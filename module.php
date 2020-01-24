@@ -9,7 +9,7 @@ class CarModule extends Module {
 	public function __construct(){
 		parent::__construct();
 		$this->routes = carRoutes();
-		$this->files = array("Car.php","CarPage.php");
+		$this->files = array("Car.php","CarUrlParser.php");
 		$this->name = "car";
 	}
 
@@ -48,15 +48,32 @@ function carRoutes() {
 		// https://www.oregonlegislature.gov/bills_laws/Pages/2011-ORS-Preface.aspx
 */
 function loadCar() {
+	$url = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_November_27,_2019";
+	
+	// $urlParser = new CarUrlParser($url);
+	// $uParser = $urlParser->getAsUrl();
+	// print($url);exit;
+
 	//library of defense protocol page object all the props of the url and method getAsUrl() method and pass the result to the 
 	//httpRequest
-	$req = new HttpRequest("https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_November_27,_2019");
+
+	// $today = today();
+	// for($i = 0; $i < 365; $i++){
+	// 	$date = $date ?: new Data($date).subtractDays();
+	// 	$parser = new CarUrlParser::forDate($date);
+	// 	$url = $parser->toUrl();
+	// }
+
+
+	$req = new HttpRequest($url);
 	
 	$resp = $req->send();
-	
+	// if($resp->status != 200) continue;
 	$page = new DocumentParser($resp->getBody());
 	$fragment = $page->fromTarget("mw-content-text");
 
+	//$fragment->setSelector("b");
+	//for 2011 case reviews $fragment->setSelector(".mw-headline")
 	$subjects = $fragment->getElementsByTagName("b");
 	
 	$links = $fragment->getElementsByTagName("a");
@@ -64,27 +81,26 @@ function loadCar() {
 	$aNumbers = array();
 	$cars = array();
 
-	$MAX_PROCESS_LINKS = 10;
+	$MAX_PROCESS_LINKS = 5;
+
+	//subjects->item() and Links
 	
 	for($i = 0; $i < $MAX_PROCESS_LINKS; $i++) {
-		$car = new Car();
-		$car->subject = explode(" - ",$subjects->item($i+1)->nodeValue)[0];
-		$car->subSubject = explode(" - ",$subjects->item($i+1)->nodeValue)[1];
-		$car->summary = getSummary($subjects->item($i+1));
-		$car->result;
-		$car->stateTitle;
-		$car->citation;
-		$car->decisionDate;
-		$car->circutCourt;
-		$car->circutCourtJudge;
-		
-		$link = $links->item($i);
-		$text = explode(" ", $link->nodeValue);
-		$href = $link->getAttribute("href");
+
+		 //We want to skip the first p tag which is who is summarizing the cases
+		$subject = $subjects->item($i+1);
+
+		 //We are skipping the first to links on the page because they are links to the author and the comments
+		$link = $links->item($i+2);
+
+		$car = new Car($subject,$link);		
+		$car->parse();
+
+
+		// $link = $links->item($i);
+		// $text = explode(" ", $link->nodeValue);
+		// $href = $link->getAttribute("href");
 		//if(strpos($href,"cdm") === false) continue;
-		// print "<pre>".print_r($text,true)."</pre>";
-		$defendant = $text[2];
-		$plaintiff = $text[0];
 		
 		
 		//$aNumbers[] = loadANumbers($defendant, $plaintiff);
@@ -98,31 +114,6 @@ function loadCar() {
 	var_dump($cars); exit;
 	return $resp;
 }
-
-function getSummary($subjectNode){
-	$summaryNodes = array();
-	$summary = "";
-	$parent = $subjectNode->parentNode;
-	$count = 0;
-
-	if($parent->nodeName != "p"){
-		throw new Exception("parent is not a p element");
-	}else{
-		//print($parent->nodeValue);
-	}
-	while(++$count < 10){// && null != ($next = $parent->nextSibling)){
-		$next = $parent->nextSibling;
-		$parent = $next;
-		//$summaryNodes[] = $next->nodeName." NODEVALUE ".$next->nodeValue;
-		if($next->nodeType == XML_TEXT_NODE) continue;
-		//if($next->firstChild->nodeName == "b") break;
-		if($next->firstChild->nodeName == "a") break;
-		$summaryNodes[] = $next->nodeValue;
-	}
-	//var_dump($summaryNodes);exit;
-	return implode("\n",$summaryNodes);
-}
-
 
 function loadANumbers($defendant, $plaintiff = "State") {
 	// https://cdm17027.contentdm.oclc.org/digital/search/searchterm/State%20v.%20McCurry
