@@ -1,38 +1,47 @@
 <?php
 class Car{
-    public $subjects;
-    public $summary;
-    public $result;
-    public $case;
-    public $citation;
-    public $decisionDate;
-    public $circutCourt;
-    public $circutCourtJudge;
-    public $plaintiff;
-    public $defendant;
-    public $linkNode;
-    public $subNode;
-    public $citationNode;
 
-    public function __construct($subNode,$linkNode){
-        $this->subNode = $subNode;
+    private $subjectNode;
+
+    private $linkNode;
+    
+    private $citationNode;
+
+    private $subjects;
+
+    private $summary;
+
+    private $result;
+
+    private $citations;
+
+
+
+    public function __construct($subjectNode,$linkNode){
+        $this->subjectNode = $subjectNode;
         $this->linkNode = $linkNode;
         $this->citationNode = $this->linkNode->nextSibling;
     }
 
     function parse(){
-        $this->subjects = explode(" - ",$this->subNode->nodeValue);
-        $this->summary = $this->getSummary($this->subNode);
+        $this->subjects = explode(" - ",$this->subjectNode->nodeValue);
+        $this->summary = $this->getSummary($this->subjectNode);
         $this->result = $this->getCaseResult($this->summary);
-        $this->case = $linkNode->nodeValue;
+        $this->case = $this->linkNode->nodeValue;
         list($this->plaintiff,$versus,$this->defendant) = explode(" ",$this->case);
-        $this->citations = $this->toArray($this->citationNode);
-        list($this->month,
+        $tempArray = $this->toArray($this->citationNode);
+        $this->citations = array_filter($tempArray,function($elem){return $elem != "";});
+        list($this->emptyElement,
+            $this->cit1,
+            $this->cit2,
+            $this->cit3,
+            $this->cit4,
+            $this->month,
             $this->day,
             $this->year,
             $this->judge,
-            $this->county1,
-            $this->county2,
+            $this->countyPart1,
+            $this->countyPart2,
             $this->judge2) = $this->citations;
     }
 
@@ -64,7 +73,7 @@ class Car{
     }
 
     function toArray($node){
-        return preg_split("/[()\s,\n]+/",$node->nodeValue);
+        return preg_split("/[()\s,\r]+/m",$node->nodeValue);
     }
     
     function getDecisionDate(){

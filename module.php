@@ -48,22 +48,26 @@ function carRoutes() {
 		// https://www.oregonlegislature.gov/bills_laws/Pages/2011-ORS-Preface.aspx
 */
 function loadCar() {
+
+	//pass in the date to be formated as the date section of the url.  Eventually the loadCar function will be called from inside of a loop.
+
+	$urlDate = new DateTime();
+	for($i = 0; $i < 1; $i++){
+		$urlDate->modify("-1 day");
+		$urlParser = new CarUrlParser($urlDate);
+		$parsedUrl = $urlParser->toUrl();
+	}
+	//print($parsedUrl);exit;
+
+
+
+
+	//only concerned with the date
 	$url = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_November_27,_2019";
 	
-	// $urlParser = new CarUrlParser($url);
-	// $uParser = $urlParser->getAsUrl();
-	// print($url);exit;
 
 	//library of defense protocol page object all the props of the url and method getAsUrl() method and pass the result to the 
 	//httpRequest
-
-	// $today = today();
-	// for($i = 0; $i < 365; $i++){
-	// 	$date = $date ?: new Data($date).subtractDays();
-	// 	$parser = new CarUrlParser::forDate($date);
-	// 	$url = $parser->toUrl();
-	// }
-
 
 	$req = new HttpRequest($url);
 	

@@ -1,17 +1,25 @@
 <?php
 class CarUrlParser{
-    private $url = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_November_27,_2019";
-
-    //private static whatever
-
-    public $protocol;
-    public $domain;
-    public $path;
-    public $theRest = array();
-
-    function __construct($url){
     
-        list($this->protocol,$this->url) = explode("//",$url);
+    // private $URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_November_27,_2019";
+    private $URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_";
+
+    private $protocol;
+    private $domain;
+    private $path;
+    private $carUrl = array();
+    private $url;
+    private $month;
+    private $monthName;
+    private $day;
+    private $year;
+    private $datetime;
+
+
+    function __construct($date){
+
+        $this->datetime = $date;
+        list($this->protocol,$this->url) = explode("//",$this->URL_TO_PAGE);
 
         list($this->domain,$this->path,$this->carUrl) = explode("/",$this->url);
     }
@@ -28,23 +36,21 @@ class CarUrlParser{
         return $this->path;
     }
 
-    function parseUrl(){
-        $lastParts = explode("/",$this->url);
-//   $data = preg_split("/[_,]+/",$this->carUrl)
-/// $data[0] = "
-        return implode($lastPart,"_");
+    function parseUrlDate(){
+        $obj = new ReflectionObject($this->datetime);
+        $prop = $obj->getProperty('date');
+        $date = $prop->getValue($this->datetime);
+        $datePieces = preg_split("/[-\s]/",$date);
+        list($this->year,$this->month,$this->date,$timeStuff) = $datePieces;
+
+        $dateObj   = DateTime::createFromFormat('!m', $this->month);
+        $this->monthName = $dateObj->format('F');
     }
 
-    // function fromDate($date){
-    //     $parser = new CarUrlParser();
-    //     $parser->month = ; $parser->day = ; $parser->year = "2019";
-
-    //     return $parser;
-    // }
-
     function toUrl(){
-        $url = self::proto . "//" . sefl::domain . "/" . self::path;
-        $url .= "{$this->month}_{$this->day},_{$this->year}";
+        $this->parseUrlDate();
+
+        $url = $this->URL_TO_PAGE.$this->monthName."_".$this->date.",_".$this->year;
         return $url;
     }
 }
