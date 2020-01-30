@@ -79,7 +79,7 @@ function loadCarsData($xml){
 	$aNumbers = array();
 	$cars = array();
 
-	$MAX_PROCESS_LINKS = 5;
+	$MAX_PROCESS_LINKS = count($subjects)-1;
 	
 	for($i = 0; $i < $MAX_PROCESS_LINKS; $i++) {
 
@@ -103,10 +103,10 @@ function loadCarsData($xml){
 
 
 	}
-	print("ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---");
-	var_dump($errors);
-	print("NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---");
-	var_dump($nullSubjects);
+	// print("ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---");
+	// var_dump($errors);
+	// print("NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---");
+	// var_dump($nullSubjects);
 	
 	return $cars;
 }
@@ -129,7 +129,7 @@ function loadANumbers($defendant, $plaintiff = "State") {
 
 function testUrls(){
 	$urlDate = new DateTime();
-	for($i = 0; $i < 365 ; $i++){
+	for($i = 0; $i < 16 ; $i++){
 		$urlDate->modify("-1 day");
 		$urlDateFormat = $urlDate->format("n j Y");
 		$xml = call_user_func_array("loadPage",explode(" ",$urlDateFormat));
@@ -138,13 +138,26 @@ function testUrls(){
 			$status = "not found";
 		}else{
 			$cars = loadCarsData($xml);
-			var_dump($cars);exit;
-			$cases = array_map(function($item){return $item->case;},$cars);
+			for($i = 0; $i < count($cars); $i++){
+				$cn = $i+1;
+				$date = $urlDate->format("F j, Y");
+				print("<br>-----CASE #".$cn." for ".$date."-----<BR>");
+				print("SUBJECT #1: ".$cars[$i]->getSubjects()[0]."<BR>");
+				print("SUBJECT #2: ".$cars[$i]->getSubjects()[1]."<BR>");
+				print("SUMMARY: ". $cars[$i]->getSummary()."<br>");
+				print("CASE RESULT: ". $cars[$i]->getCaseResult()."<br>");
+				print("CASE TITLE: ". $cars[$i]->getCaseTitle()."<br>");
+				print("PLAINTIFF: ". $cars[$i]->getLitigants()[0]."<br>");
+				print("DEFENDANT: ". $cars[$i]->getLitigants()[1]."<br>");
+				print("CITATION: ". $cars[$i]->getCitation()."<br>");
+				print("DECISION DATE: ". $cars[$i]->getDecisionDate()."<br>");
+				print("CIRCUT COURT: ". $cars[$i]->getCircutCourt()."<br>");
+				print("JUDGE: ". $cars[$i]->getJudge()."<br>");
+				print("OTHER JUDGES: ". $cars[$i]->getOtherJudges()."<br>");
+				// if(strpos($cars[$i]->getOtherJudges," "))
+				// print("OTHER JUDGES: ". preg_replace("/[\s]/",", ",$cars[$i]->getOtherJudges())."<br>");
+			}
 			$status = "everything went ok";
-
-			print("CASE TITLES FOR ".$urlDateFormat.": <br>");
-			print(implode("<br>",$cases));
-			print("<br>");
 		}
 		echo  nl2br ("THE CARS DATE: ".$urlDateFormat."---STATUS: ".$status."<br>");
 	}
