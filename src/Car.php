@@ -56,8 +56,6 @@ class Car{
         }
 
         list($this->plaintiff,$versus,$this->defendant) = explode(" ",$this->title);
-
-
     }
     
     //---GETTERS---
@@ -98,7 +96,12 @@ class Car{
     }
 
     function getOtherJudges(){
-        return substr(explode(",",$this->citationNodeValueParts[3])[1],0,-2);
+        $judges = explode(" ",substr(explode(",",$this->citationNodeValueParts[3])[1],0,-2));
+        if($judges[0] == ""){
+            array_shift($judges);
+            $judges = implode(", ",$judges);
+        }
+        return $judges;
     }
 
     //---SETTERS---

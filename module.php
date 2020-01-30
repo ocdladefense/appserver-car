@@ -154,8 +154,6 @@ function testUrls(){
 				print("CIRCUT COURT: ". $cars[$i]->getCircutCourt()."<br>");
 				print("JUDGE: ". $cars[$i]->getJudge()."<br>");
 				print("OTHER JUDGES: ". $cars[$i]->getOtherJudges()."<br>");
-				// if(strpos($cars[$i]->getOtherJudges," "))
-				// print("OTHER JUDGES: ". preg_replace("/[\s]/",", ",$cars[$i]->getOtherJudges())."<br>");
 			}
 			$status = "everything went ok";
 		}
