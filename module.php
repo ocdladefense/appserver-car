@@ -9,7 +9,7 @@ class CarModule extends Module {
 	public function __construct(){
 		parent::__construct();
 		$this->routes = carRoutes();
-		$this->files = array("Car.php","CarUrlParser.php");
+		$this->files = array("Car.php","CarUrlParser.php","CarParserException.php");
 		$this->name = "car";
 	}
 
@@ -22,108 +22,97 @@ function carRoutes() {
 			"callback" => "loadANumbers",
 			"Content-Type" => "application/json"
 		),
-		"load-car" => array(
-			"callback" => "loadCar",
+		"load-cars" => array(
+			"callback" => "loadCarsData",
+			"Content-Type" => "application/json"
+		),
+		"view-page" => array(
+			"callback" => "viewPage",
+			"Content-Type" => "text/html"
+		),
+		"test-urls" => array(
+			"callback" => "testUrls",
 			"Content-Type" => "application/json"
 		)
 	);
 }
 
-// https://trust.ocdla.org/car/State/McCurry
+function loadPage($month,$day,$year) {
 
+	//$url = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_November_27,_2019";
 
-/**
- * $req = new HttpRequest("https://www.oregonlaws.org/ors/137.700");
-
-		$req->xml();
-
-
-		new ClassFinder("nav nav-tabs hidden-print");
-
-		$title = new Label(".section_title"); // Get the section title label for display in the sidebar
-
-		new MainContent("#text");
-		new MainContent("#annotations");
-		new MainContent("#related-statutes");
-		// https://www.oregonlegislature.gov/bills_laws/Pages/2011-ORS-Preface.aspx
-*/
-function loadCar() {
-
-	//pass in the date to be formated as the date section of the url.  Eventually the loadCar function will be called from inside of a loop.
-
-	$urlDate = new DateTime();
-	for($i = 0; $i < 1; $i++){
-		$urlDate->modify("-1 day");
-		$urlParser = new CarUrlParser($urlDate);
-		$parsedUrl = $urlParser->toUrl();
-	}
-	//print($parsedUrl);exit;
-
-
-
-
-	//only concerned with the date
-	$url = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_November_27,_2019";
-	
-
-	//library of defense protocol page object all the props of the url and method getAsUrl() method and pass the result to the 
-	//httpRequest
+	//Crate a new date formated to be passed to the CarUrlParser and pass it to the request object
+	$urlDate = DateTime::createFromFormat ( "n j Y" , implode(" ",array($month,$day,$year)));
+	$urlParser = new CarUrlParser($urlDate);
+	$url = $urlParser->toUrl();
 
 	$req = new HttpRequest($url);
 	
 	$resp = $req->send();
-	// if($resp->status != 200) continue;
+
+	if($resp->getStatusCode() != 200){
+		return null;
+	}
+
+	//Pass the body of the page to the DocumentParser
 	$page = new DocumentParser($resp->getBody());
+	//We are only concerned with the content located in the 'mw-content-text' class of the page
 	$fragment = $page->fromTarget("mw-content-text");
 
-	//$fragment->setSelector("b");
-	//for 2011 case reviews $fragment->setSelector(".mw-headline")
-	$subjects = $fragment->getElementsByTagName("b");
+	return $fragment;
+}
+
+function viewPage($month,$day,$year){
+	$page = loadPage($month,$day,$year);
+	return $page->saveHTML();
+}
+
+function loadCarsData($xml){
+
+	$subjects = $xml->getElementsByTagName("b");	
 	
-	$links = $fragment->getElementsByTagName("a");
+	$links = $xml->getElementsByTagName("a");
+
+	$errors = array();
+	$nullSubjects = array();
 	
 	$aNumbers = array();
 	$cars = array();
 
 	$MAX_PROCESS_LINKS = 5;
-
-	//subjects->item() and Links
 	
 	for($i = 0; $i < $MAX_PROCESS_LINKS; $i++) {
 
-		 //We want to skip the first p tag which is who is summarizing the cases
+		//We want to skip the first p tag which is the name of the person summarizing the cases
 		$subject = $subjects->item($i+1);
 
-		 //We are skipping the first to links on the page because they are links to the author and the comments
+		//We are skipping the first to links on the page because they are links to the author and the comments
 		$link = $links->item($i+2);
 
-		$car = new Car($subject,$link);		
-		$car->parse();
-
-
-		// $link = $links->item($i);
-		// $text = explode(" ", $link->nodeValue);
-		// $href = $link->getAttribute("href");
-		//if(strpos($href,"cdm") === false) continue;
-		
-		
-		//$aNumbers[] = loadANumbers($defendant, $plaintiff);
+		//if($subject != null && $link != null) //for testing purposes
+		$car = new Car($subject,$link);	
+		try{
+			//if($car != null) //for testing purposes
+			$car->parse();
+		}catch(CarParserException $e){
+			//do something with the $e->stuff
+			$errors[] = $e;
+			$nullSubjects[] = $subject;
+		}
 		$cars[] = $car;
 
+
 	}
+	print("ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---");
+	var_dump($errors);
+	print("NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---");
+	var_dump($nullSubjects);
 	
-	// $resp = new HttpResponse($aNumbers[0]);
-	// $resp->setContentType("application/json; charset=utf-8");
-	
-	var_dump($cars); exit;
-	return $resp;
+	return $cars;
 }
 
 function loadANumbers($defendant, $plaintiff = "State") {
-	// https://cdm17027.contentdm.oclc.org/digital/search/searchterm/State%20v.%20McCurry
-	// https://trust.ocdla.org/car/State/McCurry
-	// $plaintiff = "State";
-	// $defendant = "McCurry";
+
 	$searchTerm = $plaintiff."%20v.%20".$defendant;
 	
 	$fullUrl = "https://cdm17027.contentdm.oclc.org";
@@ -136,4 +125,27 @@ function loadANumbers($defendant, $plaintiff = "State") {
 
 
 	return $resp;
+}
+
+function testUrls(){
+	$urlDate = new DateTime();
+	for($i = 0; $i < 365 ; $i++){
+		$urlDate->modify("-1 day");
+		$urlDateFormat = $urlDate->format("n j Y");
+		$xml = call_user_func_array("loadPage",explode(" ",$urlDateFormat));
+
+		if($xml == null){
+			$status = "not found";
+		}else{
+			$cars = loadCarsData($xml);
+			var_dump($cars);exit;
+			$cases = array_map(function($item){return $item->case;},$cars);
+			$status = "everything went ok";
+
+			print("CASE TITLES FOR ".$urlDateFormat.": <br>");
+			print(implode("<br>",$cases));
+			print("<br>");
+		}
+		echo  nl2br ("THE CARS DATE: ".$urlDateFormat."---STATUS: ".$status."<br>");
+	}
 }
