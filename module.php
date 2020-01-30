@@ -129,7 +129,7 @@ function loadANumbers($defendant, $plaintiff = "State") {
 
 function testUrls(){
 	$urlDate = new DateTime();
-	for($i = 0; $i < 16 ; $i++){
+	for($i = 0; $i < 50; $i++){
 		$urlDate->modify("-1 day");
 		$urlDateFormat = $urlDate->format("n j Y");
 		$xml = call_user_func_array("loadPage",explode(" ",$urlDateFormat));
