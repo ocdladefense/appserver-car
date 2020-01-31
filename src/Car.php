@@ -1,5 +1,12 @@
 <?php
 class Car{
+    const CITATION_INDEX = 0;
+
+    const DATE_INDEX = 1;
+
+    const MAJORITY_INDEX = 2;
+
+    const CIRCUT_AND_JUDGES_INDEX = 3;
 
     private $subjectNode;
 
@@ -57,7 +64,9 @@ class Car{
 
         list($this->plaintiff,$versus,$this->defendant) = explode(" ",$this->title);
     }
+    //362 Or 203 (2017) (Per Curiam)
     
+
     //---GETTERS---
     function getSubjects(){
         return $this->subjects;
@@ -80,23 +89,24 @@ class Car{
     }
 
     function getCitation(){
-        return $this->citationNodeValueParts[0];
+        return $this->citationNodeValueParts[self::CITATION_INDEX];
     }
 
     function getDecisionDate(){
-        return substr($this->citationNodeValueParts[1],0,-2);
+        //return a usable date array
+        return substr($this->citationNodeValueParts[self::DATE_INDEX],0,-2);
     }
 
     function getCircutCourt(){
-        return explode(",",$this->citationNodeValueParts[3])[0];
+        return explode(",",$this->citationNodeValueParts[self::CIRCUT_AND_JUDGES_INDEX])[0];
     }
 
     function getJudge(){
-        return substr($this->citationNodeValueParts[2],0,-2);
+        return substr($this->citationNodeValueParts[self::MAJORITY_INDEX],0,-2);
     }
 
     function getOtherJudges(){
-        $judges = explode(" ",substr(explode(",",$this->citationNodeValueParts[3])[1],0,-2));
+        $judges = explode(" ",substr(explode(",",$this->citationNodeValueParts[self::CIRCUT_AND_JUDGES_INDEX])[1],0,-2));
         if($judges[0] == ""){
             array_shift($judges);
             $judges = implode(", ",$judges);
