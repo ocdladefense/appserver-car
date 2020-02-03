@@ -14,15 +14,24 @@ class Car{
 
     private $firstParagraph;
 
-    private $subjects;
-
-    private $summary;
-
-    private $result;
-    
     private $citationNodeValue;
 
+    private $subjects;
 
+    public $subject1;
+    public $subject2;
+    public $summary;
+    public $result;
+    public $title;
+    public $plaintiff;
+    public $defendant;
+    public $citation;
+    public $month;
+    public $day;
+    public $year;
+    public $circut;
+    public $majority;
+    public $judges;
 
     public function __construct($subjectNode,$linkNode){
         $this->subjectNode = $subjectNode;
@@ -94,7 +103,9 @@ class Car{
 
     function getDecisionDate(){
         //return a usable date array
-        return substr($this->citationNodeValueParts[self::DATE_INDEX],0,-2);
+        $dateArray = substr($this->citationNodeValueParts[self::DATE_INDEX],0,-2);
+        $dateArray = preg_split("/[\s,]+/",$dateArray);
+        return $dateArray;
     }
 
     function getCircutCourt(){
