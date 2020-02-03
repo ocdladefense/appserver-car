@@ -9,7 +9,7 @@ class CarModule extends Module {
 	public function __construct(){
 		parent::__construct();
 		$this->routes = carRoutes();
-		$this->files = array("Car.php","CarUrlParser.php","CarParserException.php");
+		$this->files = array("Car.php","CarUrlParser.php","CarParserException.php","CarDB.php");
 		$this->name = "car";
 	}
 
@@ -35,7 +35,7 @@ function carRoutes() {
 			"Content-Type" => "application/json"
 		),
 		"test-db" => array(
-			"callback" => "database",
+			"callback" => "saveToCarDatabase",
 			"Content-Type" => "application/json"
 		)
 	);
@@ -134,7 +134,7 @@ function loadANumbers($defendant, $plaintiff = "State") {
 
 function testUrls(){
 	$urlDate = new DateTime();
-	for($i = 0; $i < 16; $i++){
+	for($i = 0; $i < 365; $i++){
 		$urlDate->modify("-1 day");
 		$urlDateFormat = $urlDate->format("n j Y");
 		$xml = call_user_func_array("loadPage",explode(" ",$urlDateFormat));
@@ -146,6 +146,7 @@ function testUrls(){
 			for($i = 0; $i < count($cars); $i++){
 				$cn = $i+1;
 				$date = $urlDate->format("F j, Y");
+				saveToCarDatabase($cars[$i]);
 				print("<br><strong>-----CASE #".$cn." for ".$date."-----</strong><BR>");
 				print("<strong>SUBJECT #1:</strong> ".$cars[$i]->getSubjects()[0]."<BR>");
 				print("<strong>SUBJECT #2:</strong> ".$cars[$i]->getSubjects()[1]."<BR>");
@@ -155,7 +156,7 @@ function testUrls(){
 				print("<strong>PLAINTIFF:</strong> ". $cars[$i]->getLitigants()[0]."<br>");
 				print("<strong>DEFENDANT:</strong> ". $cars[$i]->getLitigants()[1]."<br>");
 				print("<strong>CITATION:</strong> ". $cars[$i]->getCitation()."<br>");
-				print("<strong>DECISION DATE:</strong> ". $cars[$i]->getDecisionDate()."<br>");
+				print("<strong>DECISION DATE:</strong> ". $cars[$i]->getDecisionDate()[0]." ".$cars[$i]->getDecisionDate()[1].", ".$cars[$i]->getDecisionDate()[2]."<br>");
 				print("<strong>CIRCUT COURT:</strong> ". $cars[$i]->getCircutCourt()."<br>");
 				print("<strong>JUDGE:</strong> ". $cars[$i]->getJudge()."<br>");
 				print("<strong>OTHER JUDGES:</strong> ". $cars[$i]->getOtherJudges()."<br>");
@@ -164,4 +165,12 @@ function testUrls(){
 		}
 		echo  nl2br ("THE CARS DATE: ".$urlDateFormat."---STATUS: ".$status."<br>");
 	}
+}
+function saveToCarDatabase($data){
+
+	$db = new CarDB($data);
+	$db->prepareData();
+	$db->connect();
+	$db->insert();
+	$db->close();
 }
