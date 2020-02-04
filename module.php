@@ -41,15 +41,15 @@ function carRoutes() {
 	);
 }
 
-function loadPage($month,$day,$year) {
+function loadPage($month,$date,$year) {
 
 	//$url = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_November_27,_2019";
 
 	//Crate a new date formated to be passed to the CarUrlParser and pass it to the request object
-	$urlDate = DateTime::createFromFormat ( "n j Y" , implode(" ",array($month,$day,$year)));
+	$urlDate = DateTime::createFromFormat ( "n j Y" , implode(" ",array($month,$date,$year)));
 	$urlParser = new CarUrlParser($urlDate);
 	$url = $urlParser->toUrl();
-	print("<br><strong>PASSED URL:</strong>".$url."<br>");
+	//print("<br><strong>PASSED URL:</strong>".$url."<br>");
 
 	$req = new HttpRequest($url);
 	
@@ -67,8 +67,8 @@ function loadPage($month,$day,$year) {
 	return $fragment;
 }
 
-function viewPage($month,$day,$year){
-	$page = loadPage($month,$day,$year);
+function viewPage($month,$date,$year){
+	$page = loadPage($month,$date,$year);
 	return $page->saveHTML();
 }
 
@@ -134,7 +134,7 @@ function loadANumbers($defendant, $plaintiff = "State") {
 
 function testUrls(){
 	$urlDate = new DateTime();
-	for($i = 0; $i < 365; $i++){
+	for($i = 0; $i < 40; $i++){
 		$urlDate->modify("-1 day");
 		$urlDateFormat = $urlDate->format("n j Y");
 		$xml = call_user_func_array("loadPage",explode(" ",$urlDateFormat));
@@ -146,20 +146,22 @@ function testUrls(){
 			for($i = 0; $i < count($cars); $i++){
 				$cn = $i+1;
 				$date = $urlDate->format("F j, Y");
-				saveToCarDatabase($cars[$i]);
+				mysqlDatabaseInsert($cars[$i]);
+				//saveToCarDatabase($cars[$i]);
 				print("<br><strong>-----CASE #".$cn." for ".$date."-----</strong><BR>");
-				print("<strong>SUBJECT #1:</strong> ".$cars[$i]->getSubjects()[0]."<BR>");
-				print("<strong>SUBJECT #2:</strong> ".$cars[$i]->getSubjects()[1]."<BR>");
-				print("<strong>SUMMARY:</strong> ". $cars[$i]->getSummary()."<br>");
-				print("<strong>CASE RESULT:</strong> ". $cars[$i]->getCaseResult()."<br>");
-				print("<strong>CASE TITLE:</strong>". $cars[$i]->getCaseTitle()."<br>");
-				print("<strong>PLAINTIFF:</strong> ". $cars[$i]->getLitigants()[0]."<br>");
-				print("<strong>DEFENDANT:</strong> ". $cars[$i]->getLitigants()[1]."<br>");
-				print("<strong>CITATION:</strong> ". $cars[$i]->getCitation()."<br>");
-				print("<strong>DECISION DATE:</strong> ". $cars[$i]->getDecisionDate()[0]." ".$cars[$i]->getDecisionDate()[1].", ".$cars[$i]->getDecisionDate()[2]."<br>");
-				print("<strong>CIRCUT COURT:</strong> ". $cars[$i]->getCircutCourt()."<br>");
-				print("<strong>JUDGE:</strong> ". $cars[$i]->getJudge()."<br>");
-				print("<strong>OTHER JUDGES:</strong> ". $cars[$i]->getOtherJudges()."<br>");
+				print("<strong>SUBJECT #1:</strong> ".$cars[$i]->subject_1."<BR>");
+				print("<strong>SUBJECT #2:</strong> ".$cars[$i]->subject_2."<BR>");
+				print("<strong>SUMMARY:</strong> ". $cars[$i]->summary."<br>");
+				print("<strong>CASE RESULT:</strong> ". $cars[$i]->result."<br>");
+				print("<strong>CASE TITLE:</strong>". $cars[$i]->title."<br>");
+				print("<strong>PLAINTIFF:</strong> ". $cars[$i]->plaintiff."<br>");
+				print("<strong>DEFENDANT:</strong> ". $cars[$i]->defendant."<br>");
+				print("<strong>CITATION:</strong> ". $cars[$i]->citation."<br>");
+				print("<strong>DECISION DATE:</strong> ". $cars[$i]->month." ".$cars[$i]->date.", ".$cars[$i]->year."<br>");
+				print("<strong>CIRCUT COURT:</strong> ". $cars[$i]->circut."<br>");
+				print("<strong>JUDGE:</strong> ". $cars[$i]->majority."<br>");
+				print("<strong>OTHER JUDGES:</strong> ". $cars[$i]->judges."<br>");
+				print("<strong>URL TO THE PAGE:</strong> ". $cars[$i]->url."<br>");
 			}
 			$status = "everything went ok";
 		}

@@ -8,6 +8,8 @@ class Car{
 
     const CIRCUT_AND_JUDGES_INDEX = 3;
 
+    const URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_";
+
     private $subjectNode;
 
     private $linkNode;
@@ -18,8 +20,8 @@ class Car{
 
     private $subjects;
 
-    public $subject1;
-    public $subject2;
+    public $subject_1;
+    public $subject_2;
     public $summary;
     public $result;
     public $title;
@@ -27,11 +29,12 @@ class Car{
     public $defendant;
     public $citation;
     public $month;
-    public $day;
+    public $date;
     public $year;
     public $circut;
     public $majority;
     public $judges;
+    public $url;
 
     public function __construct($subjectNode,$linkNode){
         $this->subjectNode = $subjectNode;
@@ -55,7 +58,9 @@ class Car{
         }
 
         $this->subjects = explode(" - ",$this->subjectNode->nodeValue);
-        $this->summary = $this->setSummary();
+        $this->subject_1 = $this->subjects[0];
+        $this->subject_2 = $this->subjects[1];
+        $this->summary = $this->setSummary();   
 
         if($this->summary == null){
             throw new CarParserException("The summary cannot be null");
@@ -72,6 +77,18 @@ class Car{
         }
 
         list($this->plaintiff,$versus,$this->defendant) = explode(" ",$this->title);
+
+        $this->citation = $this->citationNodeValueParts[self::CITATION_INDEX];
+
+        list($this->month,$this->date,$this->year) = $this->getDecisionDate();
+
+        $this->circut = explode(",",$this->citationNodeValueParts[self::CIRCUT_AND_JUDGES_INDEX])[0];
+
+        $this->majority = substr($this->citationNodeValueParts[self::MAJORITY_INDEX],0,-2);
+
+        $this->judges = $this->getOtherJudges();
+
+        $this->url = self::URL_TO_PAGE.$this->month."_".$this->date.",_".$this->year;
     }
     //362 Or 203 (2017) (Per Curiam)
     

@@ -9,20 +9,21 @@ class CarDB{
     }
 
     function prepareData(){
-        $this->subject1 = addslashes($this->data->getSubjects()[0]);
-        $this->subject2 = addslashes($this->data->getSubjects()[1]);
-        $this->summary = addslashes($this->data->getSummary());
-        $this->result = addslashes($this->data->getCaseResult());
-        $this->title = addslashes($this->data->getCaseTitle());
-        $this->plaintiff = addslashes($this->data->getLitigants()[0]);
-        $this->defendant = addslashes($this->data->getLitigants()[1]);
-        $this->citation = addslashes($this->data->getCitation());
-        $this->month = addslashes($this->data->getDecisionDate()[0]);
-        $this->day = addslashes($this->data->getDecisionDate()[1]);
-        $this->year = addslashes($this->data->getDecisionDate()[2]);
-        $this->circut = addslashes($this->data->getCircutCourt());
-        $this->majority = addslashes($this->data->getJudge());
-        $this->judges = addslashes($this->data->getOtherJudges());
+        $this->subject_1 = addslashes($this->data->subject_1);
+        $this->subject_2 = addslashes($this->data->subject_2);
+        $this->summary = addslashes($this->data->summary);
+        $this->result = addslashes($this->data->result);
+        $this->title = addslashes($this->data->title);
+        $this->plaintiff = addslashes($this->data->plaintiff);
+        $this->defendant = addslashes($this->data->defendant);
+        $this->citation = addslashes($this->data->citation);
+        $this->month = addslashes($this->data->month);
+        $this->date = addslashes($this->data->date);
+        $this->year = addslashes($this->data->year);
+        $this->circut = addslashes($this->data->circut);
+        $this->majority = addslashes($this->data->majority);
+        $this->judges = addslashes($this->data->judges);
+        $this->url = addslashes($this->data->url);
     }
 
     function connect(){
@@ -38,8 +39,8 @@ class CarDB{
     function insert(){
         echo "Connected successfully";
         $this->connection = new mysqli(SERVER_NAME, USER_NAME, PASSWORD, DATABASE_NAME);
-        $query = "INSERT INTO cars (subject_1, subject_2, summary, result, title, plaintiff, defendant, citation, month, day, year, circut, majority, judges)
-        VALUES ('$this->subject1','$this->subject2','$this->summary','$this->result','$this->title','$this->plaintiff','$this->defendant','$this->citation','$this->month', $this->day, $this->year,'$this->circut','$this->majority','$this->judges')";
+        $query = "INSERT INTO cars (subject_1, subject_2, summary, result, title, plaintiff, defendant, citation, month, date, year, circut, majority, judges,url)
+        VALUES ('$this->subject_1','$this->subject_2','$this->summary','$this->result','$this->title','$this->plaintiff','$this->defendant','$this->citation','$this->month', $this->date, $this->year,'$this->circut','$this->majority','$this->judges','$this->url')";
 
         if ($this->connection->query($query) === TRUE) {
             echo "<br><strong>New record created successfully<br></strong>";

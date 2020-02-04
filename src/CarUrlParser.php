@@ -2,7 +2,7 @@
 class CarUrlParser{
     
     // private $URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_November_27,_2019";
-    private $URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_";
+    const URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_";
 
     private $protocol;
     private $domain;
@@ -37,7 +37,7 @@ class CarUrlParser{
 
     function toUrl(){
 
-        $url = $this->URL_TO_PAGE.$this->stringDate;
+        $url = self::URL_TO_PAGE.$this->stringDate;
         return $url;
     }
 }
