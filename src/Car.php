@@ -18,6 +18,8 @@ class Car{
 
     private $citationNodeValue;
 
+    private $citationNodeValueParts;
+
     private $subjects;
 
     public $subject_1;

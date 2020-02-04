@@ -133,8 +133,10 @@ function loadANumbers($defendant, $plaintiff = "State") {
 }
 
 function testUrls(){
+	set_time_limit(900);
+
 	$urlDate = new DateTime();
-	for($i = 0; $i < 40; $i++){
+	for($i = 0; $i < 365; $i++){
 		$urlDate->modify("-1 day");
 		$urlDateFormat = $urlDate->format("n j Y");
 		$xml = call_user_func_array("loadPage",explode(" ",$urlDateFormat));
@@ -146,33 +148,26 @@ function testUrls(){
 			for($i = 0; $i < count($cars); $i++){
 				$cn = $i+1;
 				$date = $urlDate->format("F j, Y");
-				mysqlDatabaseInsert($cars[$i]);
-				//saveToCarDatabase($cars[$i]);
-				print("<br><strong>-----CASE #".$cn." for ".$date."-----</strong><BR>");
-				print("<strong>SUBJECT #1:</strong> ".$cars[$i]->subject_1."<BR>");
-				print("<strong>SUBJECT #2:</strong> ".$cars[$i]->subject_2."<BR>");
-				print("<strong>SUMMARY:</strong> ". $cars[$i]->summary."<br>");
-				print("<strong>CASE RESULT:</strong> ". $cars[$i]->result."<br>");
-				print("<strong>CASE TITLE:</strong>". $cars[$i]->title."<br>");
-				print("<strong>PLAINTIFF:</strong> ". $cars[$i]->plaintiff."<br>");
-				print("<strong>DEFENDANT:</strong> ". $cars[$i]->defendant."<br>");
-				print("<strong>CITATION:</strong> ". $cars[$i]->citation."<br>");
-				print("<strong>DECISION DATE:</strong> ". $cars[$i]->month." ".$cars[$i]->date.", ".$cars[$i]->year."<br>");
-				print("<strong>CIRCUT COURT:</strong> ". $cars[$i]->circut."<br>");
-				print("<strong>JUDGE:</strong> ". $cars[$i]->majority."<br>");
-				print("<strong>OTHER JUDGES:</strong> ". $cars[$i]->judges."<br>");
-				print("<strong>URL TO THE PAGE:</strong> ". $cars[$i]->url."<br>");
+				$dbName = "cardb";
+				mysqlDatabaseInsert($cars[$i],$dbName);
+
+				// print("<br><strong>-----CASE #".$cn." for ".$date."-----</strong><BR>");
+				// print("<strong>SUBJECT #1:</strong> ".$cars[$i]->subject_1."<BR>");
+				// print("<strong>SUBJECT #2:</strong> ".$cars[$i]->subject_2."<BR>");
+				// print("<strong>SUMMARY:</strong> ". $cars[$i]->summary."<br>");
+				// print("<strong>CASE RESULT:</strong> ". $cars[$i]->result."<br>");
+				// print("<strong>CASE TITLE:</strong>". $cars[$i]->title."<br>");
+				// print("<strong>PLAINTIFF:</strong> ". $cars[$i]->plaintiff."<br>");
+				// print("<strong>DEFENDANT:</strong> ". $cars[$i]->defendant."<br>");
+				// print("<strong>CITATION:</strong> ". $cars[$i]->citation."<br>");
+				// print("<strong>DECISION DATE:</strong> ". $cars[$i]->month." ".$cars[$i]->date.", ".$cars[$i]->year."<br>");
+				// print("<strong>CIRCUT COURT:</strong> ". $cars[$i]->circut."<br>");
+				// print("<strong>JUDGE:</strong> ". $cars[$i]->majority."<br>");
+				// print("<strong>OTHER JUDGES:</strong> ". $cars[$i]->judges."<br>");
+				// print("<strong>URL TO THE PAGE:</strong> ". $cars[$i]->url."<br>");
 			}
 			$status = "everything went ok";
 		}
 		echo  nl2br ("THE CARS DATE: ".$urlDateFormat."---STATUS: ".$status."<br>");
 	}
-}
-function saveToCarDatabase($data){
-
-	$db = new CarDB($data);
-	$db->prepareData();
-	$db->connect();
-	$db->insert();
-	$db->close();
 }
