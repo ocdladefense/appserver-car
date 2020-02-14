@@ -30,45 +30,50 @@ function carRoutes() {
 			"callback" => "viewPage",
 			"Content-Type" => "text/html"
 		),
-		"test-urls" => array(
-			"callback" => "testUrls",
+		"test-car-data" => array(
+			"callback" => "testCarData",
 			"Content-Type" => "application/json"
 		),
-		"test-db" => array(
-			"callback" => "saveToCarDatabase",
+		"test-car-urls" => array(
+			"callback" => "testCandidateUrls",
+			"Content-Type" => "application/json"
+		),
+		"car-urls" => array(
+			"callback" => "getCarUrlsByDate",
+			"Content-Type" => "application/json"
+		),
+		"car-urls-range" => array(
+			"callback" => "getUrlsRange",
 			"Content-Type" => "application/json"
 		)
 	);
 }
 
-function loadPage($month,$date,$year) {
+function loadPage($month,$day,$year) {
 
 	//$url = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_November_27,_2019";
 
 	//Crate a new date formated to be passed to the CarUrlParser and pass it to the request object
-	$urlDate = DateTime::createFromFormat ( "n j Y" , implode(" ",array($month,$date,$year)));
+	//Create new date from numeric values only
+	$urlDate = DateTime::createFromFormat ( "n j Y" , implode(" ",array($month,$day,$year)));
 	$urlParser = new CarUrlParser($urlDate);
-	$url = $urlParser->toUrl();
-	//print("<br><strong>PASSED URL:</strong>".$url."<br>");
-
-	$req = new HttpRequest($url);
-	
-	$resp = $req->send();
-
-	if($resp->getStatusCode() != 200){
-		return null;
-	}
+	$resp = $urlParser->makeRequests();
 
 	//Pass the body of the page to the DocumentParser
+	if($resp->getBody() != ""){
 	$page = new DocumentParser($resp->getBody());
-	//We are only concerned with the content located in the 'mw-content-text' class of the page
-	$fragment = $page->fromTarget("mw-content-text");
+		//We are only concerned with the content located in the 'mw-content-text' class of the page
+		$fragment = $page->fromTarget("mw-content-text");
 
-	return $fragment;
+		return $fragment;
+	}
 }
 
-function viewPage($month,$date,$year){
-	$page = loadPage($month,$date,$year);
+function viewPage($month,$day,$year){
+	$page = loadPage($month,$day,$year);
+	if($page == null){
+		throw new CarParserException("The page at that url is null");
+	}
 	return $page->saveHTML();
 }
 
@@ -128,16 +133,38 @@ function loadANumbers($defendant, $plaintiff = "State") {
 	
 	$resp = $req->send();
 
-
 	return $resp;
 }
 
-function testUrls(){
+
+
+
+//route that takes an int number of days starting today tho attempth to load urls for without execution of calluserfunc line
+
+function testCandidateUrls($days){
 	set_time_limit(900);
 
+	$output = array();
+
+	//output = getoutput()
+
+	//return output
 	$urlDate = new DateTime();
-	for($i = 0; $i < 365; $i++){
+	for($i = 0; $i < $days; $i++){
 		$urlDate->modify("-1 day");
+		$urlParser = new CarUrlParser($urlDate);
+		$urlParser->makeRequests();
+	}
+}
+
+//dump in sql format
+function testCarData($days){
+	set_time_limit(0);
+
+	$urlDate = new DateTime();
+	for($i = 0; $i < $days; $i++){
+		$urlDate->modify("-1 day");
+		//throw an exception if 2018
 		$urlDateFormat = $urlDate->format("n j Y");
 		$xml = call_user_func_array("loadPage",explode(" ",$urlDateFormat));
 
@@ -145,29 +172,69 @@ function testUrls(){
 			$status = "not found";
 		}else{
 			$cars = loadCarsData($xml);
-			for($i = 0; $i < count($cars); $i++){
-				$cn = $i+1;
+			for($j = 0; $j < count($cars); $j++){
+				$cn = $j+1;
 				$date = $urlDate->format("F j, Y");
-				$dbName = "cardb";
-				mysqlDatabaseInsert($cars[$i],$dbName);
-
-				// print("<br><strong>-----CASE #".$cn." for ".$date."-----</strong><BR>");
-				// print("<strong>SUBJECT #1:</strong> ".$cars[$i]->subject_1."<BR>");
-				// print("<strong>SUBJECT #2:</strong> ".$cars[$i]->subject_2."<BR>");
-				// print("<strong>SUMMARY:</strong> ". $cars[$i]->summary."<br>");
-				// print("<strong>CASE RESULT:</strong> ". $cars[$i]->result."<br>");
-				// print("<strong>CASE TITLE:</strong>". $cars[$i]->title."<br>");
-				// print("<strong>PLAINTIFF:</strong> ". $cars[$i]->plaintiff."<br>");
-				// print("<strong>DEFENDANT:</strong> ". $cars[$i]->defendant."<br>");
-				// print("<strong>CITATION:</strong> ". $cars[$i]->citation."<br>");
-				// print("<strong>DECISION DATE:</strong> ". $cars[$i]->month." ".$cars[$i]->date.", ".$cars[$i]->year."<br>");
-				// print("<strong>CIRCUT COURT:</strong> ". $cars[$i]->circut."<br>");
-				// print("<strong>JUDGE:</strong> ". $cars[$i]->majority."<br>");
-				// print("<strong>OTHER JUDGES:</strong> ". $cars[$i]->judges."<br>");
-				// print("<strong>URL TO THE PAGE:</strong> ". $cars[$i]->url."<br>");
+				print("<br><strong>-----CASE #".$cn." for ".$date."-----</strong><BR>");
+				insert($cars[$j]);
+				displayCarOutput($cars[$j]);
 			}
-			$status = "everything went ok";
+			$status = $cars[$j]->url."everything went ok";
 		}
 		echo  nl2br ("THE CARS DATE: ".$urlDateFormat."---STATUS: ".$status."<br>");
 	}
+}
+
+function getCarUrlsByDate($month = null,$day = null,$year = null) {
+	set_time_limit(5);
+
+	$urls = array("someUrl","someotherurl");
+
+	$urlDate = DateTime::createFromFormat ( "n j Y" , implode(" ",array($month,$day,$year)));
+	$urlParser = new CarUrlParser($urlDate);
+
+
+	$urls = $urlParser->getUrls();
+
+
+	return $urls;
+}
+function getUrlsRange($days){
+
+	$date = new DateTime();
+	$urls = array();
+
+	for($i = 0; $i <= $days; $i++){
+		$date->modify("-1 day");
+		$urlParser = new CarUrlParser($date);
+
+
+		//Standard class to hold metadata for the urls  
+		$data =  new StdClass();
+		$data->date = $date->format("F j, Y");
+		$data->iterationNumber = $i;
+		$data->urls = $urlParser->getUrls();
+
+		$urls[] = $data;
+
+	}
+	
+	return $urls;
+}
+
+//move to url parser
+function displayCarOutput($car){
+	print("<strong>SUBJECT #1:</strong> ".$car->subject_1."<BR>");
+	print("<strong>SUBJECT #2:</strong> ".$car->subject_2."<BR>");
+	print("<strong>SUMMARY:</strong> ". $car->summary."<br>");
+	print("<strong>CASE RESULT:</strong> ". $car->result."<br>");
+	print("<strong>CASE TITLE:</strong>". $car->title."<br>");
+	print("<strong>PLAINTIFF:</strong> ". $car->plaintiff."<br>");
+	print("<strong>DEFENDANT:</strong> ". $car->defendant."<br>");
+	print("<strong>CITATION:</strong> ". $car->citation."<br>");
+	print("<strong>DECISION DATE:</strong> ". $car->month." ".$car->day.", ".$car->year."<br>");
+	print("<strong>CIRCUT COURT:</strong> ". $car->circut."<br>");
+	print("<strong>JUDGE:</strong> ". $car->majority."<br>");
+	print("<strong>OTHER JUDGES:</strong> ". $car->judges."<br>");
+	print("<strong>URL TO THE PAGE:</strong> ". $car->url."<br>");
 }

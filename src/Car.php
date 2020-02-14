@@ -31,7 +31,7 @@ class Car{
     public $defendant;
     public $citation;
     public $month;
-    public $date;
+    public $day;
     public $year;
     public $circut;
     public $majority;
@@ -82,7 +82,7 @@ class Car{
 
         $this->citation = $this->citationNodeValueParts[self::CITATION_INDEX];
 
-        list($this->month,$this->date,$this->year) = $this->getDecisionDate();
+        list($this->month,$this->day,$this->year) = $this->getDecisionDate();
 
         $this->circut = explode(",",$this->citationNodeValueParts[self::CIRCUT_AND_JUDGES_INDEX])[0];
 
@@ -90,7 +90,7 @@ class Car{
 
         $this->judges = $this->getOtherJudges();
 
-        $this->url = self::URL_TO_PAGE.$this->month."_".$this->date.",_".$this->year;
+        $this->url = self::URL_TO_PAGE.$this->month."_".$this->day.",_".$this->year;
     }
     //362 Or 203 (2017) (Per Curiam)
     
