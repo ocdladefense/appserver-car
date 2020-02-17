@@ -8,8 +8,8 @@ class CarUrlParser{
                         "U.S._Supreme_Court",
                         "Oregon_Appellate_Ct",
                         "Oregon_Supreme_Ct",
-                        "U.S._Supreme_Ct,
-                        Oregon_Court_of_Appeals");
+                        "U.S._Supreme_Ct",
+                        "Oregon_Court_of_Appeals");
     const COURT_URL_DATE_SEPERATOR_1 = ",_";
     const COURT_URL_DATE_SEPERATOR_2 = "_";
     const COURT_URL_DATE_SEPERATOR_3 = "_-_";
@@ -23,6 +23,8 @@ class CarUrlParser{
     private $url;
     private $stringDates;
     private $urlPreference; //define the pattern for each set of date ranges
+    private $outputObjs = array();
+    private static $usePreferredUrls = true;
 
 
     function __construct($date){
@@ -93,23 +95,30 @@ class CarUrlParser{
 
     function makeRequests(){
         $candidateUrls = $this->candidateUrls();
-        $output = array();
         $iteration = 0;
-
         $preferredUrls = $this->getPreferedUrls();
+        $time = time();
 
-        $allUrls = array_merge($preferredUrls,$candidateUrls);
+
+        if(self::$usePreferredUrls === true){
+            $allUrls = $this->getPreferedUrls();
+        }else{
+            $allUrls = array_merge($preferredUrls,$candidateUrls);
+        }
+
         
 
         foreach($allUrls as $url){
             $iteration++;
             $req = new HttpRequest($url);
-            
             $resp = $req->send();
-            $this->displayOutput($url,$resp,$iteration);
+            //$this->displayOutput($url,$resp,$iteration);
+            $this->outputObjs[] = $this->setOutput($url,$resp);
+
         
             if($resp->getStatusCode() == 200){
-                $this->displayOutput($url,$resp,$iteration);
+                //$this->displayOutput($url,$resp,$iteration);
+                $this->outputObjs[] = $this->setOutput($url,$resp);
                 return $resp;
                 break;
             }
@@ -130,6 +139,9 @@ class CarUrlParser{
         return $preferred;
     }
 
+
+    //Testing functions
+
     function toUrl(){
 
         //$url = self::BASE_URL.self::COURT[0].self::COURT_DATE_SEPERATOR.$this->stringDate;
@@ -141,6 +153,18 @@ class CarUrlParser{
     function displayOutput($url,$resp,$iteration){
         print("<br><strong>#".$iteration." The given url '".$url."' returned a status code of ".$resp->getStatusCode()."</strong><br>");
         //change the name of the function
+    }
+
+    function setOutput($url,$resp){
+        $output = new StdClass();
+        $output->url = $url;
+        $output->statusCode = $resp->getStatusCode();
+
+        return $output;
+    }
+
+    function getOutput(){
+        return $this->outputObjs;
     }
 
     function getUrls(){

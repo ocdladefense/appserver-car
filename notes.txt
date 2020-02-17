@@ -51,4 +51,13 @@ $resp = $request->send()
 $json = resp->getBody()
 
 
+//To Do 
+
+A route that returns query results
+all 2019
+by year, subject contains
+
+need a query object that stores all params to search by
+always build the query object
+
 

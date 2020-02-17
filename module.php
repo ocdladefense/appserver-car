@@ -18,10 +18,6 @@ class CarModule extends Module {
 
 function carRoutes() {
 	return array(
-		"search-soll" => array(
-			"callback" => "loadANumbers",
-			"Content-Type" => "application/json"
-		),
 		"load-cars" => array(
 			"callback" => "loadCarsData",
 			"Content-Type" => "application/json"
@@ -30,12 +26,12 @@ function carRoutes() {
 			"callback" => "viewPage",
 			"Content-Type" => "text/html"
 		),
-		"test-car-data" => array(
-			"callback" => "testCarData",
+		"insert-car-data" => array(
+			"callback" => "insertCarData",
 			"Content-Type" => "application/json"
 		),
 		"test-car-urls" => array(
-			"callback" => "testCandidateUrls",
+			"callback" => "getCandidateUrlOutput",
 			"Content-Type" => "application/json"
 		),
 		"car-urls" => array(
@@ -60,7 +56,7 @@ function loadPage($month,$day,$year) {
 	$resp = $urlParser->makeRequests();
 
 	//Pass the body of the page to the DocumentParser
-	if($resp->getBody() != ""){
+	if($resp != null){
 	$page = new DocumentParser($resp->getBody());
 		//We are only concerned with the content located in the 'mw-content-text' class of the page
 		$fragment = $page->fromTarget("mw-content-text");
@@ -121,27 +117,9 @@ function loadCarsData($xml){
 	return $cars;
 }
 
-function loadANumbers($defendant, $plaintiff = "State") {
+//route that takes an int number of days starting today tho attempts to load urls for without execution of calluserfunc line
 
-	$searchTerm = $plaintiff."%20v.%20".$defendant;
-	
-	$fullUrl = "https://cdm17027.contentdm.oclc.org";
-	$fullUrl .= "/digital/api/search/searchterm/{$searchTerm}/maxRecords/50";
-	
-	
-	$req = new HttpRequest($fullUrl);
-	
-	$resp = $req->send();
-
-	return $resp;
-}
-
-
-
-
-//route that takes an int number of days starting today tho attempth to load urls for without execution of calluserfunc line
-
-function testCandidateUrls($days){
+function getCandidateUrlOutput($days){
 	set_time_limit(900);
 
 	$output = array();
@@ -153,13 +131,16 @@ function testCandidateUrls($days){
 	for($i = 0; $i < $days; $i++){
 		$urlDate->modify("-1 day");
 		$urlParser = new CarUrlParser($urlDate);
-		$urlParser->makeRequests();
+		$urlParser->makeRequests();	
+		$output[] = $urlParser->getOutput();
 	}
+	return $output;
 }
 
 //dump in sql format
-function testCarData($days){
+function insertCarData($days){
 	set_time_limit(0);
+	$startTime = time();
 
 	$urlDate = new DateTime();
 	for($i = 0; $i < $days; $i++){
@@ -174,14 +155,15 @@ function testCarData($days){
 			$cars = loadCarsData($xml);
 			for($j = 0; $j < count($cars); $j++){
 				$cn = $j+1;
+				$runTime = time_elapsed(time() - $startTime);
 				$date = $urlDate->format("F j, Y");
-				print("<br><strong>-----CASE #".$cn." for ".$date."-----</strong><BR>");
+				print("<br><strong>-----CASE #".$cn." for ".$date."-----ELAPSED TIME ".($runTime). "</strong><br>");
 				insert($cars[$j]);
-				displayCarOutput($cars[$j]);
+				// displayCarOutput($cars[$j]);
 			}
 			$status = $cars[$j]->url."everything went ok";
 		}
-		echo  nl2br ("THE CARS DATE: ".$urlDateFormat."---STATUS: ".$status."<br>");
+		echo  nl2br ("<br><strong>THE CARS DATE: ".$urlDateFormat."---STATUS: ".$status." ELAPSED TIME ".($runTime)."</strong><br>");
 	}
 }
 
@@ -200,6 +182,7 @@ function getCarUrlsByDate($month = null,$day = null,$year = null) {
 	return $urls;
 }
 function getUrlsRange($days){
+	//gets the candidate urls for a specified number of days
 
 	$date = new DateTime();
 	$urls = array();
@@ -238,3 +221,19 @@ function displayCarOutput($car){
 	print("<strong>OTHER JUDGES:</strong> ". $car->judges."<br>");
 	print("<strong>URL TO THE PAGE:</strong> ". $car->url."<br>");
 }
+
+function time_elapsed($secs){
+    $bit = array(
+        ' Years' => $secs / 31556926 % 12,
+        ' Weeks' => $secs / 604800 % 52,
+        ' Days' => $secs / 86400 % 7,
+        ' Hours' => $secs / 3600 % 24,
+        ' Minutes' => $secs / 60 % 60,
+        ' Seconds' => $secs % 60
+        );
+       
+    foreach($bit as $k => $v)
+        if($v > 0)$ret[] = $v . $k;
+       
+    return join(' ', $ret);
+    }
