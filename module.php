@@ -41,6 +41,10 @@ function carRoutes() {
 		"car-urls-range" => array(
 			"callback" => "getUrlsRange",
 			"Content-Type" => "application/json"
+		),
+		"query-db" => array(
+			"callback" => "queryDb",
+			"Content-Type" => "application/json"
 		)
 	);
 }
@@ -205,7 +209,7 @@ function getUrlsRange($days){
 	return $urls;
 }
 
-//move to url parser
+
 function displayCarOutput($car){
 	print("<strong>SUBJECT #1:</strong> ".$car->subject_1."<BR>");
 	print("<strong>SUBJECT #2:</strong> ".$car->subject_2."<BR>");
@@ -236,4 +240,116 @@ function time_elapsed($secs){
         if($v > 0)$ret[] = $v . $k;
        
     return join(' ', $ret);
-    }
+}
+function queryDb($json){
+
+	//from the console
+
+	// var search = {field:"summary",op:"LIKE",value:"duii"})
+	// VM8917:1 Uncaught SyntaxError: Unexpected token ')'
+	// var search = {field:"summary",op:"LIKE",value:"duii"}
+	// undefined
+	// var params = JSON.stringify(search);
+	// undefined
+	// params
+	// "{"field":"summary","op":"LIKE","value":"duii"}"
+	// var mySearch = fetch("/query-db",{method:"post",body:params});
+	// undefined
+	// mySearch.then(function(result){console.log(result))}
+	// VM9853:1 Uncaught SyntaxError: Unexpected token ')'
+
+
+
+
+//function queryDb($field,$operator,$search){
+	$requestBody = '[{"field":"summary","op":"LIKE","value":"duii"}]';
+	$json = json_decode($requestBody);
+
+	
+
+	$rows = array();
+
+	$queryObj = selectClause($field).whereClause($json);
+	//print($queryObj);exit;
+
+	$connection = new mysqli(HOST_NAME,USER_NAME,USER_PASSWORD, DATABASE_NAME);
+
+	if ($connection->connect_error) {
+		die("Connection failed: " . $connection->connect_error);
+	}
+	$result = $connection->query($queryObj);
+
+	if ($result != null) {
+		print_r("NUMBER OF ROWS ".$result->num_rows."<br>");
+		if($result->num_rows > 0){
+			while($row = $result->fetch_assoc()){
+				$rows[] = $row;
+			}
+			print("NUMBER OF ROWS ".count($rows));
+		}
+		return $rows;
+	} else {
+		echo "<br><strong>ERROR RETRIEVING RECORD: <br>" . $queryObj . "<br>" . $connection->error . "<br></strong>";
+	}
+}
+
+function selectClause($field){
+	$tableName = "car";
+	$selectFields = array();
+
+	// $fields = array(
+	// "subject_1","subject_2",
+	// "summary","result",
+	// "title","plaintiff",
+	// "defendant","citation",
+	// "month","day","year",
+	// "circut","majority","judges");
+
+	// foreach($fields as $f){
+	// 	if($f == $field){
+	// 		$selectFields[] = $f;
+	// 	}
+	// }
+
+	// if(count($selectFields) == 0){
+	// 	throw new Exception("No valid fields provided");
+	// }
+	// if(count($selectFields) == 1){
+	// 	$fieldsList = $selectFields[0];
+	// }
+	// if(count($selectFields) >= 2){
+	// 	$fieldsList = implode(",",$selectFields);
+	// }
+
+	//return "SELECT $fieldsList FROM $tableName";
+	return "SELECT * FROM $tableName";
+}
+
+// s
+
+
+function whereClause($conditions){
+
+
+
+   $where = "";  // Prepare to build a SQL WHERE clause
+   $tmp = array();
+   
+	foreach($conditions as $c){
+		$field = $c->field;
+		$op = $c->op;
+		$value = $c->value;
+
+		if(is_int($value)){
+			$tmp []= sprintf("%s %s %d",$field,$op,$value);
+		} else if($op == 'LIKE'){
+			$tmp [] = sprintf("%s %s '%%%s%%'",$field,$op,$value);
+		} else {
+			$tmp [] = sprintf("%s %s '%s'",$field,$op,$value);
+		}
+	}
+
+	$where .= " WHERE ".implode(' AND ',$tmp);
+
+	return $where;
+}
