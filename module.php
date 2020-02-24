@@ -45,6 +45,10 @@ function carRoutes() {
 		"query-db" => array(
 			"callback" => "queryDb",
 			"Content-Type" => "application/json"
+		),
+		"test-db" => array(
+			"callback" => "testDb",
+			"Content-Type" => "application/json"
 		)
 	);
 }
@@ -242,13 +246,18 @@ function time_elapsed($secs){
     return join(' ', $ret);
 }
 function queryDb($json){
-
-	$requestBody = '[{"field":"summary","op":"LIKE","value":"duii"},
-					 {"field":"result","op":"LIKE","value":"reversed"},
-					 {"field":"subject_2","op":"LIKE","value":"discretionary"},
-					 {"field":"year","op":"=","value":2019}]';
-					 
-	$json = json_decode($requestBody);
+			 
+	$json = json_decode($json);
 
 	return select($json);
+}
+
+function testDb(){
+
+	$requestBody = '[{"field":"summary","op":"LIKE","value":"duii"},
+	{"field":"result","op":"LIKE","value":"reversed"},
+	{"field":"subject_2","op":"LIKE","value":"discretionary"},
+	{"field":"year","op":"=","value":2019}]';
+
+	return queryDb($requestBody);
 }
