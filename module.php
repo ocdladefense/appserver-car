@@ -243,33 +243,12 @@ function time_elapsed($secs){
 }
 function queryDb($json){
 
-	$requestBody = '[{"field":"summary","op":"LIKE","value":"duii"},{"field":"result","op":"LIKE","value":"reversed"}]';
+	$requestBody = '[{"field":"summary","op":"LIKE","value":"duii"},
+					 {"field":"result","op":"LIKE","value":"reversed"},
+					 {"field":"subject_2","op":"LIKE","value":"discretionary"},
+					 {"field":"year","op":"=","value":2019}]';
+					 
 	$json = json_decode($requestBody);
 
-	
-
-	$rows = array();
-
-	$queryObj = selectClause().whereClause($json);
-	print($queryObj);exit;
-
-	$connection = new mysqli(HOST_NAME,USER_NAME,USER_PASSWORD, DATABASE_NAME);
-
-	if ($connection->connect_error) {
-		die("Connection failed: " . $connection->connect_error);
-	}
-	$result = $connection->query($queryObj);
-
-	if ($result != null) {
-		print_r("NUMBER OF ROWS ".$result->num_rows."<br>");
-		if($result->num_rows > 0){
-			while($row = $result->fetch_assoc()){
-				$rows[] = $row;
-			}
-			print("NUMBER OF ROWS ".count($rows));
-		}
-		return $rows;
-	} else {
-		echo "<br><strong>ERROR RETRIEVING RECORD: <br>" . $queryObj . "<br>" . $connection->error . "<br></strong>";
-	}
+	return select($json);
 }
