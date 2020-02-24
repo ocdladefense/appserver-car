@@ -166,7 +166,7 @@ function insertCarData($days){
 				$runTime = time_elapsed(time() - $startTime);
 				$date = $urlDate->format("F j, Y");
 				print("<br><strong>-----CASE #".$cn." for ".$date."-----ELAPSED TIME ".($runTime). "</strong><br>");
-				insert($cars[$j]);
+				echo insert($cars[$j]);
 				// displayCarOutput($cars[$j]);
 			}
 			$status = $cars[$j]->url."everything went ok";
@@ -253,6 +253,8 @@ function queryDb($json){
 }
 
 function testDb(){
+
+	//explain the requestbody structrue array of objects and each object has field, op, and value keys
 
 	$requestBody = '[{"field":"summary","op":"LIKE","value":"duii"},
 	{"field":"result","op":"LIKE","value":"reversed"},
