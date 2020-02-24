@@ -70,3 +70,20 @@ build the where clause from an array()
 5 different scenarios
 query for all of cars for 2019
 all of the cars for 2019 where the result was reversed
+
+2/24/2020
+
+	from the console
+
+	var search = {field:"summary",op:"LIKE",value:"duii"})
+	VM8917:1 Uncaught SyntaxError: Unexpected token ')'
+	var search = {field:"summary",op:"LIKE",value:"duii"}
+	undefined
+	var params = JSON.stringify(search);
+	undefined
+	params
+	"{"field":"summary","op":"LIKE","value":"duii"}"
+	var mySearch = fetch("/query-db",{method:"post",body:params});
+	undefined
+	mySearch.then(function(result){console.log(result))}
+	VM9853:1 Uncaught SyntaxError: Unexpected token ')'
