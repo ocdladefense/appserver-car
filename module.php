@@ -15,7 +15,6 @@ class CarModule extends Module {
 
 }
 
-
 function carRoutes() {
 	return array(
 		"load-cars" => array(
@@ -43,7 +42,7 @@ function carRoutes() {
 			"Content-Type" => "application/json"
 		),
 		"query-db" => array(
-			"callback" => "queryDb",
+			"callback" => "fetchCarsFromDb",
 			"Content-Type" => "application/json"
 		),
 		"test-db" => array(
@@ -125,27 +124,6 @@ function loadCarsData($xml){
 	return $cars;
 }
 
-//route that takes an int number of days starting today tho attempts to load urls for without execution of calluserfunc line
-
-function getCandidateUrlOutput($days){
-	set_time_limit(900);
-
-	$output = array();
-
-	//output = getoutput()
-
-	//return output
-	$urlDate = new DateTime();
-	for($i = 0; $i < $days; $i++){
-		$urlDate->modify("-1 day");
-		$urlParser = new CarUrlParser($urlDate);
-		$urlParser->makeRequests();	
-		$output[] = $urlParser->getOutput();
-	}
-	return $output;
-}
-
-//dump in sql format
 function insertCarData($days){
 	set_time_limit(0);
 	$startTime = time();
@@ -175,6 +153,58 @@ function insertCarData($days){
 	}
 }
 
+function fetchCarsFromDb($json){
+
+	$builder = new QueryBuilder();
+	$builder->setTable("car");
+	$builder->setConditions(json_decode($json));
+	$sql = $builder->compile();
+
+	$results = MysqlDatabase::query($sql);
+	//if results has an error returned as json
+	return $results->getIterator();
+}
+
+function testDb(){
+
+	//This is the requestbody structrue array of objects and each object has field, op, and value keys
+
+	$requestBody = '[{"field":"summary","op":"LIKE","value":"duii"},
+	{"field":"result","op":"LIKE","value":"reversed"},
+	{"field":"subject_2","op":"LIKE","value":"discretionary"},
+	{"field":"year","op":"=","value":2019}]';
+
+	return fetchCarsFromDb($requestBody);
+}
+
+function updateSelectInsert(){
+
+	$results = MysqlDatabase::query("select id,title from car");
+
+	foreach($results as $result){
+		echo $result["id"].$result["title"];
+	}
+}
+
+//----------Testing Functions-----------------
+//route that takes an int number of days starting today tho attempts to load urls for without execution of calluserfunc line
+function getCandidateUrlOutput($days){
+	set_time_limit(900);
+
+	$output = array();
+
+	//output = getoutput()
+
+	//return output
+	$urlDate = new DateTime();
+	for($i = 0; $i < $days; $i++){
+		$urlDate->modify("-1 day");
+		$urlParser = new CarUrlParser($urlDate);
+		$urlParser->makeRequests();	
+		$output[] = $urlParser->getOutput();
+	}
+	return $output;
+}
 function getCarUrlsByDate($month = null,$day = null,$year = null) {
 	set_time_limit(5);
 
@@ -213,7 +243,6 @@ function getUrlsRange($days){
 	return $urls;
 }
 
-
 function displayCarOutput($car){
 	print("<strong>SUBJECT #1:</strong> ".$car->subject_1."<BR>");
 	print("<strong>SUBJECT #2:</strong> ".$car->subject_2."<BR>");
@@ -244,22 +273,4 @@ function time_elapsed($secs){
         if($v > 0)$ret[] = $v . $k;
        
     return join(' ', $ret);
-}
-function queryDb($json){
-			 
-	$json = json_decode($json);
-
-	return select($json);
-}
-
-function testDb(){
-
-	//explain the requestbody structrue array of objects and each object has field, op, and value keys
-
-	$requestBody = '[{"field":"summary","op":"LIKE","value":"duii"},
-	{"field":"result","op":"LIKE","value":"reversed"},
-	{"field":"subject_2","op":"LIKE","value":"discretionary"},
-	{"field":"year","op":"=","value":2019}]';
-
-	return queryDb($requestBody);
 }
