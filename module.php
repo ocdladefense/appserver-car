@@ -13,10 +13,39 @@ class CarModule extends Module {
 		$this->name = "car";
 	}
 
+	public function carSearchForm($params = array()) {
+		$form = $this->getSearchForm();
+	
+		$template = Template::loadTemplate("webconsole");
+
+		$carStyles = array(
+			"active" => true,
+			"href" => "/modules/car/css/style.css"
+		);
+		
+		$template->addStyles(array($carStyles));
+
+		
+		return $template->render(array(
+			"defaultStageClass" 	=> "not-home", //home
+			"content" 						=> $form,
+			"doInit"							=> false
+		));
+	}
+	
+	
+	private function getSearchForm() {
+		return "<h2>Here is the CAR search form.</h2>";
+	}
+
 }
 
 function carRoutes() {
 	return array(
+		"cars"		=> array(
+			"callback" => "carSearchForm",
+			"Content-Type" => "text/html"
+		),
 		"load-cars" => array(
 			"callback" => "loadCarsData",
 			"Content-Type" => "application/json"
@@ -51,6 +80,13 @@ function carRoutes() {
 		)
 	);
 }
+
+
+
+
+
+
+
 
 function loadPage($month,$day,$year) {
 
