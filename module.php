@@ -193,6 +193,8 @@ function insertCarData($days){
 
 	$urlDate = new DateTime();
 	for($i = 0; $i < $days; $i++){
+		$cars = array(); // An array of Car objects for this day.
+
 		$urlDate->modify("-1 day");
 		//throw an exception if 2018
 		$urlDateFormat = $urlDate->format("n j Y");
@@ -200,19 +202,25 @@ function insertCarData($days){
 
 		if($xml == null){
 			$status = "not found";
-		}else{
+		} else {
 			$cars = loadCarsData($xml);
-			for($j = 0; $j < count($cars); $j++){
-				$cn = $j+1;
-				$runTime = time_elapsed(time() - $startTime);
-				$date = $urlDate->format("F j, Y");
-				print("<br><strong>-----CASE #".$cn." for ".$date."-----ELAPSED TIME ".($runTime). "</strong><br>");
-				echo insert($cars[$j]);
-				// displayCarOutput($cars[$j]);
-			}
+			// This is the GLOBAL insert call.
+			insert($cars);
 			$status = $cars[$j]->url."everything went ok";
 		}
 		echo  nl2br ("<br><strong>THE CARS DATE: ".$urlDateFormat."---STATUS: ".$status." ELAPSED TIME ".($runTime)."</strong><br>");
+	}
+}
+
+function showCarInfo($cars = array()){
+	for($j = 0; $j < count($cars); $j++){
+		$cn = $j+1;
+		$runTime = time_elapsed(time() - $startTime);
+		$date = $urlDate->format("F j, Y");
+		print("<br><strong>-----CASE #".$cn." for ".$date."-----ELAPSED TIME ".($runTime). "</strong><br>");
+		// insert($cars[$j]);
+		//should retrun an istance of DbInsertResult then echo whateever I want to
+		// displayCarOutput($cars[$j]);
 	}
 }
 
