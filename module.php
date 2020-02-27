@@ -3,6 +3,16 @@
 use \Html\HtmlLink;
 
 
+
+define("DOM_SECTION_BREAK","<p>&nbsp;</p>");
+
+define("DOM_COMMA",",");
+
+define("DOM_LINE_BREAK","<br />");
+
+
+
+
 class CarModule extends Module {
 
 
@@ -15,12 +25,26 @@ class CarModule extends Module {
 
 	public function carSearchForm($params = array()) {
 		$form = $this->getSearchForm();
-	
+		
+		$list = [];
+		$list []= array("id","case","date","summary");
+		
+		
 		$template = Template::loadTemplate("webconsole");
+
+		$results = MysqlDatabase::query("SELECT * FROM car ORDER BY year DESC");
+		
+		// print "<pre>".print_r($results->getIterator(),true)."</pre>";
+		
+		// exit;
+		
+		$cars = Template::renderTemplate("case-reviews",array('cases'=>$results));
+		
+
 
 		$carStyles = array(
 			"active" => true,
-			"href" => "/modules/car/css/style.css"
+			"href" => "/modules/car/css/styles.css"
 		);
 		
 		$template->addStyles(array($carStyles));
@@ -28,14 +52,17 @@ class CarModule extends Module {
 		
 		return $template->render(array(
 			"defaultStageClass" 	=> "not-home", //home
-			"content" 						=> $form,
+			"content" 						=> $form . $cars,
 			"doInit"							=> false
 		));
 	}
 	
 	
 	private function getSearchForm() {
-		return "<h2>Here is the CAR search form.</h2>";
+		$form = "<h2>OCDLA Criminal Apellate Review Search</h2>";
+		$form .= "<h5>Showing all results:</h5>";
+		
+		return $form;
 	}
 
 }

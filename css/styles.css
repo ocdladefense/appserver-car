@@ -1,0 +1,40 @@
+/**
+ * Some formatting for the CAR list.
+ */
+
+.car-field-container {
+	display:block;
+}
+ 
+.car-title {
+	font-style: italic;
+}
+
+
+.car-summary {
+
+}
+
+
+.car-date {
+	display: inline-block;
+	font-size:11px;
+	padding:1px 7px;
+	border-radius: 5px;
+	background-color: rgba(0,0,0,0.8);
+	color: rgba(255,255,255,0.9);
+}
+
+
+.car-subject {
+	display: inline-block;
+	cursor: pointer;
+	font-size:11px;
+	padding:4px;
+	color: rgba(0,0,0,0.8);
+	border-bottom: 1px solid transparent;
+}
+
+.car-subject:hover {
+	border-bottom: 1px solid #666;
+}
