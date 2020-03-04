@@ -10,6 +10,23 @@ class Car{
 
     const URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_";
 
+    public $id;
+    public $title;
+    public $subject_1;
+    public $subject_2;
+    public $summary;
+    public $result;
+    public $plaintiff;
+    public $defendant;
+    public $citation;
+    public $month;
+    public $day;
+    public $year;
+    public $circut;
+    public $majority;
+    public $judges;
+    public $url;
+
     private $subjectNode;
 
     private $linkNode;
@@ -22,21 +39,6 @@ class Car{
 
     private $subjects;
 
-    public $subject_1;
-    public $subject_2;
-    public $summary;
-    public $result;
-    public $title;
-    public $plaintiff;
-    public $defendant;
-    public $citation;
-    public $month;
-    public $day;
-    public $year;
-    public $circut;
-    public $majority;
-    public $judges;
-    public $url;
 
     public function __construct($subjectNode,$linkNode){
         $this->subjectNode = $subjectNode;
