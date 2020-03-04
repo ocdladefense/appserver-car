@@ -25,8 +25,12 @@ function carRoutes() {
 			"callback" => "viewPage",
 			"Content-Type" => "text/html"
 		),
-		"insert-car-data" => array(
-			"callback" => "insertCarData",
+		"insert-bulk-case-reviews" => array(
+			"callback" => "insertBulkCarData",
+			"Content-Type" => "application/json"
+		),
+		"insert-single-case-reviews" => array(
+			"callback" => "insertCarDataForDay",
 			"Content-Type" => "application/json"
 		),
 		"test-car-urls" => array(
@@ -112,7 +116,9 @@ function loadCarsData($xml){
 			$errors[] = $e;
 			$nullSubjects[] = $subject;
 		}
-		$cars[] = $car;
+		if($car->day !== null && $car->summary !== ""){
+			$cars[] = $car;
+		}
 
 
 	}
@@ -124,12 +130,13 @@ function loadCarsData($xml){
 	return $cars;
 }
 
-function insertCarData($days){
+function insertBulkCarData($days){
 	set_time_limit(0);
 	$startTime = time();
 
 	$urlDate = new DateTime();
 	for($i = 0; $i < $days; $i++){
+		$runTime = (time() - $startTime)%60;
 		$cars = array(); // An array of Car objects for this day.
 
 		$urlDate->modify("-1 day");
@@ -142,23 +149,35 @@ function insertCarData($days){
 		} else {
 			$cars = loadCarsData($xml);
 			// This is the GLOBAL insert call.
-			insert($cars);
+			// print("COUNT = " . count($cars));
+			if(count($cars) !== 0){
+				insert($cars);
+			}
+			var_dump($cars);
 			$status = $cars[$j]->url."everything went ok";
 		}
-		echo  nl2br ("<br><strong>THE CARS DATE: ".$urlDateFormat."---STATUS: ".$status." ELAPSED TIME ".($runTime)."</strong><br>");
+		echo  nl2br ("<br><strong>THE CARS DATE: ".$urlDateFormat."---STATUS: ".$status." ELAPSED TIME ".($runTime)." seconds.</strong><br>");
 	}
 }
 
-function showCarInfo($cars = array()){
-	for($j = 0; $j < count($cars); $j++){
-		$cn = $j+1;
-		$runTime = time_elapsed(time() - $startTime);
-		$date = $urlDate->format("F j, Y");
-		print("<br><strong>-----CASE #".$cn." for ".$date."-----ELAPSED TIME ".($runTime). "</strong><br>");
-		// insert($cars[$j]);
-		//should retrun an istance of DbInsertResult then echo whateever I want to
-		// displayCarOutput($cars[$j]);
+function insertCarDataForDay($month,$day,$year){
+	$urlDate = DateTime::createFromFormat ( "n j Y" , implode(" ",array($month,$day,$year)));
+
+	$xml = loadPage($month,$day,$year);
+
+	if($xml == null){
+		$status = "not found";
+	} else {
+		$cars = loadCarsData($xml);
+		// This is the GLOBAL insert call.
+		insert($cars);
+		//$dbInsertResult = MysqlDatabase::insert($cars,$options);
+		var_dump($cars);
+
+
+		$status = $cars[$j]->url."everything went ok";
 	}
+	echo  nl2br ("<br><strong>THE CARS DATE: ".$urlDateFormat."---STATUS: ".$status." ELAPSED TIME ".($runTime)."</strong><br>");
 }
 
 function fetchCarsFromDb($json){
@@ -167,6 +186,7 @@ function fetchCarsFromDb($json){
 	$builder->setTable("car");
 	$builder->setConditions(json_decode($json));
 	$sql = $builder->compile();
+	echo $sql; exit;
 
 	$results = MysqlDatabase::query($sql);
 	//if results has an error returned as json
