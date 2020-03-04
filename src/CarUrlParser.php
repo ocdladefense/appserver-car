@@ -133,7 +133,9 @@ class CarUrlParser{
             self::BASE_URL."/".self::COURTS[0].self::COURT_URL_DATE_SEPERATOR_1.$this->stringDates[0],
             self::BASE_URL."/".self::COURTS[1].self::COURT_URL_DATE_SEPERATOR_1.$this->stringDates[0],
             self::BASE_URL."/".self::COURTS[0].self::COURT_URL_DATE_SEPERATOR_3.$this->stringDates[0],
-            self::BASE_URL."/".self::COURTS[1].self::COURT_URL_DATE_SEPERATOR_3.$this->stringDates[0]
+            self::BASE_URL."/".self::COURTS[1].self::COURT_URL_DATE_SEPERATOR_3.$this->stringDates[0],
+            self::BASE_URL."/".self::COURTS[0].self::COURT_URL_DATE_SEPERATOR_4.$this->stringDates[0],
+            self::BASE_URL."/".self::COURTS[1].self::COURT_URL_DATE_SEPERATOR_4.$this->stringDates[0]
         );
 
         return $preferred;
