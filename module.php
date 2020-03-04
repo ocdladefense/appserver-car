@@ -108,6 +108,10 @@ function carRoutes() {
 		"test-db" => array(
 			"callback" => "testDb",
 			"Content-Type" => "application/json"
+		),
+		"test-db2" => array(
+			"callback" => "updateSelectInsert",
+			"Content-Type" => "application/json"
 		)
 	);
 }
