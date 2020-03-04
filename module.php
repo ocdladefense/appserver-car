@@ -23,39 +23,52 @@ class CarModule extends Module {
 		$this->name = "car";
 	}
 
-	public function carSearchForm($params = array()) {
-		$form = $this->getSearchForm();
-		
-		$list = [];
-		$list []= array("id","case","date","summary");
-		
-		
-		$template = Template::loadTemplate("webconsole");
 
+
+	/**
+	 * @route "/cars"
+	 *
+	 * @description Show a list of CARs together with a search form.
+	 *  CAR data is stored in a database.  After loading the data we can build the
+	 *  HTML page using the new case-reviews template.
+	 *
+	 * @return String The HTML markup, including the case reviews.
+	 */
+	public function carSearchForm($params = array()) {
+		
+		// Will already search in default location,
+		//  So let's add a pointer to our module's templates.
+		Template::addPath(__DIR__ . "/templates");
+		
+		
+		// Perform a query for CARs in the database.
+		// @todo - should return an iterable list of SObjects.
 		$results = MysqlDatabase::query("SELECT * FROM car ORDER BY year DESC");
 		
-		// print "<pre>".print_r($results->getIterator(),true)."</pre>";
 		
-		// exit;
-		
+		// Templates to generate our HTML.
+		$form = $this->getSearchForm();
+		$template = Template::loadTemplate("webconsole");
 		$cars = Template::renderTemplate("case-reviews",array('cases'=>$results));
-		
 
 
-		$carStyles = array(
+		// ... and custom styles.
+		$css = array(
 			"active" => true,
 			"href" => "/modules/car/css/styles.css"
 		);
 		
-		$template->addStyles(array($carStyles));
+		$template->addStyle($css);
 
 		
 		return $template->render(array(
-			"defaultStageClass" 	=> "not-home", //home
+			"defaultStageClass" 	=> "not-home", 
 			"content" 						=> $form . $cars,
 			"doInit"							=> false
 		));
 	}
+	
+	
 	
 	
 	private function getSearchForm() {
