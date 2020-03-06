@@ -1,7 +1,7 @@
 <?php
 
 use \Html\HtmlLink;
-
+use function \Html\createElement as createElement;
 
 
 define("DOM_SECTION_BREAK","<p>&nbsp;</p>");
@@ -60,6 +60,21 @@ class CarModule extends Module {
 		
 		$template->addStyle($css);
 
+		// include all js files
+		$js = array(
+			array(
+				"src" => "/modules/car/src/module.js"
+			),
+			array(
+				"src" => "/modules/car/src/CarFormParser.js"
+			),
+			array(
+				"src" => "/modules/car/src/settings.js"
+			)
+		);
+
+		$template->addScripts($js);
+
 		
 		return $template->render(array(
 			"defaultStageClass" 	=> "not-home", 
@@ -68,15 +83,36 @@ class CarModule extends Module {
 		));
 	}
 	
-	
-	
-	
 	private function getSearchForm() {
 		$form = "<h2>OCDLA Criminal Apellate Review Search</h2>";
 		$form .= "<h5>Showing all results:</h5>";
-		
+
+		$form .= $this->buildSelect("subject_1");
+		$form .= createElement("input", ["id" => "car-search-box", "placeholder" => "Search case review"], []);
+
 		return $form;
 	}
+
+	private function buildSelect($field) {
+		$optionStrings = $this->getListOptions($field);
+		$createOption = function($option) {
+			return createElement("option", ["value" => $option], $option);
+		};
+
+		$optionElements = array_map($createOption, $optionStrings);
+
+		return createElement("select", ["id" => "car-subject"], $optionElements);		
+	}
+
+	private function getListOptions($field) {
+		$dbResults = MysqlDatabase::query("SELECT DISTINCT {$field} FROM car ORDER BY {$field}");
+		$parsedResults = array();
+		foreach($dbResults as $result) {
+			$parsedResults[] = $result[$field];
+		}
+		return $parsedResults;
+	}
+
 
 }
 
