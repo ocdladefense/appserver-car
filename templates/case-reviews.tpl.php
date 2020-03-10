@@ -8,7 +8,6 @@ define("DOM_SPACE"," ");
 ?>
 
 
-
 	<?php
 
 		foreach($cases as $case):
