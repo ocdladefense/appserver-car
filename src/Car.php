@@ -4,6 +4,12 @@ class Car{
 
     const DATE_INDEX = 1;
 
+    const MONTH_INDEX = 0;
+
+    const DAY_INDEX = 1;
+
+    const YEAR_INDEX = 2;
+
     const MAJORITY_INDEX = 2;
 
     const CIRCUT_AND_JUDGES_INDEX = 3;
@@ -22,8 +28,8 @@ class Car{
     public $month;
     public $day;
     public $year;
-    public $circut;
     public $majority;
+    public $circut;
     public $judges;
     public $url;
 
@@ -31,7 +37,7 @@ class Car{
 
     private $linkNode;
 
-    private $firstParagraph;
+    private $firstParagraphElement;
 
     private $citationNodeValue;
 
@@ -43,9 +49,10 @@ class Car{
     public function __construct($subjectNode,$linkNode){
         $this->subjectNode = $subjectNode;
         $this->linkNode = $linkNode;
-        $this->firstParagraph = $this->subjectNode->parentNode;
+        //the name of the firstParagraphElement prop needs to change.  Maybe subjectNodeParent or ....
+        $this->firstParagraphElement = $this->setFirstParagraphElement($this->subjectNode->parentNode);
         $this->citationNodeValue = $this->linkNode->nextSibling->nodeValue;
-        $this->citationNodeValueParts = $this->toArray($this->citationNodeValue);
+        $this->citationNodeValueParts = $this->citationToArray($this->citationNodeValue);
     }
 
     function parse(){
@@ -57,11 +64,12 @@ class Car{
             throw new CarParserException("The link node cannot be null");
         }
 
-        if($this->subjectNode->parentNode->nodeName != "p"){
-            throw new CarParserException("parent is not a p element");
-        }
+        // if($this->subjectNode->parentNode->nodeName != "p"){
+        //     throw new CarParserException("parent is not a p element");
+        // }
 
-        $this->subjects = explode(" - ",$this->subjectNode->nodeValue);
+        $this->subjects = $this->getSubjects($this->subjectNode->nodeValue);
+
         $this->subject_1 = $this->subjects[0];
         $this->subject_2 = $this->subjects[1];
         $this->summary = $this->setSummary();   
@@ -84,21 +92,30 @@ class Car{
 
         $this->citation = $this->citationNodeValueParts[self::CITATION_INDEX];
 
-        list($this->month,$this->day,$this->year) = $this->getDecisionDate();
+        $this->month = $this->getDecisionDate()[self::MONTH_INDEX];
 
-        $this->circut = explode(",",$this->citationNodeValueParts[self::CIRCUT_AND_JUDGES_INDEX])[0];
+        $this->day = $this->getDecisionDate()[self::DAY_INDEX];
 
-        $this->majority = substr($this->citationNodeValueParts[self::MAJORITY_INDEX],0,-2);
+        $this->year = $this->getDecisionYear();
+
+        $this->majority = $this->getJudge();
+
+        $this->circut = $this->getCircutCourt();
 
         $this->judges = $this->getOtherJudges();
 
         $this->url = self::URL_TO_PAGE.$this->month."_".$this->day.",_".$this->year;
     }
-    //362 Or 203 (2017) (Per Curiam)
-    
 
     //---GETTERS---
-    function getSubjects(){
+    function getSubjects($nodeValue){
+        $nodeValueParts = explode("-",$this->subjectNode->nodeValue);
+
+        foreach($nodeValueParts as $part){
+            if($part !== "" && $part !== "-"){
+                $this->subjects[] = $part;
+            }
+        }
         return $this->subjects;
     }
 
@@ -122,6 +139,14 @@ class Car{
         return $this->citationNodeValueParts[self::CITATION_INDEX];
     }
 
+    function getDecisionYear(){
+        $year = $this->getDecisionDate()[self::YEAR_INDEX];
+        if(substr($year,-1) == ")"){
+            $year = rtrim($year,")");
+        }
+        return $year;
+    }
+
     function getDecisionDate(){
         //return a usable date array
         $dateArray = substr($this->citationNodeValueParts[self::DATE_INDEX],0,-2);
@@ -130,7 +155,8 @@ class Car{
     }
 
     function getCircutCourt(){
-        return explode(",",$this->citationNodeValueParts[self::CIRCUT_AND_JUDGES_INDEX])[0];
+        $circut = explode(",",$this->citationNodeValueParts[self::CIRCUT_AND_JUDGES_INDEX])[0];
+        return $circut;
     }
 
     function getJudge(){
@@ -153,13 +179,23 @@ class Car{
         $count = 0;
     
         while(++$count < 10){
-            $next = $this->firstParagraph->nextSibling;
-            $this->firstParagraph = $next;
+            $next = $this->firstParagraphElement->nextSibling;
+            $this->firstParagraphElement = $next;
             if($next->nodeType == XML_TEXT_NODE) continue;
             if($next->firstChild->nodeName == "a") break;
             $summaryNodes[] = $next->nodeValue;
         }
         return implode("\n",$summaryNodes);
+    }
+
+    function setFirstParagraphElement($parentNode){
+        if($parentNode->tagName !== "p"){
+            $this->firstParagraphElement = $parentNode->parentNode;
+        }
+        else{
+            $this->firstParagraphElement = $parentNode;
+        }
+        return $this->firstParagraphElement;
     }
     
     function setCaseResult($summaryString){
@@ -169,7 +205,16 @@ class Car{
 
         return $result;
     }
-    function toArray($nodeValue){
-        return explode("(",$nodeValue);
+    function citationToArray($citationString){
+        $parts = preg_split("/(\)\s*\(*)|\(/",$citationString);
+        $trimmedParts = array_map(function($item){
+            return trim($item);
+        },$parts);
+
+        $trimmedParts = array_filter($trimmedParts,function($item){
+            return !empty($item);
+        });
+        //var_dump($trimmedParts);exit;
+        //return explode("(",$nodeValue);
     }
 }
