@@ -84,11 +84,13 @@ class CarModule extends Module {
 	}
 	
 	private function getSearchForm() {
-		$form = "<h2>OCDLA Criminal Apellate Review Search</h2>";
-		$form .= "<h5>Showing all results:</h5>";
+		$heading = createElement("h2", [], "OCDLA Criminal Apellate Review Search");
 
-		$form .= $this->buildSelect("subject_1");
-		$form .= createElement("input", ["id" => "car-search-box", "placeholder" => "Search case review"], []);
+		$subjectSelect = $this->buildSelect("subject_1");
+		
+		$searchBox = createElement("input", ["id" => "car-search-box", "placeholder" => "Search case review"], []);
+
+		$form = createElement("form", ["id" => "car-form"], [$heading, $subjectSelect, $searchBox]);
 
 		return $form;
 	}
@@ -101,7 +103,7 @@ class CarModule extends Module {
 
 		$optionElements = array_map($createOption, $optionStrings);
 
-		return createElement("select", ["id" => "car-subject"], $optionElements);		
+		return createElement("select", ["id" => "car-subject_1"], $optionElements);		
 	}
 
 	private function getListOptions($field) {
@@ -297,12 +299,12 @@ function insertCarDataForDay($month,$day,$year){
 }
 
 function fetchCarsFromDb($json){
+	$json = urldecode($json);
 
 	$builder = new QueryBuilder();
 	$builder->setTable("car");
 	$builder->setConditions(json_decode($json));
 	$sql = $builder->compile();
-	echo $sql; exit;
 
 	$results = MysqlDatabase::query($sql);
 	//if results has an error returned as json
