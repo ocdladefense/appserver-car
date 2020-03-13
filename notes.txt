@@ -16,3 +16,9 @@ https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Supreme_Court_today
 
 
 if an update or a delete doesnt have an id throw an exception 
+
+---------------------------------------------------------------------
+
+28 days of empty cars before adjustments using "array (size=0)" in find;
+
+341 rows in database
