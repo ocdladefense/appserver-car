@@ -21,6 +21,8 @@ class CarUrlParser{
     private $path;
     private $carUrl = array();
     private $url;
+    private $selectedUrl;
+    private $validResponse;
     private $stringDates;
     private $urlPreference; //define the pattern for each set of date ranges
     private $outputObjs = array();
@@ -119,6 +121,8 @@ class CarUrlParser{
             if($resp->getStatusCode() == 200){
                 //$this->displayOutput($url,$resp,$iteration);
                 $this->outputObjs[] = $this->setOutput($url,$resp);
+                $this->selectedUrl = $url;
+                $this->validResponse = $resp;
                 return $resp;
                 break;
             }
@@ -176,5 +180,19 @@ class CarUrlParser{
         $preferredUrls = $this->getPreferedUrls();
 
         return array_merge($preferredUrls,$candidateUrls);
+    }
+
+    public function getDocumentParser(){
+        //Pass the body of the page to the DocumentParser
+        if($this->validResponse != null){
+            $page = new DocumentParser($this->validResponse->getBody());
+            //We are only concerned with the content located in the 'mw-content-text' class of the page
+            $fragment = $page->fromTarget("mw-content-text");
+
+            return $fragment;
+        }
+    }
+    public function getSelectedUrl(){
+        return $this->selectedUrl;
     }
 }

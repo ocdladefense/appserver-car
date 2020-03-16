@@ -4,12 +4,6 @@ class Car{
 
     const DATE_INDEX = 1;
 
-    const MONTH_INDEX = 0;
-
-    const DAY_INDEX = 1;
-
-    const YEAR_INDEX = 2;
-
     const MAJORITY_INDEX = 2;
 
     const CIRCUT_AND_JUDGES_INDEX = 3;
@@ -50,7 +44,8 @@ class Car{
         $this->subjectNode = $subjectNode;
         $this->linkNode = $linkNode;
         //the name of the firstParagraphElement prop needs to change.  Maybe subjectNodeParent or ....
-        $this->firstParagraphElement = $this->setFirstParagraphElement($this->subjectNode->parentNode);
+        $this->firstParagraphElement = $this->subjectNode->parentNode;
+        //var_dump($this->firstParagraphElement);exit;
         $this->citationNodeValue = $this->linkNode->nextSibling->nodeValue;
         $this->citationNodeValueParts = $this->citationToArray($this->citationNodeValue);
     }
@@ -63,10 +58,6 @@ class Car{
         if($this->linkNode == null){
             throw new CarParserException("The link node cannot be null");
         }
-
-        // if($this->subjectNode->parentNode->nodeName != "p"){
-        //     throw new CarParserException("parent is not a p element");
-        // }
 
         $this->subjects = $this->getSubjects($this->subjectNode->nodeValue);
 
@@ -92,11 +83,7 @@ class Car{
 
         $this->citation = $this->citationNodeValueParts[self::CITATION_INDEX];
 
-        $this->month = $this->getDecisionDate()[self::MONTH_INDEX];
-
-        $this->day = $this->getDecisionDate()[self::DAY_INDEX];
-
-        $this->year = $this->getDecisionYear();
+        list($this->month, $this->day, $this->year) = $this->getDecisionDate();
 
         $this->majority = $this->getJudge();
 
@@ -139,18 +126,11 @@ class Car{
         return $this->citationNodeValueParts[self::CITATION_INDEX];
     }
 
-    function getDecisionYear(){
-        $year = $this->getDecisionDate()[self::YEAR_INDEX];
-        if(substr($year,-1) == ")"){
-            $year = rtrim($year,")");
-        }
-        return $year;
-    }
-
     function getDecisionDate(){
         //return a usable date array
-        $dateArray = substr($this->citationNodeValueParts[self::DATE_INDEX],0,-2);
+        $dateArray = $this->citationNodeValueParts[self::DATE_INDEX];
         $dateArray = preg_split("/[\s,]+/",$dateArray);
+
         return $dateArray;
     }
 
@@ -188,15 +168,15 @@ class Car{
         return implode("\n",$summaryNodes);
     }
 
-    function setFirstParagraphElement($parentNode){
-        if($parentNode->tagName !== "p"){
-            $this->firstParagraphElement = $parentNode->parentNode;
-        }
-        else{
-            $this->firstParagraphElement = $parentNode;
-        }
-        return $this->firstParagraphElement;
-    }
+    // function setFirstParagraphElement($parentNode){
+    //     if($parentNode->tagName !== "p"){
+    //         $this->firstParagraphElement = $parentNode->parentNode;
+    //     }
+    //     else{
+    //         $this->firstParagraphElement = $parentNode;
+    //     }
+    //     return $this->firstParagraphElement;
+    // }
     
     function setCaseResult($summaryString){
         $SENTENCE_DELIMITER = ".";
@@ -214,7 +194,7 @@ class Car{
         $trimmedParts = array_filter($trimmedParts,function($item){
             return !empty($item);
         });
-        //var_dump($trimmedParts);exit;
-        //return explode("(",$nodeValue);
+
+        return $trimmedParts;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-define("DOM_SPACE"," ");
+define("DOM_SPACE"," ");	
 
 
 
