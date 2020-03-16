@@ -76,6 +76,7 @@ class CarModule extends Module {
 		
 		// Templates to generate our HTML.
 		$form = $this->getSearchForm();
+		$carResults = createElement("div", ["id" => "car-results"], []);
 		$template = Template::loadTemplate("webconsole");
 		$cars = Template::renderTemplate("case-reviews",array('cases'=>$results));
 		
@@ -91,13 +92,16 @@ class CarModule extends Module {
 		// include all js files
 		$js = array(
 			array(
-				"src" => "/modules/car/src/module.js"
-			),
-			array(
-				"src" => "/modules/car/src/CarFormParser.js"
-			),
-			array(
 				"src" => "/modules/car/src/settings.js"
+			),
+			array(
+				"src" => "/modules/car/src/FormParser.js"
+			),
+			array(
+				"src" => "/modules/car/src/FormSubmission.js"
+			),
+			array(
+				"src" => "/modules/car/src/module.js"
 			)
 		);
 
@@ -106,16 +110,18 @@ class CarModule extends Module {
 		
 		return $template->render(array(
 			"defaultStageClass" 	=> "not-home", 
-			"content" 						=> $form . $cars,
+			"content" 						=> $form . $carResults . $cars,
 			"doInit"							=> false
 		));
 	}
 	private function getSearchForm() {
-		$form = "<h2>OCDLA Criminal Apellate Review Search</h2>";
-		$form .= "<h5>Showing all results:</h5>";
+		$heading = createElement("h2", [], "OCDLA Criminal Apellate Review Search");
 
-		$form .= $this->buildSelect("subject_1");
-		$form .= createElement("input", ["id" => "car-search-box", "placeholder" => "Search case review"], []);
+		$subjectSelect = $this->buildSelect("subject_1");
+		
+		$searchBox = createElement("input", ["id" => "car-search-box", "placeholder" => "Search case review"], []);
+
+		$form = createElement("form", ["id" => "car-form"], [$heading, $subjectSelect, $searchBox]);
 
 		return $form;
 	}
@@ -128,7 +134,7 @@ class CarModule extends Module {
 
 		$optionElements = array_map($createOption, $optionStrings);
 
-		return createElement("select", ["id" => "car-subject"], $optionElements);		
+		return createElement("select", ["id" => "car-subject_1"], $optionElements);		
 	}
 
 	private function getListOptions($field) {
@@ -177,8 +183,23 @@ function carRoutes() {
 		"car-urls-range" => array(
 			"callback" => "getUrlsRange",
 			"Content-Type" => "application/json"
+		),
+		"car-results" => array(
+			"callback" => "getCarResults",
+			"Content-Type" => "text/html"
 		)
 	);
+}
+
+function getCarResults() {
+	// Takes raw data from the http request
+	$json = file_get_contents('php://input');
+
+	$results = fetchCarsFromDb($json);
+	Template::addPath(__DIR__ . "/templates");
+	$cars = Template::renderTemplate("case-reviews",array('cases'=>$results));
+	print($cars);
+	exit;
 }
 
 
@@ -323,6 +344,27 @@ function insertCarDataForDay($month,$day,$year){
 	displayErrors($errors);
 }
 
+function fetchCarsFromDb($json){
+	$json = urldecode($json);
+
+	$builder = new QueryBuilder();
+	$builder->setTable("car");
+	$builder->setConditions(json_decode($json));
+	$sql = $builder->compile();
+
+	$results = MysqlDatabase::query($sql);
+	//if results has an error returned as json
+	return $results->getIterator();
+}
+
+function testDb(){
+
+	//This is the requestbody structrue array of objects and each object has field, op, and value keys
+
+	$requestBody = '[{"field":"summary","op":"LIKE","value":"duii"}]';
+
+	return fetchCarsFromDb($requestBody);
+}
 
 
 //----------Testing Functions-----------------
