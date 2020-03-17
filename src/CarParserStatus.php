@@ -13,6 +13,8 @@ class CarParserStatus
 
     //Setters
     public function setRuntime($secs){
+        if($secs < 1 || $secs === null) return 0 . "seconds";
+        
         $bit = array(
             ' Years' => $secs / 31556926 % 12,
             ' Weeks' => $secs / 604800 % 52,
@@ -24,10 +26,6 @@ class CarParserStatus
             
         foreach($bit as $k => $v)
             if($v > 0)$ret[] = $v . $k;
-    
-            if($ret === null){
-                return 0 . " Seconds";
-            }
     
         $this->runtime =  implode(' ',$ret);
     }

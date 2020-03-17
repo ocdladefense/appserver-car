@@ -164,7 +164,7 @@ function carRoutes() {
 		),
 		"insert-single-case-reviews" => array(
 			"callback" => "insertCarDataForDay",
-			"Content-Type" => "application/json"
+			"Content-Type" => "text/html"
 		),
 		"test-car-urls" => array(
 			"callback" => "getCandidateUrlOutput",
@@ -189,7 +189,7 @@ function loadPage($month,$day,$year) {
 	$urlDate = DateTime::createFromFormat ( "n j Y" , implode(" ",array($month,$day,$year)));
 
 	$urlParser = new CarUrlParser($urlDate);
-	$urlParser->setMaxUrlTests(1);
+	$urlParser->setMaxUrlTests(6);
 	$urlParser->makeRequests();
 	return $urlParser;
 
@@ -276,6 +276,7 @@ function insertBulkCarData($days){
 				$status->setMessage("everything went ok");
 				$status->setUrl($parser->getSelectedUrl());
 			} catch(DbException $e){
+				$status->setUrl($parser->getSelectedUrl());
 				$status->setMessage($e->getMessage());
 				$status->setStatusCode("DB_INSERT_ERROR");
 			} 
@@ -301,13 +302,22 @@ function insertBulkCarData($days){
 }
 
 function insertCarDataForDay($month,$day,$year){
+	set_time_limit(0);
+	$statuses = array();
 	$urlDate = DateTime::createFromFormat ( "n j Y" , implode(" ",array($month,$day,$year)));
-	$errors = array();
 
 	$xml = loadPage($month,$day,$year);
 
+	$status = new CarParserStatus();
+
+	$cars = array(); // An array of Car objects for this day.
+	$urlDateFormat = $urlDate->format("n j Y");
+	$status->setDate($urlDate);
+	$parser = call_user_func_array("loadPage",explode(" ",$urlDateFormat));
+	$xml = $parser->getDocumentParser();
+
 	if($xml == null){
-		$status = "not found";
+		$status->setMessage("not found");
 	} else {
 		try{
 			$cars = loadCarsData($xml);
@@ -316,13 +326,30 @@ function insertCarDataForDay($month,$day,$year){
 				insert($cars);
 			}
 			//var_dump($cars);
-			$status = $cars[$j]->url."everything went ok";
+			$status->setMessage("everything went ok");
+			$status->setUrl($parser->getSelectedUrl());
 		} catch(DbException $e){
-			$errors[] = "<br><strong>Did not insert data for " . $urlDate->format("n/j/Y") . ".  " . $e->getMessage() . "<br></strong>";
+			$status->setUrl($parser->getSelectedUrl());
+			$status->setMessage($e->getMessage());
+			$status->setStatusCode("DB_INSERT_ERROR");
 		} 
 	}
-	echo  nl2br ("<br><strong>THE CARS DATE: ".$urlDate->format("n/j/Y")."---STATUS: ".$status." ELAPSED TIME ". $runTime .".</strong><br>");
-	displayErrors($errors);
+	$statuses[] = $status;
+
+	Template::addPath(__DIR__ . "/templates");
+	$html = Template::renderTemplate("car-parser-statuses",array('statuses'=>$statuses));
+
+	// ... and custom styles.
+	$css = array(
+		"active" => true,
+		"href" => "/modules/car/css/styles.css"
+	);
+	
+	//$template->addStyle($css);
+	
+
+	return $html;
+	// displayErrors($errors);
 }
 
 
