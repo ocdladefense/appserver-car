@@ -1,3 +1,15 @@
+<style type="text/css">
+    .car-status{
+        display:table-row;
+    }
+    .car-status-field-container{
+        display:table-cell;
+    }
+</style>
+
+
+
+
 <?php
 
 foreach($statuses as $status){
@@ -12,27 +24,27 @@ foreach($statuses as $status){
 <div class= "car-status">
     <div class= "car-status-field-container">
         <div class="status-date">
-            <?php print($date); ?>
+            <?php print $date; ?>
         </div>
     </div>
     <div class= "car-status-field-container">
         <div class="status-message">
-            <?php print($message); ?>
+            <?php print $message; ?>
         </div>
     </div>
     <div class= "car-status-field-container">
         <div class="status-url">
-            <?php print($url); ?>
+            <a href="<?php print $url; ?>"> <?php print $url; ?> </a>
         </div>
     </div>
     <div class= "car-status-field-container">
         <div class="status-code">
-            <?php print($statusCode); ?>
+            <?php print $statusCode; ?>
         </div>
     </div>
     <div class= "car-status-field-container">
         <div class="status-runtime">
-            <?php print($runtime); ?>
+            <?php print $runtime; ?>
         </div>
     </div>
 </div>
