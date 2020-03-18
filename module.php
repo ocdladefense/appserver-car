@@ -203,7 +203,7 @@ function viewPage($month,$day,$year){
 	return $page->saveHTML();
 }
 
-function loadCarsData($xml){
+function loadCarsData($xml,$url){
 	if($xml->isDraft()){
 		return array();
 	}
@@ -230,7 +230,7 @@ function loadCarsData($xml){
 
 	foreach($subjects as $subject){
 
-		$car = new Car($subject,$links->current());	
+		$car = new Car($subject,$links->current(),$url);	
 
 		try{
 			$car->parse();
@@ -245,7 +245,6 @@ function loadCarsData($xml){
 }
 
 function insertBulkCarData($days){
-	set_time_limit(0);
 	$startTime = time();
 	$statuses = array();
 
@@ -267,7 +266,7 @@ function insertBulkCarData($days){
 			$status->setMessage("not found");
 		} else {
 			try{
-				$cars = loadCarsData($xml);
+				$cars = loadCarsData($xml,$parser->getSelectedUrl());
 				// This is the GLOBAL insert call.
 				if(count($cars) !== 0){
 					insert($cars);
@@ -302,7 +301,6 @@ function insertBulkCarData($days){
 }
 
 function insertCarDataForDay($month,$day,$year){
-	set_time_limit(0);
 	$statuses = array();
 	$urlDate = DateTime::createFromFormat ( "n j Y" , implode(" ",array($month,$day,$year)));
 
@@ -320,7 +318,7 @@ function insertCarDataForDay($month,$day,$year){
 		$status->setMessage("not found");
 	} else {
 		try{
-			$cars = loadCarsData($xml);
+			$cars = loadCarsData($xml,$parser->getSelectedUrl());
 			// This is the GLOBAL insert call.
 			if(count($cars) !== 0){
 				insert($cars);

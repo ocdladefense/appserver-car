@@ -37,9 +37,6 @@
         <th class="runtime">Runtime</th>
         <th class="url">Given URL</th>
     </tr>
-<!-- </table> -->
-
-
 
 <?php
 foreach($statuses as $status){
@@ -49,7 +46,6 @@ foreach($statuses as $status){
     $statusCode = $status->getStatusCode();
     $runtime = $status->getRuntime();
 ?>
-<table class="status-table">
     <tr class="status-row">
         <td class="date status-field"> <?php print $date; ?> </td>
         <td class="e-type status-field"> <?php print $statusCode; ?> </td>
@@ -57,5 +53,5 @@ foreach($statuses as $status){
         <td class="runtime status-field"> <?php print $runtime; ?> </td>
         <td class="url status-field"><a href="<?php print $url; ?>"><?php print $url; ?></a></td>
     </tr>
-</table>
 <?php }; ?>
+</table>

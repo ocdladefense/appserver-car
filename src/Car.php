@@ -8,7 +8,7 @@ class Car{
 
     const CIRCUT_AND_JUDGES_INDEX = 3;
 
-    const URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_";
+    //const URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_";
 
     public $id;
     public $title;
@@ -40,7 +40,7 @@ class Car{
     private $subjects;
 
 
-    public function __construct($subjectNode,$linkNode){
+    public function __construct($subjectNode,$linkNode,$url){
         $this->subjectNode = $subjectNode;
         $this->linkNode = $linkNode;
         //the name of the firstParagraphElement prop needs to change.  Maybe subjectNodeParent or ....
@@ -48,6 +48,7 @@ class Car{
         //var_dump($this->firstParagraphElement);exit;
         $this->citationNodeValue = $this->linkNode->nextSibling->nodeValue;
         $this->citationNodeValueParts = $this->citationToArray($this->citationNodeValue);
+        $this->url = $url;
     }
 
     function parse(){
@@ -91,19 +92,12 @@ class Car{
 
         $this->judges = $this->getOtherJudges();
 
-        $this->url = self::URL_TO_PAGE.$this->month."_".$this->day.",_".$this->year;
+        //$this->url = self::URL_TO_PAGE.$this->month."_".$this->day.",_".$this->year;
     }
 
     //---GETTERS---
     function getSubjects($nodeValue){
-        $nodeValueParts = explode("-",$this->subjectNode->nodeValue);
-
-        foreach($nodeValueParts as $part){
-            if($part !== "" && $part !== "-"){
-                $this->subjects[] = $part;
-            }
-        }
-        return $this->subjects;
+        return preg_split("/[—-]*/",$nodeValue);
     }
 
     function getSummary(){
@@ -168,15 +162,6 @@ class Car{
         return implode("\n",$summaryNodes);
     }
 
-    // function setFirstParagraphElement($parentNode){
-    //     if($parentNode->tagName !== "p"){
-    //         $this->firstParagraphElement = $parentNode->parentNode;
-    //     }
-    //     else{
-    //         $this->firstParagraphElement = $parentNode;
-    //     }
-    //     return $this->firstParagraphElement;
-    // }
     
     function setCaseResult($summaryString){
         $SENTENCE_DELIMITER = ".";
