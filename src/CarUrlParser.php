@@ -176,7 +176,7 @@ class CarUrlParser{
         $candidateUrls = $this->candidateUrls();
         $iteration = 0;
 
-        $preferredUrls = $this->getPreferedUrls();
+        $preferredUrls = $this->getPreferredUrls();
 
         return array_merge($preferredUrls,$candidateUrls);
     }

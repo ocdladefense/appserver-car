@@ -7,9 +7,7 @@ class Car{
     const MAJORITY_INDEX = 2;
 
     const CIRCUT_AND_JUDGES_INDEX = 3;
-
-    //const URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_";
-
+    
     public $id;
     public $title;
     public $subject_1;

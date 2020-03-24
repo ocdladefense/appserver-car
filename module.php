@@ -31,22 +31,15 @@ class CarModule extends Module {
 	 * @description Show a list of CARs together with a search form.
 	 *  CAR data is stored in a database.  After loading the data we can build the
 	 *  HTML page using the new case-reviews template.
+	 * 
+	 * Sample parameter with one condition
+	 * $params = '[{"field":"summary","op":"LIKE","value":"duii"}]';
 	 *
 	 * @return String The HTML markup, including the case reviews.
 	 */
+	
 	public function carSearchForm($params = array()) {
 
-
-		//Hard coded for testing only!!!  Comment this out to use paramenters!!!
-		// $params = '[{"field":"summary","op":"LIKE","value":"duii"},
-		// {"field":"result","op":"LIKE","value":"reversed"},
-		// {"field":"subject_2","op":"LIKE","value":"discretionary"},
-		// {"field":"year","op":"=","value":2019}]';
-
-
-
-
-		
 		// Will already search in default location,
 		//  So let's add a pointer to our module's templates.
 		Template::addPath(__DIR__ . "/templates");
@@ -54,7 +47,6 @@ class CarModule extends Module {
 		
 		// Perform a query for CARs in the database.
 		// @todo - should return an iterable list of SObjects.
-
 		//if conditons have been passed in then use them to build the query
 		//otherwise use the next line for the query
 		if(!empty($params)){
@@ -62,11 +54,8 @@ class CarModule extends Module {
 			$builder->setTable("car");
 			$builder->setConditions(json_decode($params));
 			$sql = $builder->compile();
-			//print($sql);exit;
-		
+
 			$results = MysqlDatabase::query($sql);
-			//if results has an error returned as json
-			//$results = $results->getIterator();
 		}
 		else {
 			$results = MysqlDatabase::query("SELECT * FROM car ORDER BY year DESC");
@@ -94,7 +83,7 @@ class CarModule extends Module {
 				"src" => "/modules/car/src/module.js"
 			),
 			array(
-				"src" => "/modules/car/src/CarFormParser.js"
+				"src" => "/modules/car/src/FormParser.js"
 			),
 			array(
 				"src" => "/modules/car/src/settings.js"
@@ -372,7 +361,6 @@ function getCandidateUrlOutput($days){
 	return $output;
 }
 function getCarUrlsByDate($month = null,$day = null,$year = null) {
-	set_time_limit(5);
 
 	$urls = array();
 
@@ -394,6 +382,7 @@ function getUrlsRange($days){
 	for($i = 0; $i <= $days; $i++){
 		$date->modify("-1 day");
 		$urlParser = new CarUrlParser($date);
+		
 
 
 		//Standard class to hold metadata for the urls  
