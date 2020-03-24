@@ -86,6 +86,9 @@ class CarModule extends Module {
 				"src" => "/modules/car/src/FormParser.js"
 			),
 			array(
+				"src" => "/modules/car/src/FormSubmission.js"
+			),
+			array(
 				"src" => "/modules/car/src/settings.js"
 			)
 		);
