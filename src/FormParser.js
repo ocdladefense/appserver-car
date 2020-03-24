@@ -20,6 +20,7 @@ const FormParser = (function(){
         },
 
         values: function(elementId) {
+            console.log("ELEMENT ID:"+elementId);
             if(elementId) {
                 return { elementId: { "value":this.elements(elementId).value, "tagName":element.tagName }};
             }

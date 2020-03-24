@@ -80,9 +80,6 @@ class CarModule extends Module {
 		// include all js files
 		$js = array(
 			array(
-				"src" => "/modules/car/src/module.js"
-			),
-			array(
 				"src" => "/modules/car/src/FormParser.js"
 			),
 			array(
@@ -90,6 +87,9 @@ class CarModule extends Module {
 			),
 			array(
 				"src" => "/modules/car/src/settings.js"
+			),
+			array(
+				"src" => "/modules/car/src/module.js"
 			)
 		);
 
