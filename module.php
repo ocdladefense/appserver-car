@@ -98,6 +98,9 @@ class CarModule extends Module {
 			),
 			array(
 				"src" => "/modules/car/src/settings.js"
+			),
+			array(
+				"src" => "/modules/car/src/car.js"
 			)
 		);
 
