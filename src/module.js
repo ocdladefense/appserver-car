@@ -4,6 +4,19 @@ window.onload = () => {
     let parser = new FormParser(FORM_ID);
     parser.registerHandlers(HANDLERS);
 
+    document.addEventListener('click', (e) => {
+        let target = e.target;
+        let parent = target.parentNode;
+
+        let ellipsis = parent.querySelector(".ellipsis");
+        let moreText = parent.querySelector(".more");
+        let btnText = parent.querySelector(".readMoreButton");
+
+        readMore(ellipsis, moreText, btnText);
+    } );
+
+
+
     document.addEventListener('input', (e) => {
         let response = FormSubmission.send(parser.toJson(parser.conditions()), URL);
         response.then(data => {

@@ -81,11 +81,11 @@ define("DOM_SPACE"," ");
 
 							print $firstPart;
 					?>
-							<span id="ellipsis">...</span>
+							<span class="ellipsis">...</span>
 
-							<span id="more"><?php print $secondPart ?></span>
+							<span class="more"><?php print $secondPart ?></span>
 
-							<button onclick='readMore()' id='readMoreButton' class="btn btn-link">Read More</button>
+							<button class="btn btn-link readMoreButton">Read More</button>
 
 						<?php
 						}

@@ -35,9 +35,9 @@ h2, h5{
 	color: rgba(255,255,255,0.9);
 }
 
-#more {display: none;}
+.more {display: none;}
 
-#readMoreButton{
+.readMoreButton{
 	font-size: .7rem;
 }
 

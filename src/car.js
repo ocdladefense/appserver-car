@@ -1,9 +1,7 @@
 
 
-function readMore() {
-    const ellipsis = document.getElementById("dots");
-    const moreText = document.getElementById("more");
-    const btnText = document.getElementById("readMoreButton");
+
+function readMore(ellipsis, moreText, btnText) {
 
     if (ellipsis.style.display === "none") {
         ellipsis.style.display = "inline";
