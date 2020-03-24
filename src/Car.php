@@ -7,9 +7,7 @@ class Car{
     const MAJORITY_INDEX = 2;
 
     const CIRCUT_AND_JUDGES_INDEX = 3;
-
-    //const URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_";
-
+    
     public $id;
     public $title;
     public $subject_1;
@@ -91,13 +89,19 @@ class Car{
         $this->circut = $this->getCircutCourt();
 
         $this->judges = $this->getOtherJudges();
-
-        //$this->url = self::URL_TO_PAGE.$this->month."_".$this->day.",_".$this->year;
     }
 
     //---GETTERS---
     function getSubjects($nodeValue){
-        return preg_split("/[—-]*/",$nodeValue);
+        $parts = preg_split("/—|\s+-\s+|-{2}/",$nodeValue);
+        $subs = array();
+
+        foreach($parts as $part){
+            if(strlen($part) > 2 ){
+                $subs[] = $part;
+            }
+        }
+        return $subs;
     }
 
     function getSummary(){
@@ -130,6 +134,9 @@ class Car{
 
     function getCircutCourt(){
         $circut = explode(",",$this->citationNodeValueParts[self::CIRCUT_AND_JUDGES_INDEX])[0];
+        if($circut == null){
+            return "No circut info listed";
+        }
         return $circut;
     }
 
@@ -142,6 +149,9 @@ class Car{
         if($judges[0] == ""){
             array_shift($judges);
             $judges = implode(", ",$judges);
+        }
+        if($judges == null){
+            return "No judges listed";
         }
         return $judges;
     }
