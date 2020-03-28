@@ -78,7 +78,9 @@ class CarModule extends Module {
 		$form = $this->getSearchForm();
 		$carResults = createElement("div", ["id" => "car-results"], []);
 		$template = Template::loadTemplate("webconsole");
-		$cars = Template::renderTemplate("case-reviews",array('cases'=>$results));
+		$cars = Template::renderTemplate("case-reviews",
+			array('cases'=>$results, 
+				  'subjectOptions'=> json_encode($this->getListOptions("subject_1"))));
 
 
 		// ... and custom styles.
@@ -95,10 +97,19 @@ class CarModule extends Module {
 				"src" => "/modules/car/src/settings.js"
 			),
 			array(
-				"src" => "/modules/car/src/FormParser.js"
+				"src" => "modules/car/src/BaseComponent.js"
+			),
+			array(
+				"src" => "/modules/car/src/FormParserComponent.js"
 			),
 			array(
 				"src" => "/modules/car/src/FormSubmission.js"
+			),
+			array(
+				"src" => "/modules/car/src/DBQuery.js"
+			),
+			array(
+				"src" => "/modules/car/src/EventFramework.js"
 			),
 			array(
 				"src" => "/modules/car/src/module.js"
@@ -110,7 +121,8 @@ class CarModule extends Module {
 		
 		return $template->render(array(
 			"defaultStageClass" 	=> "not-home", 
-			"content" 						=> $form . $carResults . $cars,
+			// "content" 						=> $form . $carResults . $cars, // OLD WAY
+			"content" 						=> $carResults . $cars,
 			"doInit"							=> false
 		));
 	}
@@ -119,7 +131,7 @@ class CarModule extends Module {
 
 		$subjectSelect = $this->buildSelect("subject_1");
 		
-		$searchBox = createElement("input", ["id" => "car-search-box", "placeholder" => "Search case review"], []);
+		// $searchBox = createElement("input", ["id" => "car-search-box", "placeholder" => "Search case review"], []);
 
 		$form = createElement("form", ["id" => "car-form"], [$heading, $subjectSelect, $searchBox]);
 
@@ -146,6 +158,14 @@ class CarModule extends Module {
 		return $parsedResults;
 	}
 
+	public function getSelectList($field) {
+		$dbResults = MysqlDatabase::query("SELECT DISTINCT {$field} FROM car ORDER BY {$field}");
+		$parsedResults = array();
+		foreach($dbResults as $result) {
+			$parsedResults[] = $result[$field];
+		}
+		return json_encode($parsedResults);
+	}
 
 }
 
@@ -187,6 +207,10 @@ function carRoutes() {
 		"car-results" => array(
 			"callback" => "getCarResults",
 			"Content-Type" => "text/html"
+		),
+		"car-build-select-list" => array(
+			"callback" => "getSelectList",
+			"Content-Type" => "application/json"
 		)
 	);
 }
@@ -197,6 +221,10 @@ function getCarResults() {
 
 	$results = fetchCarsFromDb($json);
 	Template::addPath(__DIR__ . "/templates");
+
+	// Doesn't work
+	// return Template::renderTemplate("case-reviews",array('cases'=>$results));
+
 	$cars = Template::renderTemplate("case-reviews",array('cases'=>$results));
 	print($cars);
 	exit;
