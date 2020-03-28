@@ -4,18 +4,10 @@ class Car{
 
     const DATE_INDEX = 1;
 
-    const MONTH_INDEX = 0;
-
-    const DAY_INDEX = 1;
-
-    const YEAR_INDEX = 2;
-
     const MAJORITY_INDEX = 2;
 
     const CIRCUT_AND_JUDGES_INDEX = 3;
-
-    const URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_";
-
+    
     public $id;
     public $title;
     public $subject_1;
@@ -46,13 +38,15 @@ class Car{
     private $subjects;
 
 
-    public function __construct($subjectNode,$linkNode){
+    public function __construct($subjectNode,$linkNode,$url){
         $this->subjectNode = $subjectNode;
         $this->linkNode = $linkNode;
         //the name of the firstParagraphElement prop needs to change.  Maybe subjectNodeParent or ....
-        $this->firstParagraphElement = $this->setFirstParagraphElement($this->subjectNode->parentNode);
+        $this->firstParagraphElement = $this->subjectNode->parentNode;
+        //var_dump($this->firstParagraphElement);exit;
         $this->citationNodeValue = $this->linkNode->nextSibling->nodeValue;
         $this->citationNodeValueParts = $this->citationToArray($this->citationNodeValue);
+        $this->url = $url;
     }
 
     function parse(){
@@ -63,10 +57,6 @@ class Car{
         if($this->linkNode == null){
             throw new CarParserException("The link node cannot be null");
         }
-
-        // if($this->subjectNode->parentNode->nodeName != "p"){
-        //     throw new CarParserException("parent is not a p element");
-        // }
 
         $this->subjects = $this->getSubjects($this->subjectNode->nodeValue);
 
@@ -92,31 +82,26 @@ class Car{
 
         $this->citation = $this->citationNodeValueParts[self::CITATION_INDEX];
 
-        $this->month = $this->getDecisionDate()[self::MONTH_INDEX];
-
-        $this->day = $this->getDecisionDate()[self::DAY_INDEX];
-
-        $this->year = $this->getDecisionYear();
+        list($this->month, $this->day, $this->year) = $this->getDecisionDate();
 
         $this->majority = $this->getJudge();
 
         $this->circut = $this->getCircutCourt();
 
         $this->judges = $this->getOtherJudges();
-
-        $this->url = self::URL_TO_PAGE.$this->month."_".$this->day.",_".$this->year;
     }
 
     //---GETTERS---
     function getSubjects($nodeValue){
-        $nodeValueParts = explode("-",$this->subjectNode->nodeValue);
+        $parts = preg_split("/—|\s+-\s+|-{2}/",$nodeValue);
+        $subs = array();
 
-        foreach($nodeValueParts as $part){
-            if($part !== "" && $part !== "-"){
-                $this->subjects[] = $part;
+        foreach($parts as $part){
+            if(strlen($part) > 2 ){
+                $subs[] = $part;
             }
         }
-        return $this->subjects;
+        return $subs;
     }
 
     function getSummary(){
@@ -139,23 +124,19 @@ class Car{
         return $this->citationNodeValueParts[self::CITATION_INDEX];
     }
 
-    function getDecisionYear(){
-        $year = $this->getDecisionDate()[self::YEAR_INDEX];
-        if(substr($year,-1) == ")"){
-            $year = rtrim($year,")");
-        }
-        return $year;
-    }
-
     function getDecisionDate(){
         //return a usable date array
-        $dateArray = substr($this->citationNodeValueParts[self::DATE_INDEX],0,-2);
+        $dateArray = $this->citationNodeValueParts[self::DATE_INDEX];
         $dateArray = preg_split("/[\s,]+/",$dateArray);
+
         return $dateArray;
     }
 
     function getCircutCourt(){
         $circut = explode(",",$this->citationNodeValueParts[self::CIRCUT_AND_JUDGES_INDEX])[0];
+        if($circut == null){
+            return "No circut info listed";
+        }
         return $circut;
     }
 
@@ -168,6 +149,9 @@ class Car{
         if($judges[0] == ""){
             array_shift($judges);
             $judges = implode(", ",$judges);
+        }
+        if($judges == null){
+            return "No judges listed";
         }
         return $judges;
     }
@@ -188,15 +172,6 @@ class Car{
         return implode("\n",$summaryNodes);
     }
 
-    function setFirstParagraphElement($parentNode){
-        if($parentNode->tagName !== "p"){
-            $this->firstParagraphElement = $parentNode->parentNode;
-        }
-        else{
-            $this->firstParagraphElement = $parentNode;
-        }
-        return $this->firstParagraphElement;
-    }
     
     function setCaseResult($summaryString){
         $SENTENCE_DELIMITER = ".";
@@ -214,7 +189,7 @@ class Car{
         $trimmedParts = array_filter($trimmedParts,function($item){
             return !empty($item);
         });
-        //var_dump($trimmedParts);exit;
-        //return explode("(",$nodeValue);
+
+        return $trimmedParts;
     }
 }

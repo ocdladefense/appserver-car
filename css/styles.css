@@ -2,37 +2,55 @@
  * Some formatting for the CAR list.
  */
 
-.car-field-container {
+ .car-field-container {
 	display:block;
+	text-align: center;
+	font-size: 17px;
 }
  
 .car-title {
-	font-style: italic;
+	font-weight: bold;
+	text-decoration: underline;	
+	text-align:center;
 }
 
+.car-judges, .car-circut{
+	font-size: 12px; 
+}
 
 .car-summary {
+	text-align:justify;
 
 }
 
-
-.car-date {
+h2, h5{
+	text-align: center;
+}
+.car-date, .car-citation{
 	display: inline-block;
-	font-size:11px;
+	font-size:10px;
 	padding:1px 7px;
 	border-radius: 5px;
 	background-color: rgba(0,0,0,0.8);
 	color: rgba(255,255,255,0.9);
 }
 
+.more {display: none;}
+
+.readMoreButton{
+	font-size: .7rem;
+}
 
 .car-subject {
 	display: inline-block;
 	cursor: pointer;
 	font-size:11px;
-	padding:4px;
-	color: rgba(0,0,0,0.8);
+	padding: 0%;
 	border-bottom: 1px solid transparent;
+}
+
+#car-subject{
+	padding: .3rem;
 }
 
 .car-subject:hover {

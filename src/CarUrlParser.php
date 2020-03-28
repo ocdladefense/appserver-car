@@ -21,10 +21,13 @@ class CarUrlParser{
     private $path;
     private $carUrl = array();
     private $url;
+    private $selectedUrl;
+    private $validResponse;
     private $stringDates;
     private $urlPreference; //define the pattern for each set of date ranges
     private $outputObjs = array();
     private static $usePreferredUrls = true;
+    private $maxUrlTests = 0;
 
 
     function __construct($date){
@@ -96,20 +99,18 @@ class CarUrlParser{
     function makeRequests(){
         $candidateUrls = $this->candidateUrls();
         $iteration = 0;
-        $preferredUrls = $this->getPreferedUrls();
+        $preferredUrls = $this->getPreferredUrls();
         $time = time();
 
+        //give preference to preferred urls to reduce execution time.
+        $allUrls = self::$usePreferredUrls === true ? array_merge($preferredUrls,$candidateUrls) : $candidateUrls;
 
-        if(self::$usePreferredUrls === true){
-            $allUrls = $this->getPreferedUrls();
-        }else{
-            $allUrls = array_merge($preferredUrls,$candidateUrls);
-        }
 
         
 
         foreach($allUrls as $url){
             $iteration++;
+            if($iteration > $this->maxUrlTests) break;
             $req = new HttpRequest($url);
             $resp = $req->send();
             //$this->displayOutput($url,$resp,$iteration);
@@ -119,6 +120,8 @@ class CarUrlParser{
             if($resp->getStatusCode() == 200){
                 //$this->displayOutput($url,$resp,$iteration);
                 $this->outputObjs[] = $this->setOutput($url,$resp);
+                $this->selectedUrl = $url;
+                $this->validResponse = $resp;
                 return $resp;
                 break;
             }
@@ -127,7 +130,7 @@ class CarUrlParser{
         return null;
     }
 
-    function getPreferedUrls(){
+    function getPreferredUrls(){
         //returns a url 
         $preferred = array(
             self::BASE_URL."/".self::COURTS[0].self::COURT_URL_DATE_SEPERATOR_1.$this->stringDates[0],
@@ -173,8 +176,26 @@ class CarUrlParser{
         $candidateUrls = $this->candidateUrls();
         $iteration = 0;
 
-        $preferredUrls = $this->getPreferedUrls();
+        $preferredUrls = $this->getPreferredUrls();
 
         return array_merge($preferredUrls,$candidateUrls);
+    }
+
+    public function getDocumentParser(){
+        //Pass the body of the page to the DocumentParser
+        if($this->validResponse != null){
+            $page = new DocumentParser($this->validResponse->getBody());
+            //We are only concerned with the content located in the 'mw-content-text' class of the page
+            $fragment = $page->fromTarget("mw-content-text");
+
+            return $fragment;
+        }
+    }
+    public function getSelectedUrl(){
+        return $this->selectedUrl;
+    }
+
+    public function setMaxUrlTests($number){
+        $this->maxUrlTests = $number;
     }
 }

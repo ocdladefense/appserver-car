@@ -22,3 +22,7 @@ if an update or a delete doesnt have an id throw an exception
 28 days of empty cars before adjustments using "array (size=0)" in find;
 
 341 rows in database
+
+
+----------------------PROBLEMS--------------------------------------
+URL is being hard coded in the car class.  How do I use the url being generated in the urlparser?  The url being set as the url property of the car object should reflect the url to the page of the car reviews for the given day.
