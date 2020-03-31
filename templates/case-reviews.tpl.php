@@ -5,10 +5,13 @@ define("DOM_SPACE"," ");
 
 
 ?>
+<script> 
+const options = <?php print_r($subjectOptions); ?>;
+</script>
+<!-- <input placeholder="For demonstrating event framework" type="text" style="width: 400px; position: relative; top: -140px;"></input> -->
 
-
+<div id="car-results">
 	<?php
-
 		foreach($cases as $case):
 			$date = $case["month"] .DOM_SPACE .$case["day"] .DOM_COMMA.DOM_SPACE.$case["year"];
 			$subject = strtolower($case["subject_1"]);
@@ -98,4 +101,5 @@ define("DOM_SPACE"," ");
 
 		</div>
 	<?php endforeach; ?>
+</div>
 	
