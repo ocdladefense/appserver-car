@@ -2,6 +2,12 @@
  * Some formatting for the CAR list.
  */
 
+
+
+#container-left.column{
+	display: none;
+}
+
  .car-field-container {
 	display:block;
 	text-align: center;
@@ -56,3 +62,12 @@ h2, h5{
 .car-subject:hover {
 	border-bottom: 1px solid #666;
 }
+
+@media screen and (min-width: 1000px){
+
+	#container-left.column{
+		display: inline-block;
+	}
+
+
+ }

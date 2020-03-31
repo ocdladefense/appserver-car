@@ -12,9 +12,6 @@ define("DOM_SPACE"," ");
 		foreach($cases as $case):
 			$date = $case["month"] .DOM_SPACE .$case["day"] .DOM_COMMA.DOM_SPACE.$case["year"];
 			$subject = strtolower($case["subject_1"]);
-			$firstHalf;
-			$secondHalf;
-			
 		?>
 
 		<div class="car-instance">
