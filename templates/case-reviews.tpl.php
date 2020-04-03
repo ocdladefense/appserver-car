@@ -22,31 +22,31 @@ const options = <?php print_r($subjectOptions); ?>;
 			<hr />
 
 			<div class="row">
-				<div class="car-field-container col-sm-2">
+				<div id="date" class="car-field-container col-2">
 					<div class='car-date'>
 						<?php print $date; ?>
 					</div>
 				</div>
 
-				<div class="car-field-container col-sm-2">
+				<div id="judges" class="car-field-container col-2">
 					<div class='car-judges'>
 						<?php print $case["judges"]; ?>
 					</div>
 				</div>
 
-				<div class="car-field-container col-sm-4">
+				<div id="title" class="car-field-container col-4">
 					<div class='car-title'>
 						<?php print $case["title"]; ?>
 					</div>
 				</div>
 
-				<div class="car-field-container col-sm-2">
+				<div id="circut" class="car-field-container col-2">
 					<div class='car-circut'>
 						<?php print $case["circut"]; ?>
 					</div>
 				</div>
 
-				<div class="car-field-container col-sm-2">
+				<div id="citation" class="car-field-container col-2">
 					<div class='car-citation'>
 						<?php print $case["citation"]; ?>
 					</div>
@@ -56,7 +56,7 @@ const options = <?php print_r($subjectOptions); ?>;
 			</div>
 
 			<div class="row">
-				<div class="car-field-container col-sm-12">
+				<div class="car-field-container col-12">
 					<div class='car-subject'>
 						<?php print $case["subject_1"]; ?>
 					</div>

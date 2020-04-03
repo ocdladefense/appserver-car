@@ -26,7 +26,6 @@
 
 .car-summary {
 	text-align:justify;
-
 }
 
 h2, h5{
@@ -34,11 +33,8 @@ h2, h5{
 }
 .car-date, .car-citation{
 	display: inline-block;
-	font-size:10px;
-	padding:1px 7px;
-	border-radius: 5px;
-	background-color: rgba(0,0,0,0.8);
-	color: rgba(255,255,255,0.9);
+	font-size: 12px;
+	font-weight: bold;
 }
 
 .more {display: none;}
@@ -55,10 +51,12 @@ h2, h5{
 	border-bottom: 1px solid transparent;
 }
 
-#car-subject{
+#car-subject_1{
 	padding: .3rem;
 }
-
+#car-form{
+	text-align: center;
+}
 .car-subject:hover {
 	border-bottom: 1px solid #666;
 }
@@ -68,6 +66,5 @@ h2, h5{
 	#container-left.column{
 		display: inline-block;
 	}
-
-
+	
  }

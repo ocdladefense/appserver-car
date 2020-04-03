@@ -1,6 +1,4 @@
 
-
-
 function readMore(ellipsis, moreText, btnText) {
 
     if (ellipsis.style.display === "none") {
