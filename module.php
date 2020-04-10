@@ -66,9 +66,38 @@ class CarModule extends Module {
 		// Templates to generate our HTML.
 		$form = $this->getSearchForm();
 		$template = Template::loadTemplate("webconsole");
+
+		//Number of words to display in the teaser
+		$teaserWordLength = 40;
+		//Minimun number of characters
+		$teaserCutoff = 350;
+		$useTeasers = true;
+		
+		$cases = [];
+
+
+
+		foreach($results as $result){
+
+			$case = $result;
+
+			$summaryArray =  explode(" " , $case["summary"]);
+			$case['useTeaser'] = $useTeasers === true && strlen($case["summary"]) > $teaserCutoff;
+
+
+
+			$case['teaser'] = implode(" ", array_slice($summaryArray, 0, $teaserWordLength));
+			$case['readMore'] = implode(" ", array_slice($summaryArray, $teaserWordLength));
+
+			$cases[] = $case;
+		} 
+		//iterable might be exhausted, may need to rewind here
+
 		$cars = Template::renderTemplate("case-reviews",
-			array('cases'=>$results, 
-				  'subjectOptions'=> json_encode($this->getListOptions("subject_1"))));
+			array(
+				'cases' 				=> $cases, 
+				'subjectOptions' 		=> json_encode($this->getListOptions("subject_1"))
+			));
 
 
 		// ... and custom styles.

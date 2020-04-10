@@ -15,6 +15,7 @@ const options = <?php print_r($subjectOptions); ?>;
 		foreach($cases as $case):
 			$date = $case["month"] .DOM_SPACE .$case["day"] .DOM_COMMA.DOM_SPACE.$case["year"];
 			$subject = strtolower($case["subject_1"]);
+
 		?>
 
 		<div class="car-instance">
@@ -51,10 +52,8 @@ const options = <?php print_r($subjectOptions); ?>;
 						<?php print $case["citation"]; ?>
 					</div>
 				</div>
-
-				
 			</div>
-
+			
 			<div class="row">
 				<div class="car-field-container col-12">
 					<div class='car-subject'>
@@ -73,32 +72,24 @@ const options = <?php print_r($subjectOptions); ?>;
 				<div class='car-summary'>
 					<?php 
 
-						//$resultPos = strpos($case["summary"],$case["result"]);
-
-						if(strlen($case["summary"]) > 350){
-							$firstPart = substr($case["summary"], 0, 350);
-							$secondPart = substr($case["summary"], 350);
-
-							print $firstPart;
+						if($case['useTeaser']):				
+							print $case['teaser'];
+												
 					?>
 							<span class="ellipsis">...</span>
 
-							<span class="more"><?php print $secondPart ?></span>
+							<span class="more"><?php print $case['readMore'] ?></span>
 
 							<button class="btn btn-link readMoreButton">Read More</button>
 
 						<?php
-						}
-						else{
+						
+						else:
 							print $case["summary"];
-						}
+						endif;
 					 	 ?>
 				</div>
-				
-
-				
 			</div>
-
 		</div>
 	<?php endforeach; ?>
 </div>
