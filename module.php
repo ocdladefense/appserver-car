@@ -93,7 +93,7 @@ class CarModule extends Module {
 		} 
 		//iterable might be exhausted, may need to rewind here
 
-		$cars = Template::renderTemplate("case-reviews",
+		$cars = Template::renderTemplate("case-reviews-mobile",
 			array(
 				'cases' 				=> $cases, 
 				'subjectOptions' 		=> json_encode($this->getListOptions("subject_1"))
@@ -102,8 +102,10 @@ class CarModule extends Module {
 
 		// ... and custom styles.
 		$css = array(
+			"active" => false,
+			"href" => "/modules/car/css/styles.css",
 			"active" => true,
-			"href" => "/modules/car/css/styles.css"
+			"href" => "/modules/car/css/styles-mobile.css"
 		);
 		
 		$template->addStyle($css);
