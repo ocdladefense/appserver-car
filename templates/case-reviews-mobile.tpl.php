@@ -22,11 +22,10 @@ const options = <?php print_r($subjectOptions); ?>;
 		
 			<hr />
 
-				<div id="date" class="car-field-container">
-					<div class='car-date'>
-						<?php print $date; ?>
+			<div class="car-field-container">
+					<div class='car-subject'>
+						<?php print $case["subject_1"]; ?>
 					</div>
-					<i class="fa fa-calendar" aria-hidden="true"></i>
 				</div>
 
 				<div id="title" class="car-field-container">
@@ -53,6 +52,8 @@ const options = <?php print_r($subjectOptions); ?>;
 					</div>
 				</div>
 			
+				
+
 				<div class="car-field-container">
 					<div class='car-subject'>
 						<?php print $case["subject_1"]; ?>
