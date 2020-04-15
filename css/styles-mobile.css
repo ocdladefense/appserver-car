@@ -10,13 +10,12 @@
 
  .car-field-container {
 	display: block;
-	text-align: center;
+	text-align: justify; 
 	font-size: .9rem;
 
 }
  
 h2, h5{
-	text-align: center;
 	font-size: 1.7rem;
 	font-weight: bold;
 }
@@ -33,7 +32,8 @@ h2, h5{
     padding: 4.1px;
 	width: 7.4rem;
 }
-
+#car-form{
+}
 .car-title {
 	font-weight: bold;
 	text-decoration: underline;	
@@ -46,7 +46,8 @@ h2, h5{
 }
 
 .car-summary {
-	text-align: justify;
+	text-align: left;
+	padding-top: .5rem;
 }
 
 .car-date{
@@ -91,9 +92,6 @@ h2, h5{
 	.car-date, .car-citation{
 	display: inline-block;
 	font-weight: bold;
-	}
-	#car-form{
-		text-align: center;
 	}
 
  }

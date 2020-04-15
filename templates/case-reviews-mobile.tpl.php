@@ -34,7 +34,7 @@ const options = <?php print_r($subjectOptions); ?>;
 						<?php print $case["title"]; ?>
 					</div>
 				</div>
-
+				<!--
 				<div id="judges" class="car-field-container">
 					<div class='car-judges'>
 						<?php print $case["judges"]; ?>
@@ -64,7 +64,7 @@ const options = <?php print_r($subjectOptions); ?>;
 					<?php print strtoupper($case["subject_2"]); ?>
 				</div>
 			</div>
-
+			-->
 			<div class="car-field-container">
 				<div class='car-summary'>
 					<?php 
