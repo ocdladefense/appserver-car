@@ -35,8 +35,8 @@ class FormParserComponent extends BaseComponent {
         let selectOptions = options.map(option => {
             return super.createVNode(
                 "option",
-                { value: option },
-                option,
+                { value: option.value },
+                option.name,
                 this
             );
         });
@@ -122,9 +122,13 @@ class FormParserComponent extends BaseComponent {
         let formData = this.values();
         for(let formField in formData) {
             let data = formData[formField];
+            if(data.value == null || data.value.trim() == '' || typeof(data.value) == "undefined") {
+                continue;
+            }
+
             if(this.getHandler(data.tagName)) {
                 let handler = this.getHandler(data.tagName);
-                conditions.push(...handler(formField, formData[formField].value));
+                conditions.push(...handler(formField, data.value));
             }
         }
         return conditions;
