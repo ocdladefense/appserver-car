@@ -100,7 +100,7 @@ class CarModule extends Module {
 
 		$subjectJson = count($subjects) == 0 ? json_encode(array($defaultSubject)) : json_encode($subjects);
 
-		$cars = Template::renderTemplate("case-reviews",
+		$cars = Template::renderTemplate("case-reviews-mobile",
 			array(
 				'cases' 				=> $cases, 
 				'subjectJson' 			=> $subjectJson 
@@ -109,8 +109,10 @@ class CarModule extends Module {
 
 		// ... and custom styles.
 		$css = array(
+			"active" => false,
+			"href" => "/modules/car/css/styles.css",
 			"active" => true,
-			"href" => "/modules/car/css/styles.css"
+			"href" => "/modules/car/css/styles-mobile.css"
 		);
 		
 		$template->addStyle($css);
