@@ -81,10 +81,11 @@ class CarModule extends Module {
 
 			$case = $result;
 
+			$case["month"] = substr($case["month"], 0, 3);
+			$case["month"] .= ".";
+
 			$summaryArray =  explode(" " , $case["summary"]);
 			$case['useTeaser'] = $useTeasers === true && strlen($case["summary"]) > $teaserCutoff;
-
-
 
 			$case['teaser'] = implode(" ", array_slice($summaryArray, 0, $teaserWordLength));
 			$case['readMore'] = implode(" ", array_slice($summaryArray, $teaserWordLength));
@@ -93,7 +94,7 @@ class CarModule extends Module {
 		} 
 		//iterable might be exhausted, may need to rewind here
 
-		$cars = Template::renderTemplate("case-reviews-mobile",
+		$cars = Template::renderTemplate("case-reviews",
 			array(
 				'cases' 				=> $cases, 
 				'subjectOptions' 		=> json_encode($this->getListOptions("subject_1"))
@@ -102,10 +103,10 @@ class CarModule extends Module {
 
 		// ... and custom styles.
 		$css = array(
-			"active" => false,
-			"href" => "/modules/car/css/styles.css",
 			"active" => true,
-			"href" => "/modules/car/css/styles-mobile.css"
+			"href" => "/modules/car/css/styles.css",
+			/* "active" => true,
+			"href" => "/modules/car/css/styles-mobile.css" */
 		);
 		
 		$template->addStyle($css);

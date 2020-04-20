@@ -21,49 +21,44 @@ const options = <?php print_r($subjectOptions); ?>;
 		<div class="car-instance">
 		
 			<hr />
-
-			<div class="row">
-				<div id="date" class="car-field-container col-2">
-					<div class='car-date'>
-						<?php print $date; ?>
-					</div>
-				</div>
-
-				<div id="judges" class="car-field-container col-2">
-					<div class='car-judges'>
-						<?php print $case["judges"]; ?>
-					</div>
-				</div>
-
-				<div id="title" class="car-field-container col-4">
+			<div id="title" class="car-field-container">
 					<div class='car-title'>
 						<?php print $case["title"]; ?>
 					</div>
 				</div>
 
-				<div id="circut" class="car-field-container col-2">
+				<div id="date" class="car-field-container">
+					<div class='car-date'>
+						<?php print $date; ?>
+					</div>
+				</div>
+
+				<div id="judges" class="car-field-container">
+					<div class='car-judges'>
+						<?php print $case["judges"]; ?>
+					</div>
+				</div>
+
+				<div id="circut" class="car-field-container">
 					<div class='car-circut'>
 						<?php print $case["circut"]; ?>
 					</div>
 				</div>
 
-				<div id="citation" class="car-field-container col-2">
+				<div id="citation" class="car-field-container">
 					<div class='car-citation'>
 						<?php print $case["citation"]; ?>
 					</div>
 				</div>
-			</div>
-			
-			<div class="row">
-				<div class="car-field-container col-12">
+
+				<div class="car-field-container">
 					<div class='car-subject'>
 						<?php print $case["subject_1"]; ?>
 					</div>
 				</div>
-			</div>
 
 			<div class="car-field-container">
-				<div class='car-subject'>
+				<div class='car-subject-2'>
 					<?php print strtoupper($case["subject_2"]); ?>
 				</div>
 			</div>

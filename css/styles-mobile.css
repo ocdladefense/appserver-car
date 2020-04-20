@@ -50,8 +50,19 @@ h2, h5{
 	padding-top: .5rem;
 }
 
-.car-date{
-	font-size: .9rem;
+.car-date {
+    font-size: 14px;
+    color: #1d4877;
+    padding-top: 16px;
+    font-weight: 200;
+}
+.car-instance {
+    position: relative;
+}
+div#date {
+    position: absolute;
+    top: 0px;
+    right: 0px;
 }
 
 

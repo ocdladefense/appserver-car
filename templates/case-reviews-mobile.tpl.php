@@ -21,6 +21,11 @@ const options = <?php print_r($subjectOptions); ?>;
 		<div class="car-instance">
 		
 			<hr />
+			<div id="title" class="car-field-container">
+					<div class='car-title'>
+						<?php print $case["title"]; ?>
+					</div>
+				</div>
 
 			<div class="car-field-container">
 					<div class='car-subject'>
@@ -28,11 +33,14 @@ const options = <?php print_r($subjectOptions); ?>;
 					</div>
 				</div>
 
-				<div id="title" class="car-field-container">
-					<div class='car-title'>
-						<?php print $case["title"]; ?>
+				<div id="date" class="car-field-container">
+					<div class='car-date'>
+						<?php $shortDate =  ?>
+						<?php print $date; ?>
 					</div>
 				</div>
+
+				
 				<!--
 				<div id="judges" class="car-field-container">
 					<div class='car-judges'>
