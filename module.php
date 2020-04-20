@@ -64,7 +64,7 @@ class CarModule extends Module {
 		
 		
 		// Templates to generate our HTML.
-		$form = $this->getSearchForm();
+		// $form = $this->getSearchForm();
 		$template = Template::loadTemplate("webconsole");
 
 		//Number of words to display in the teaser
@@ -94,10 +94,17 @@ class CarModule extends Module {
 		} 
 		//iterable might be exhausted, may need to rewind here
 
+		$subjects = $this->getListOptions("subject_1");
+		$defaultSubject = new stdClass();
+		$defaultSubject->name = "All Subjects";
+		$defaultSubject->value = "";
+
+		$subjectJson = count($subjects) == 0 ? json_encode(array($defaultSubject)) : json_encode($subjects);
+
 		$cars = Template::renderTemplate("case-reviews",
 			array(
 				'cases' 				=> $cases, 
-				'subjectOptions' 		=> json_encode($this->getListOptions("subject_1"))
+				'subjectJson' 			=> $subjectJson 
 			));
 
 
@@ -105,8 +112,6 @@ class CarModule extends Module {
 		$css = array(
 			"active" => true,
 			"href" => "/modules/car/css/styles.css",
-			/* "active" => true,
-			"href" => "/modules/car/css/styles-mobile.css" */
 		);
 		
 		$template->addStyle($css);
@@ -178,7 +183,10 @@ class CarModule extends Module {
 		$dbResults = MysqlDatabase::query("SELECT DISTINCT {$field} FROM car ORDER BY {$field}");
 		$parsedResults = array();
 		foreach($dbResults as $result) {
-			$parsedResults[] = $result[$field];
+			$option = new stdClass();
+			$option->name = $result[$field];
+			$option->value = $result[$field];
+			$parsedResults[] = $option;
 		}
 		return $parsedResults;
 	}

@@ -6,7 +6,7 @@ define("DOM_SPACE"," ");
 
 ?>
 <script> 
-const options = <?php print_r($subjectOptions); ?>;
+const options = <?php print($subjectJson) ?>;
 </script>
 <!-- <input placeholder="For demonstrating event framework" type="text" style="width: 400px; position: relative; top: -140px;"></input> -->
 

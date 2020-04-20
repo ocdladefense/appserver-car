@@ -10,6 +10,10 @@ window.onload = () => {
         let target = e.target;
         let parent = target.parentNode;
 
+        if (!target.classList.contains("readMoreButton")) {
+            return;
+        }
+
         let ellipsis = parent.querySelector(".ellipsis");
         let moreText = parent.querySelector(".more");
         let btnText = parent.querySelector(".readMoreButton");
