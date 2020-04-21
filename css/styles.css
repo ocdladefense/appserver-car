@@ -4,21 +4,20 @@
 
 
 
-#container-left.column{
+ #container-left.column{
 	display: none;
 }
 
  .car-field-container {
-	display:block;
-	text-align: center;
-	font-size: 13px;
-	padding: 0%;
+	display: block;
+	text-align: justify; 
+	font-size: .9rem;
+
 }
  
-
-
 h2, h5{
-	text-align: center;
+	font-size: 1.7rem;
+	font-weight: bold;
 }
 
 
@@ -30,41 +29,62 @@ h2, h5{
 
 
 #car-subject_1{
-	padding: .3rem;
-	width: 17rem;
+    padding: 4.1px;
+	width: 7.4rem;
 }
-#car-form{
-	text-align: center;
-}
+
 .car-title {
 	font-weight: bold;
 	text-decoration: underline;	
-	text-align:center;
+	font-size: 1rem;
 }
 .car-subject {
-	display: inline-block;
-	font-size:11px;
 	padding: 0%;
 }
 .car-judges, .car-circut{
-	font-size: 12px; 
 }
 
 .car-summary {
-	text-align:justify;
+	text-align: left;
+	padding-top: .5rem;
 }
 
-.car-date, .car-citation{
-	display: inline-block;
-	font-size: 10px;
-	font-weight: bold;
+.car-date {
+    font-size: 14px;
+    color: #1d4877;
+    padding-top: 1.1rem;
+    font-weight: 200;
+}
+.car-instance {
+    position: relative;
+}
+div#date {
+    position: absolute;
+    top: 0px;
+	right: 0px;
 }
 .car-citation{
-	padding: .2rem;
+	display: none;
+}
+.car-judges{
+	display: none;
+}
+.car-judges{
+	display: none;
+}
+.car-subject-2{
+	display: none;
+}
+.car-circut{
+	display: none;
 }
 
 
 @media screen and (min-width: 900px){
+
+	#car-form{
+		text-align: center;
+	}
 
 	#container-left.column{
 		display: inline-block;
@@ -81,7 +101,8 @@ h2, h5{
 		font-size: 17px;
 	}
 	.car-citation{
-		padding: 0;
+		padding-top: 1.1rem;
+		display: inline-block;
 	}
 	.car-date, .car-citation{
 		font-size: 14px;
@@ -91,5 +112,29 @@ h2, h5{
 		font-size:11px;
 		text-align: center;
 	}
-	
+	.car-subject-2 {
+		display: inline-block;
+		font-size:11px;
+		text-align: center;
+	}
+	div#citation {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+	}
+	.car-circut{
+		display: inline-block;
+		position: absolute;
+		padding-top: 1.1rem;
+		top: 0px;
+		left: 9.8rem;
+
+	}
+	.car-judges{
+		display: inline-block;
+		position: absolute;
+		padding-top: 1.1rem;
+		top: 0px;
+		right: 11rem;
+	}
  }
