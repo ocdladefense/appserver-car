@@ -3,6 +3,9 @@
 define("DOM_SPACE"," ");	
 
 
+if($subjectJson == "") {
+	$subjectJson = "[]";
+}
 
 ?>
 <script> 
