@@ -93,18 +93,21 @@ class CarModule extends Module {
 		} 
 		//iterable might be exhausted, may need to rewind here
 
-		$subjects = $this->getListOptions("subject_1");
+		$subjects = $this->getListOptions("fooby");
 		$defaultSubject = new stdClass();
 		$defaultSubject->name = "All Subjects";
 		$defaultSubject->value = "";
 
-		$subjectJson = count($subjects) == 0 ? json_encode(array($defaultSubject)) : json_encode($subjects);
+		$subjectJson = empty($subjects) ? json_encode(array($defaultSubject)) : json_encode($subjects);
+
+		//$subjectJson = "";
 
 		$cars = Template::renderTemplate("case-reviews-mobile",
 			array(
 				'cases' 				=> $cases, 
-				'subjectJson' 			=> $subjectJson 
-			));
+				'subjectJson' 			=> $subjectJson
+			)
+		);
 
 
 		// ... and custom styles.

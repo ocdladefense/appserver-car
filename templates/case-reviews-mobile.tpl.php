@@ -3,10 +3,17 @@
 define("DOM_SPACE"," ");	
 
 
+// $subjectJson = "";
+// $subjectJson = "{}";
+// $subjectJson = "{[]}";
+// $subjectJson = "[]";
 
+if($subjectJson == "") {
+	$subjectJson = "[]";
+}
 ?>
 <script> 
-const options = <?php print($subjectJson) ?>;
+const options = <?php print $subjectJson ?>;
 </script>
 <!-- <input placeholder="For demonstrating event framework" type="text" style="width: 400px; position: relative; top: -140px;"></input> -->
 
