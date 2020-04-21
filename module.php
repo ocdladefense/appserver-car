@@ -94,7 +94,7 @@ class CarModule extends Module {
 		} 
 		//iterable might be exhausted, may need to rewind here
 
-		$subjects = $this->getListOptions("fooby");
+		$subjects = $this->getListOptions("subject_1");
 		$defaultSubject = new stdClass();
 		$defaultSubject->name = "All Subjects";
 		$defaultSubject->value = "";
