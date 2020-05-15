@@ -1,4 +1,8 @@
 <?php
+
+use Http\Http as Http;
+use Http\HttpRequest as HttpRequest;
+
 class CarUrlParser{
     
     // private $URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_November_27,_2019";
@@ -97,24 +101,25 @@ class CarUrlParser{
     }
 
     function makeRequests(){
+        $http = $this->newCarParserHttpSession();
         $candidateUrls = $this->candidateUrls();
         $iteration = 0;
         $preferredUrls = $this->getPreferredUrls();
-        $time = time();
 
         //give preference to preferred urls to reduce execution time.
-        $allUrls = self::$usePreferredUrls === true ? array_merge($preferredUrls,$candidateUrls) : $candidateUrls;
-
+        //$allUrls = self::$usePreferredUrls === true ? array_merge($preferredUrls,$candidateUrls) : $candidateUrls;
+        $allUrls = $preferredUrls;
 
         
 
         foreach($allUrls as $url){
             $iteration++;
-            if($iteration > $this->maxUrlTests) break;
+            //if($iteration > $this->maxUrlTests) break;
             $req = new HttpRequest($url);
-            $resp = $req->send();
+            $resp = $http->send($req);
             //$this->displayOutput($url,$resp,$iteration);
             $this->outputObjs[] = $this->setOutput($url,$resp);
+            //print "status " .  $resp->getStatusCode() . "<br>";
 
         
             if($resp->getStatusCode() == 200){
@@ -198,4 +203,17 @@ class CarUrlParser{
     public function setMaxUrlTests($number){
         $this->maxUrlTests = $number;
     }
+
+    private static function newCarParserHttpSession() {
+    $config = array(
+        //"cainfo" => BASE_PATH . "/vendor/cybersource/rest-client-php/lib/ssl/cacert.pem",
+        "verbose" => true,
+        // "encoding" => '',
+        "returntransfer" => true,
+        "ssl_verifyhost" => false,
+        "ssl_verifypeer" => false,
+        "useragent"	=> "Swagger-Codegen/1.0.0/php");
+		
+		return new Http($config);
+	}
 }
