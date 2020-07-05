@@ -202,6 +202,21 @@ class CarModule extends Module {
 		}
 		return json_encode($parsedResults);
 	}
+	
+	public function getCarResults() {
+		// Takes raw data from the http request
+		$json = file_get_contents('php://input');
+
+		$results = fetchCarsFromDb($json);
+		Template::addPath(__DIR__ . "/templates");
+
+		// Doesn't work
+		// return Template::renderTemplate("case-reviews",array('cases'=>$results));
+
+		$cars = Template::renderTemplate("case-reviews",array('cases'=>$results));
+		print($cars);
+		exit;
+	}
 
 }
 
@@ -262,20 +277,7 @@ function fetchCarsFromDb($json){
 	return $results->getIterator();
 }
 
-function getCarResults() {
-	// Takes raw data from the http request
-	$json = file_get_contents('php://input');
 
-	$results = fetchCarsFromDb($json);
-	Template::addPath(__DIR__ . "/templates");
-
-	// Doesn't work
-	// return Template::renderTemplate("case-reviews",array('cases'=>$results));
-
-	$cars = Template::renderTemplate("case-reviews",array('cases'=>$results));
-	print($cars);
-	exit;
-}
 
 
 function loadPage($month,$day,$year) {
