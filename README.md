@@ -11,7 +11,7 @@ Installation consists of a PHP executable component and a MySQL database compone
     * This section should be completed with the values chosen in the "MySQL Database" section, below.
 
 ### MySQL Database
-1. Identify the data/ folder and data/car.sql file in this repo.
+1. Identify the data/sql folder and data/sql/car.sql file in this repo.
     * This SQL file contains data to be imported into your Appserver's database.
 2.  Open your WAMP --> phpMyAdmin database utility
 3.  Login using the default "superuser" credentials:
@@ -19,8 +19,12 @@ Installation consists of a PHP executable component and a MySQL database compone
     *  password: [the default root password is empty]
 4.  Familiarize yourself with the user interface
 5.  Create a new database; you can name it anything, but let's give preference to "ocdla"
-6.  Identify the import functionality and either select the car.sql file for upload/import or copy and paste its contents into the phpMyAdmin interface; execute the import.
-7.  Use phpMyAdmin to browse the newly-imported data; validate that the data from car.sql was imported successfully.
+6. Optionally use phpMyAdmin to create a user with access to the new database
+    * A MySQL user consists of a username, password and a set of privileges for a given database or database.table combination.
+7.  Identify the import functionality and either select the car.sql file for upload/import or copy and paste its contents into the phpMyAdmin interface; execute the import.
+    * The car.sql imports both the new car table/schema and data (rows) into the database server.
+8.  Use phpMyAdmin to browse the newly-imported data; validate that the data from car.sql was imported successfully.
+9.  Configure the Appserver's config/config.php database section with the values for database name and username and password.
 
 ### Validate installation
 To validate installation of the car repo + data, navigate to http://appserver/car.
