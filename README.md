@@ -54,5 +54,3 @@ http://appserver/car-urls/3/11/2020
 ### View the list of the urls tested for a range of days with the status code
 // Something is not working with this url...
 http://appserver/test-car-urls/10
-
-### View the html for specific date
