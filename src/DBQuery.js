@@ -2,8 +2,16 @@ const DBQuery = (function() {
 
     function DBQuery() { }
 
-    DBQuery.createCondition = function(field, value, op) { 
-        return {"field":field, "op":op, "value":value};
+    DBQuery.createCondition = function(field, value, op = "=") { 
+        return {"type":"condition", "field":field, "op":op, "value":value};
+    };
+
+    DBQuery.createSortCondition = function(field, desc = false) {
+        return {"type":"sortCondition", "field":field, "desc":desc};
+    };
+
+    DBQuery.createLimitCondition = function(rowCount, offset = 0) {
+        return {"type":"limitCondition", "rowCount": rowCount, "offset": offset}
     };
 
     DBQuery.createTerms = function(value) {

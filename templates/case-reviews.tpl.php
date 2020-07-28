@@ -10,6 +10,11 @@ if($subjectJson == "") {
 ?>
 <script> 
 const options = <?php print($subjectJson) ?>;
+const dateRanges = <?php print($dateRangesJson) ?>;
+const searches = <?php print($searchesJson) ?>;
+const sorts = <?php print($sortsJson) ?>;
+const loadLimit = <?php print($loadLimit) ?>;
+const loadOffset = <?php print($loadOffset) ?>;
 </script>
 <!-- <input placeholder="For demonstrating event framework" type="text" style="width: 400px; position: relative; top: -140px;"></input> -->
 
@@ -56,7 +61,7 @@ const options = <?php print($subjectJson) ?>;
 
 				<div class="car-field-container">
 					<div class='car-subject'>
-						<?php print $case["subject_1"]; ?>
+						<?php print strtoupper($case["subject_1"]); ?>
 					</div>
 				</div>
 

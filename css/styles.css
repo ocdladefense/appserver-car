@@ -18,6 +18,10 @@ h2, h5{
 	font-weight: bold;
 }
 
+option {
+	text-transform: capitalize;
+}
+
 
 .more {display: none;}
 
@@ -25,10 +29,76 @@ h2, h5{
 	font-size: .7rem;
 }
 
-
+/*
 #car-subject_1{
+	text-transform: capitalize;
     padding: 4.1px;
 	width: 7.4rem;
+}
+
+#car-dates{
+    padding: 4.1px;
+	width: 7.4rem;
+}
+
+#car-search{
+	text-transform: capitalize;
+    padding: 4.1px;
+	width: 7.4rem;
+}
+
+#car-sort{
+    padding: 4.1px;
+	width: 7.4rem;
+}*/
+
+h2 {
+	text-align: center;
+}
+
+#car-form-button {
+	position: fixed;
+    top: 15px;
+    right: 30px;
+    z-index: 100;
+}
+
+#car-form {
+	display: none;
+	position: fixed;
+	z-index: 100;
+	background-color: white;
+}
+
+.car-form-field {
+	text-transform: capitalize;
+	padding: 4.1px;
+	margin-left: 3px;
+	margin-right: 10px;
+	width: 14.4rem;
+}
+
+#checkbox-group {
+	background-color: white;;
+	display: inline;
+	padding: 5px;
+	border: 1px solid grey;
+	border-radius: 2px;
+	margin-left: 3px;
+}
+
+#checkbox-group > label {
+	text-transform: capitalize;
+	margin-right: 2px;
+	margin-left: 4px;
+}
+
+#car-search-box {
+	width: 22rem;
+}
+
+#car-mobile-separator {
+	display: none;
 }
 
 .car-title {
@@ -80,8 +150,14 @@ div#date {
 
 @media screen and (min-width: 900px){
 
+	#car-form-button{
+		display: none;
+	}
+
 	#car-form{
+		display: block;
 		text-align: center;
+		position: static;
 	}
 
 	#container-left.column{
@@ -99,10 +175,10 @@ div#date {
 		font-size: 17px;
 	}
 	.car-citation{
-		padding-top: 1.1rem;
 		display: inline-block;
 	}
 	.car-date, .car-citation{
+		padding-top: 2.5rem;
 		font-size: 14px;
 	}
 	.car-subject {
@@ -123,7 +199,7 @@ div#date {
 	.car-circut{
 		display: inline-block;
 		position: absolute;
-		padding-top: 1.1rem;
+		padding-top: 2.5rem;
 		top: 0px;
 		left: 9.8rem;
 
@@ -131,8 +207,40 @@ div#date {
 	.car-judges{
 		display: inline-block;
 		position: absolute;
-		padding-top: 1.1rem;
+		padding-top: 2.5rem;
 		top: 0px;
 		right: 11rem;
 	}
  }
+
+@media screen and (max-width: 899px){
+	#car-form {
+		width: 100%;
+		top: 57px;
+		left: 0px;
+		background-color: #232F3E;
+		padding: 10px 5px;
+	}
+
+	#checkbox-group {
+		width: 100%;
+	}
+
+	#car-search-box {
+		width: 95%;
+		margin-left: 3px;
+	}
+
+	#car-form > div > label {
+		display: none;
+	}
+
+	select {
+		display: block;
+		min-width: 95%;
+	}
+
+	#car-mobile-separator {
+		display: block;
+	}
+}

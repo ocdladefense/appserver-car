@@ -25,12 +25,12 @@ class BaseComponent {
 		let $el = document.createElement(vnode.type);
 		
 		for(let prop in vnode.props) {
-
+            /*
             // if prop is an event listener, wire it to EventFramwork and don't set as attribute
             if(prop.includes('on')) {
                 EventFramework.registerEventListener(prop.replace('on', ''), vnode.component);
                 continue;
-            }
+            }*/
 
 			let html5 = "className" == prop ? "class" : prop;
 			$el.setAttribute(html5, vnode.props[prop]);

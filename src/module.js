@@ -1,30 +1,45 @@
+let page;
 let parser;
+let scroller;
 
 window.onload = () => {
+    page = new PageUI();
 
-    let parser = new FormParserComponent(SEARCH_WIDGET_SETTINGS);
+    //FormParser extracts querry data from the Form
+    parser = new FormParser();
+    parser.setResultsLimit(loadLimit);
 
-    // Application.init();
+    scroller = new InfiniteScroller();
 
-    document.addEventListener('click', (e) => {
-        let target = e.target;
-        let parent = target.parentNode;
-
-        if (!target.classList.contains("readMoreButton")) {
-            return;
-        }
-
-        let ellipsis = parent.querySelector(".ellipsis");
-        let moreText = parent.querySelector(".more");
-        let btnText = parent.querySelector(".readMoreButton");
-
-        readMore(ellipsis, moreText, btnText);
-    } );
-
-
-    parser.render();
-
+    page.render();
     
+    page.addFeature("readMoreSummary", page.readMoreClick);
+    page.addFeature("infiniteScroll", scroller);
+    page.addFeature("searchBoxPlaceholder", searchPlaceholderText);
+
+    page.onUserSearch(sendQuery);
+
+    style();
 };
 
+window.onresize = style;
 
+function sendQuery() {
+    let conditions = parser.parseConditions();
+
+    console.log("Submitting Form Input");
+    let response = FormSubmission.send("/car-results", JSON.stringify(conditions));
+    response.then(data => {
+        let container = document.getElementById("car-results");
+        container.innerHTML = data;
+    });
+}
+
+function style() {
+    if (window.innerWidth >= 900) {
+
+    } else {
+        let topStyle = (document.getElementById("header").offsetHeight - 2) + "px";
+        document.getElementById("car-form").style.top = topStyle;
+    }
+}

@@ -64,6 +64,10 @@ class CarModule extends Module {
 			"car-build-select-list" => array(
 				"callback" => "getSelectList",
 				"Content-Type" => "application/json"
+			),
+			"car-load-more" => array(
+				"callback" => "loadMore",
+				"Content-Type" => "text/html"
 			)
 		);
 	}
@@ -90,6 +94,8 @@ class CarModule extends Module {
 		Template::addPath(__DIR__ . "/templates");
 		
 
+		$loadLimit = 10;
+
 		// Perform a query for CARs in the database.
 		// @todo - should return an iterable list of SObjects.
 		//if conditons have been passed in then use them to build the query
@@ -103,15 +109,15 @@ class CarModule extends Module {
 			$results = MysqlDatabase::query($sql);
 		}
 		else {
-			$results = MysqlDatabase::query("SELECT * FROM car ORDER BY year DESC");
+			$results = MysqlDatabase::query("SELECT * FROM car ORDER BY full_date DESC LIMIT " . $loadLimit);
 		}
-		
-		
 		
 		// Templates to generate our HTML.
 		// $form = $this->getSearchForm();
 		$template = Template::loadTemplate("webconsole");
 
+		//Commented out code below moved to it's own function
+		/*
 		//Number of words to display in the teaser
 		$teaserWordLength = 40;
 		//Minimun number of characters
@@ -138,6 +144,11 @@ class CarModule extends Module {
 			$cases[] = $case;
 		} 
 		//iterable might be exhausted, may need to rewind here
+		*/
+		$config = array(
+			'teaserWordLength' => 40, 'teaserCutoff' => 350, 'useTeasers' => true
+		);
+		$cases = $this->formatResults($results, $config); //Call to the function containing the code that was commented out
 
 		$subjects = $this->getListOptions("subject_1");
 		$defaultSubject = new stdClass();
@@ -148,10 +159,74 @@ class CarModule extends Module {
 
 		//$subjectJson = "";
 
+		$config12 = array(
+			"numOfMonths" => 12, "inclusive" => false
+		);
+
+		$config6 = array(
+			"numOfMonths" => 6, "inclusive" => false
+		);
+
+		$dateRanges = array(
+			["--ALL-- (Select Date Range)", "ALL"],
+			["Last Year", $this->calculateDays($config12)], 
+			["Last 6 Months", $this->calculateDays($config6)], 
+			["Last 30 Days", 30],
+			["----------------", "space"], 
+			["This Year", $this->thisYear()], 
+			["This Month", $this->thisMonth()]
+		);
+
+		$parsedDates = array();
+		foreach($dateRanges as $dateRange) {
+			$option = new stdClass();
+			$option->name = $dateRange[0];
+			$option->value = $dateRange[1];
+			$parsedDates[] = $option;
+		}
+
+		$dateRangesJson = json_encode($parsedDates);
+
+		$sorts = array(/*
+			["By Date Descending", "ORDER BY str_to_date(concat(month, ' ', day, ' ', year), '%M %d %Y') DESC"],
+			["By Date Ascending", "ORDER BY str_to_date(concat(month, ' ', day, ' ', year), '%M %d %Y')"],
+			["By Title Alphabetically", "ORDER BY title"]*/
+			["Newest to Oldest ", "full_date=DESC"],
+			["Oldest to Newest", "full_date"],
+			["Title Alphabetically", "title"]
+		);
+
+		$parsedSorts = array();
+		foreach($sorts as $sort) {
+			$option = new stdClass();
+			$option->name = $sort[0];
+			$option->value = $sort[1];
+			$parsedSorts[] = $option;
+		}
+
+		$sortsJson = json_encode($parsedSorts);
+
+		$searches = array("summary", "title");
+
+		$parsedSearches = array();
+		foreach($searches as $search) {
+			$option = new stdClass();
+			$option->name = $search;
+			$option->value = $search;
+			$parsedSearches[] = $option;
+		}
+
+		$searchesJson = json_encode($parsedSearches);
+
 		$cars = Template::renderTemplate("case-reviews",
 			array(
 				'cases' 				=> $cases, 
-				'subjectJson' 			=> $subjectJson
+				'subjectJson' 			=> $subjectJson,
+				'dateRangesJson'		=> $dateRangesJson,
+				'searchesJson'			=> $searchesJson,
+				'sortsJson'				=> $sortsJson,
+				'loadLimit'				=> $loadLimit,
+				'loadOffset'			=> 0
 			)
 		);
 
@@ -166,36 +241,40 @@ class CarModule extends Module {
 
 		// include all js files
 		$js = array(
-			array(
+			/*array(
 				"src" => "/modules/car/src/settings.js"
-			),
+			),*/
 			array(
 				"src" => "modules/car/src/BaseComponent.js"
 			),
 			array(
-				"src" => "/modules/car/src/FormParserComponent.js"
+				"src" => "/modules/car/src/FormParser.js"
 			),
 			array(
 				"src" => "/modules/car/src/FormSubmission.js"
 			),
 			array(
 				"src" => "/modules/car/src/DBQuery.js"
-			),
+			),/*
 			array(
 				"src" => "/modules/car/src/EventFramework.js"
-			),
+			),*/
 			array(
 				"src" => "/modules/car/src/car.js"
 			),
 			array(
+				"src" => "/modules/car/src/InfiniteScroller.js"
+			),
+			array(
 				"src" => "/modules/car/src/module.js"
+			),
+			array(
+				"src" => "/modules/car/src/PageUI.js"
 			)
-			
 		);
 
 		$template->addScripts($js);
 
-		
 		return $template->render(array(
 			"defaultStageClass" 	=> "not-home", 
 			// "content" 						=> $form . $carResults . $cars, // OLD WAY
@@ -203,6 +282,7 @@ class CarModule extends Module {
 			"doInit"							=> false
 		));
 	}
+
 	private function getSearchForm() {
 		$form = "<h2>OCDLA Criminal Apellate Review Search</h2>";
 		$form .= "<h5>Showing all results:</h5>";
@@ -251,8 +331,19 @@ class CarModule extends Module {
 	public function getCarResults() {
 		// Takes raw data from the http request
 		$json = file_get_contents('php://input');
+		//$searchJson = json_encode(json_decode($json)[0]);
 
 		$results = fetchCarsFromDb($json);
+
+		if (count($results->rows) <= 0) { 
+			print('<h4 style="text-align: center;">There are no results that match your search.</h4>');
+			exit;
+		}
+
+		$config = array(
+			'teaserWordLength' => 40, 'teaserCutoff' => 350, 'useTeasers' => true
+		);
+		$results = $this->formatResults($results, $config);
 		Template::addPath(__DIR__ . "/templates");
 
 		// Doesn't work
@@ -369,22 +460,134 @@ class CarModule extends Module {
 		// displayErrors($errors);
 	}
 
+	private function calculateDays($config) {
+		$numOfMonths = $config["numOfMonths"];
+		$inclusive = $config["inclusive"];
+
+		$month = date("m") - $numOfMonths;
+		$month = $month <= 0 ? 12 + $month : $month;
+
+		$numOfYears = floor($numOfMonths / 12);
+		
+		$day = date("d");
+		$year = date("Y") - $numOfYears;
+
+		$d=mktime(0, 0, 0, $month, $day, $year);
+		$days = floor((time() - $d)/60/60/24);
+
+		if ($inclusive) $days += 1;
+
+		return $days;
+	}
+
+	private function thisMonth() {
+		return date("d");
+	}
+
+	private function thisYear() {
+		$year = date("Y");
+		$daysInYear = 0;
+
+		for ($month = 1; $month < date("m"); $month++) {
+			$daysInYear += cal_days_in_month(CAL_GREGORIAN, $month, $year);
+		}
+
+		$daysInYear += date("d");
+
+		return $daysInYear;
+	}
+
+	private function formatResults($results, $config) {
+		//Number of words to display in the teaser
+		$teaserWordLength = $config['teaserWordLength'];
+		//Minimun number of characters
+		$teaserCutoff = $config['teaserCutoff'];
+		$useTeasers = $config['useTeasers'];
+		
+		$cases = [];
+
+
+
+		foreach($results as $result){
+
+			$case = $result;
+
+			$case["month"] = substr($case["month"], 0, 3);
+			$case["month"] .= ".";
+
+			$summaryArray =  explode(" " , $case["summary"]);
+			$case['useTeaser'] = $useTeasers === true && strlen($case["summary"]) > $teaserCutoff;
+
+			$case['teaser'] = implode(" ", array_slice($summaryArray, 0, $teaserWordLength));
+			$case['readMore'] = implode(" ", array_slice($summaryArray, $teaserWordLength));
+
+			$cases[] = $case;
+		} 
+		//iterable might be exhausted, may need to rewind here
+
+		return $cases;
+	}
+
+	public function loadMore() {
+		// Takes raw data from the http request
+		$json = file_get_contents('php://input');
+		//$searchJson = json_encode(json_decode($json)[0]);
+
+		$results = fetchCarsFromDb($json);
+
+		if (count($results->rows) <= 0) { 
+			return null;
+		}
+
+		$config = array(
+			'teaserWordLength' => 40, 'teaserCutoff' => 350, 'useTeasers' => true
+		);
+		$results = $this->formatResults($results, $config);
+		Template::addPath(__DIR__ . "/templates");
+
+		// Doesn't work
+		// return Template::renderTemplate("case-reviews",array('cases'=>$results));
+
+		return Template::renderTemplate("case-reviews",array('cases'=>$results));
+		//return $cars;
+	}
 }
 
 
 function fetchCarsFromDb($json){
 	$json = urldecode($json);
+	$phpJson = json_decode($json);
+	$conditions = array();
+	$sortConditions = array();
+	$limitCondition = "";
+
+	//This removes queries that return everything
+	foreach($phpJson as $cond) {
+		if (is_array($cond) || ($cond->type == "condition" && $cond->value != "ALL")) {
+			$conditions[] = $cond;
+		} else if ($cond->type == "sortCondition") {
+			$sortConditions[] = $cond;
+		} else if ($cond->type == "limitCondition") {
+			$limitCondition = $cond;
+		}
+	}
+	/*
+	if ($phpJson->value == "ALL") {
+		return MysqlDatabase::query("SELECT * FROM car ORDER BY year DESC");
+	}*/
+
 	$builder = new QueryBuilder();
 	$builder->setTable("car");
-	$builder->setConditions(json_decode($json));
+	$builder->setConditions($conditions);
+	$builder->setSortConditions($sortConditions);
+	$builder->setLimitCondition($limitCondition);
 	$sql = $builder->compile();
+	print($sql);
 	$results = MysqlDatabase::query($sql);
 	//if results has an error returned as json
-	return $results->getIterator();
+	$results->getIterator();
+	return $results;
 }
-
-
-
 
 function loadPage($month,$day,$year) {
 

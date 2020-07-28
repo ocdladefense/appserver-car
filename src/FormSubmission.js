@@ -2,7 +2,7 @@ const FormSubmission = (function() {
 
     function FormSubmission() {}
 
-    FormSubmission.send = function (json, url) {
+    FormSubmission.send = function (url, json) {
         let req = this.getRequest(json, url);
         let response = fetch(req);
         return response.then((resp) => {

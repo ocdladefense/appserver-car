@@ -13,13 +13,22 @@ const EventFramework = (function() {
     };
 
     EventFramework.registerEventListener = function(type, component) {
-        if(!EventFramework.handlers[type]) {
-            EventFramework.handlers[type] = [];
+        let exists = false;
 
-            document.addEventListener(type, EventFramework.handle);
+        for(let index in EventFramework.handlers[type]) {
+            let handler = EventFramework.handlers[type][index];
+            if (handler.id == component.id) exists = true;
         }
 
-        EventFramework.handlers[type].push(component);
+        if (!exists) {       
+            if(!EventFramework.handlers[type]) {
+                EventFramework.handlers[type] = [];
+
+                document.addEventListener(type, EventFramework.handle);
+            }
+
+            EventFramework.handlers[type].push(component);
+        }
     };
 
     EventFramework.handle = function(e) {
@@ -28,7 +37,7 @@ const EventFramework = (function() {
 
         EventFramework.handlers[type].forEach(component => {
             if(EventFramework.owns(target, component)) {
-                component.handleEvent(e);
+                component.parser.handleEvent(e);
             }
         });
 
