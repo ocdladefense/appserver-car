@@ -6,9 +6,14 @@ const FormParser = (function() {
 
     let id = "car-form";
     let resultsLimit;
+    let resultsOffset = 0;
 
     const setResultsLimit = (limit) => {
         resultsLimit = limit;
+    }
+
+    const setResultsOffset = (offset) => {
+        resultsOffset = offset;
     }
 
     const elements = (elementId) => {
@@ -54,7 +59,7 @@ const FormParser = (function() {
 
         //query = new DBQuery();
         //query.addCondition();
-        conditions.push(DBQuery.createLimitCondition(resultsLimit));
+        conditions.push(DBQuery.createLimitCondition(resultsLimit, resultsOffset));
 
         return conditions;
     };
@@ -111,7 +116,8 @@ const FormParser = (function() {
     let proto = {
         parseConditions: parseConditions,
         parseLimitInput: parseLimitInput,
-        setResultsLimit: setResultsLimit
+        setResultsLimit: setResultsLimit,
+        setResultsOffset: setResultsOffset
     }
 
     FormParser.prototype = proto;

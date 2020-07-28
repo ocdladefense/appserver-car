@@ -21,7 +21,8 @@ const InfiniteScroller = (function(){
     
     const getNextPage = (limit) => {
         offset += limit;
-        
+
+        parser.setResultsOffset(offset);
         let conditions = parser.parseConditions();
 
         //Revist to match syntax in module.js
@@ -43,6 +44,7 @@ const InfiniteScroller = (function(){
     const reset = () => {
         moreResults = true;
         offset = 0;
+        parser.setResultsOffset(0);
         window.scrollTo(0, 0);
     }
 

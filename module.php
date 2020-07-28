@@ -582,7 +582,7 @@ function fetchCarsFromDb($json){
 	$builder->setSortConditions($sortConditions);
 	$builder->setLimitCondition($limitCondition);
 	$sql = $builder->compile();
-	print($sql);
+	//print($sql);
 	$results = MysqlDatabase::query($sql);
 	//if results has an error returned as json
 	$results->getIterator();

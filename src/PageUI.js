@@ -151,7 +151,7 @@ class PageUI extends BaseComponent {
 
         let formSearchVNode = super.createVNode(
             "div",
-            {},
+            { id: "car-search-container" },
             [checkBoxesVNode, inputVNode],//selectSearchLabelVNode, selectSearchVNode, inputVNode],
             this
         );
