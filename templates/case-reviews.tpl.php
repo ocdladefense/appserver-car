@@ -9,7 +9,7 @@ if($subjectJson == "") {
 
 ?>
 <script> 
-const options = <?php print($subjectJson) ?>;
+const subjects = <?php print($subjectJson) ?>;
 const dateRanges = <?php print($dateRangesJson) ?>;
 const searches = <?php print($searchesJson) ?>;
 const sorts = <?php print($sortsJson) ?>;

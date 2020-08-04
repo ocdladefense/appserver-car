@@ -160,6 +160,10 @@ div#date {
 		position: static;
 	}
 
+	#car-search-container {
+		
+	}
+
 	#container-left.column{
 		display: inline-block;
 	}

@@ -1,12 +1,21 @@
 //'use strict'
 
 const FormParser = (function() {
-    
-    function FormParser() {}
-
-    let id = "car-form";
+    let id;
+    let overides = {};
+    let dontParse = [];
     let resultsLimit;
     let resultsOffset = 0;
+
+    function FormParser() {}
+
+    const setSettings = (settings) => {
+        id = settings.formId;
+
+        overides = settings.overides;
+
+        dontParse = settings.dontParse;
+    }
 
     const setResultsLimit = (limit) => {
         resultsLimit = limit;
@@ -20,13 +29,21 @@ const FormParser = (function() {
         return !!elementId ? document.getElementById(elementId) : Array.from(document.getElementById(id).elements);
     };
 
-    const values = (elementId) => {
-        if(elementId) {
+    const values = (/*elementId*/) => {
+        /*if(elementId) {
             return { elementId: { "value":elements(elementId).value, "tagName":element.tagName }};
-        }
+        }*/
         let allValues = {};
         elements().forEach(element => {  
-            allValues[element.id] = { "value": element.value, "tagName":element.tagName };
+        allValues[element.id] = { "value": element.value, "tagName":element.tagName };
+            for (let i in element.attributes) {
+                let att = element.attributes[i];
+                let attName = att.name;
+                if (attName && attName.startsWith("data-")) 
+                    allValues[element.id][attName] = att.value;{
+                }
+                
+            }
         });
         return allValues;
     };
@@ -34,88 +51,61 @@ const FormParser = (function() {
     const parseConditions = () => {
         let conditions = [];
 
-        const dontCondition = ["checkbox-group"];
-
         let formData = values();
-        console.log(formData);
-        for(let formField in formData) {
+        for(let formField in formData) {           
             let data = formData[formField];
-
-            if (dontCondition.includes(formField) || dontCondition.includes((document.getElementById(formField)).parentNode.id) || 
-                data.value == null || data.value.trim() == '' || typeof(data.value) == "undefined") {           
+            
+            if (dontParse.includes(formField) || dontParse.includes(document.getElementById(formField).parentNode.id) || 
+            (typeof(data.value) != "undefined" && data.value == null) || (typeof(data.value) == "string" && data.value.trim() == '')) {           
                 continue;                          
             }
+          
+            if (overides[formField]) {
+                conditions.push(overides[formField](data));
+            }
 
-            let fieldParser = {
-                "car-sort": parseSortSelect,
-                "car-limit": parseLimitInput,
-                "car-search-box": parseSearchBox,
-                "car-dates": parseDateRange,
-                "car-subject_1": parseSubjectSelect
-            };
-           
-            conditions.push(fieldParser[formField](data));
+            let parserFunctions = [parseWhereCondition, parseOrderByCondition, parseLimitCondition];
+            for (let i in parserFunctions) {
+                let parserFunction = parserFunctions[i];
+                let condition = parserFunction(data);
+                if (condition != null) {
+                    conditions.push(condition);
+                }
+            }
         }
 
         //query = new DBQuery();
         //query.addCondition();
         conditions.push(DBQuery.createLimitCondition(resultsLimit, resultsOffset));
 
+        console.log(conditions);
         return conditions;
     };
 
-    const parseSortSelect = (data) => {
-        let params = data.value.split("=");
-        if (params.length == 1) {
-            return DBQuery.createSortCondition(params[0]);
-        } else {
-            let desc = false;
-            if (params[1].toUpperCase() == "DESC" || params[1].toLowerCase() == "true") {
-                desc = true;
-            }
-            return DBQuery.createSortCondition(params[0], desc);
+    const parseWhereCondition = (data) => {
+        if (data["data-field"] && data.value) {
+            return DBQuery.createCondition(data["data-field"], data.value, data["data-op"]);
         }
+        return null;
     };
 
-    const parseSubjectSelect = (data) => {
-        return DBQuery.createCondition("subject_1", data.value);
-    }
-
-    const parseLimitInput = (data) => {
-        return DBQuery.createLimitCondition(...data.value);
+    const parseOrderByCondition = (data) => {
+        if (data.value && data["data-desc"]) {
+            return DBQuery.createSortCondition(data.value, data["data-desc"]);
+        }
+        return null;
     };
 
-    const parseSearchBox = (data) => {
-        let checkboxes = document.getElementsByClassName("search-checkbox");
-        let searchConditions = [];
-        for(let i = 0; i < checkboxes.length; i++) {
-            let checkbox = checkboxes[i];
-            if (checkbox.checked) {
-                let searchTerms = DBQuery.createTerms(data.value);
-                let conditions = [];
-        
-                searchTerms.forEach(term => {
-                    conditions.push(DBQuery.createCondition(checkbox.value, term, "LIKE"));
-                });
-
-                searchConditions.push(...conditions);
-            }
+    const parseLimitCondition = (data) => {
+        if (data["data-row-count"]) {       
+            return DBQuery.createLimitCondition(data["data-row-count"], data["data-offset"]);
         }
-        
-        if (searchConditions.length == 1) {
-            return searchConditions[0];
-        } else if (searchConditions.length > 1) {
-            return searchConditions;
-        }
-    };
-
-    const parseDateRange = function (data) {
-        return DBQuery.createCondition("datediff(curdate(), full_date)", data.value, "<");
+        return null;
     };
 
     let proto = {
+        setSettings: setSettings,
         parseConditions: parseConditions,
-        parseLimitInput: parseLimitInput,
         setResultsLimit: setResultsLimit,
         setResultsOffset: setResultsOffset
     }
