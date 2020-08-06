@@ -218,6 +218,14 @@ div#date {
  }
 
 @media screen and (max-width: 899px){
+	.show-form {
+
+	}
+
+	.hide-form #car-form {
+		display: none;
+	}
+
 	#car-form {
 		width: 100%;
 		top: 57px;

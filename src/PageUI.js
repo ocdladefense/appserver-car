@@ -201,10 +201,17 @@ class PageUI extends BaseComponent {
             this
         );
 
+        let carCreateLink = super.createVNode(
+            "a",
+            { href: "../car-create" },
+            "Create Criminal Apellate Review",
+            this
+        );
+
         let formVNode = super.createVNode(
             "form",
-            { id: "car-form" },
-            [formSearchVNode, mobileSeparatorVNode, formFilterVNode],
+            { id: this.id },
+            [formSearchVNode, mobileSeparatorVNode, formFilterVNode, carCreateLink],
             this
         );
 
@@ -326,7 +333,7 @@ class PageUI extends BaseComponent {
         function theHandler(e, context = thisContext) {
             let target = e.target;
 
-            const ignore = ["car-limit"];
+            const ignore = ["car-limit", "car-create-link"];
             if (e.type != "input" || ignore.includes(target.id) || 
                 (target.parentNode.id == "checkbox-group" && document.getElementById("car-search-box").value == "")) {
                 return false;

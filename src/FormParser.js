@@ -4,7 +4,7 @@ const FormParser = (function() {
     let id;
     let overides = {};
     let dontParse = [];
-    let resultsLimit;
+    let resultsLimit = 0;
     let resultsOffset = 0;
 
     function FormParser() {}
@@ -62,14 +62,16 @@ const FormParser = (function() {
           
             if (overides[formField]) {
                 conditions.push(overides[formField](data));
+                continue;
             }
 
-            let parserFunctions = [parseWhereCondition, parseOrderByCondition, parseLimitCondition];
+            let parserFunctions = [parseInsertCondition, parseWhereCondition, parseOrderByCondition, parseLimitCondition];
             for (let i in parserFunctions) {
                 let parserFunction = parserFunctions[i];
                 let condition = parserFunction(data);
                 if (condition != null) {
                     conditions.push(condition);
+                    break;
                 }
             }
         }
@@ -78,7 +80,6 @@ const FormParser = (function() {
         //query.addCondition();
         conditions.push(DBQuery.createLimitCondition(resultsLimit, resultsOffset));
 
-        console.log(conditions);
         return conditions;
     };
 
@@ -99,6 +100,13 @@ const FormParser = (function() {
     const parseLimitCondition = (data) => {
         if (data["data-row-count"]) {       
             return DBQuery.createLimitCondition(data["data-row-count"], data["data-offset"]);
+        }
+        return null;
+    };
+
+    const parseInsertCondition = (data) => {
+        if (data["data-field"] && data["data-row-id"]) {
+            return DBQuery.createInsertCondition(data["data-field"], data.value, data["data-row-id"]);
         }
         return null;
     };

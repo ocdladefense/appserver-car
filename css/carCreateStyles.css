@@ -1,0 +1,42 @@
+h1 {
+    text-align: center;
+}
+
+.form-field {
+    width: 100%;
+    display: block;
+    margin-bottom: 20px;
+    padding: 4.1px;
+}
+
+.form-field > input, .form-field > textarea {
+    width: 85%;
+}
+
+.form-field > label {
+    width: 15%;
+    vertical-align: bottom;
+    display: inline-block;
+    text-transform: capitalize;
+}
+
+.existing-group {
+    display: inline;
+}
+
+.existing-select {
+    padding: 4.1px;
+    width: 42.5%;
+}
+
+.existing-input {
+    width: 42.5%;
+}
+
+#car-submit-button {
+    width: 100%;
+}
+
+.errors {
+    color: red;
+}

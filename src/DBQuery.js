@@ -14,6 +14,10 @@ const DBQuery = (function() {
         return {"type":"limitCondition", "rowCount": rowCount, "offset": offset}
     };
 
+    DBQuery.createInsertCondition = function(field, value, rowId) {
+        return {"type":"insertCondition", "field": field, "value": value, "rowId": rowId}
+    };
+
     DBQuery.createTerms = function(value) {
         let punctuationless = value.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()@\+\?><\[\]\+]/g, ' '); // could cause problems with dates
         let extraSpaceRemoved = punctuationless.replace(/ +(?= )/g,'');
