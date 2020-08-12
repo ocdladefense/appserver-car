@@ -19,7 +19,7 @@ class CarModule extends Module {
 	public function __construct(){
 		parent::__construct();
 		$this->routes = $this->carRoutes();
-		$this->files = array("Car.php","CarUrlParser.php","CarParserException.php","CarDB.php","CarIterator.php","CarParserStatus.php");
+		$this->files = array("Car.php","CarUrlParser.php","CarParserException.php","CarDB.php","CarIterator.php","CarParserStatus.php","CarCreate.php");
 		$this->name = "car";
 	}
 
@@ -28,6 +28,7 @@ class CarModule extends Module {
 			"cars"		=> array(
 				"callback" => "carSearchForm",
 				"Content-Type" => "text/html"
+				//"access" => true
 			),
 			"load-cars" => array(
 				"callback" => "loadCarsData",
@@ -75,6 +76,16 @@ class CarModule extends Module {
 			),
 			"car-submit" => array(
 				"callback" => "carSubmit",
+				"Content-Type" => "text/html"
+			),
+			"car-update" => array(
+				"callback" => "carUpdate",
+				"Content-Type" => "text/html",
+				"parameters" => ["carId"]
+				//"access" => is_user_profile("staffUser")
+			),
+			"car-submit-update" => array(
+				"callback" => "carSubmitUpdate",
 				"Content-Type" => "text/html"
 			)
 		);
@@ -570,87 +581,19 @@ class CarModule extends Module {
 	}
 
 	function carCreate() {
-		Template::addPath(__DIR__ . "/templates");
-	
-		$template = Template::loadTemplate("webconsole");
-
-		$css = array(
-			"active" => true,
-			"href" => "/modules/car/css/carCreateStyles.css"
-		);
-		
-		$template->addStyle($css);
-
-		$js = array(
-			array(
-				"src" => "/modules/car/src/FormSubmission.js"
-			),
-			array(
-				"src" => "/modules/car/src/FormParser.js"
-			),
-			array(
-				"src" => "/modules/car/src/DBQuery.js"
-			),
-			array(
-				"src" => "/modules/car/src/BaseComponent.js"
-			),
-			array(
-				"src" => "/modules/car/src/CreateCarUI.js"
-			),
-			array(
-				"src" => "/modules/car/src/CarCreateModule.js"
-			)
-		);
-
-		$template->addScripts($js);
-
-		$existingOptionFields = ["subject_1", "plaintiff", "circut", "majority"];
-		$newFields = ["title", "subject_2", "summary", "result", "defendant", "citation", "judges", "url"];
-		$listOptions = [];
-
-		foreach ($existingOptionFields as $field) {
-			$listOptions[$field] = $this->getListOptions($field);
-		}
-
-		$newFieldsJson = json_encode($newFields);
-		$listOptionsJson = json_encode($listOptions);
-	
-		$content = Template::renderTemplate("car-create", array(
-			'newFieldsJson' => $newFieldsJson,
-			'listOptionsJson' => $listOptionsJson
-		));
-	
-		return $template->render(array(
-			"defaultStageClass" 	=> "not-home", 
-			"content" 				=> $content,
-			"doInit"				=> false
-		));
+		return carCreatePage();
 	}
 
 	function carSubmit() {
-		$json = file_get_contents('php://input');
-		$json = urldecode($json);
-		$phpJson = json_decode($json);
-		$columns = [];
-		$values = [];
+		submitNewCar();
+	}
 
-		foreach ($phpJson as $insertCondition) {
-			if ($insertCondition->type == "insertCondition") {
-				if (!in_array($insertCondition->field, $columns)) {
-					$columns[] = $insertCondition->field;					
-				}
-				$values[$insertCondition->rowId][$insertCondition->field] = $insertCondition->value;
-			}
-		}
+	function carUpdate($carId) {
+		return carCreatePage($carId);
+	}
 
-		//$values = array($phpJson->row);
-		//$this->carCreate();
-		$builder = new QueryBuilder();
-		$builder->setTable("car");
-		$builder->setColumns($columns);
-		$builder->setValues($values);
-		$sql = $builder->compile("insert");
-		MysqlDatabase::query($sql, "insert");
+	function carSubmitUpdate() {
+		updateCar();
 	}
 }
 

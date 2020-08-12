@@ -56,6 +56,10 @@ h2 {
 	text-align: center;
 }
 
+#car-id {
+	display: none;
+}
+
 #car-form-button {
 	position: fixed;
     top: 15px;
@@ -219,7 +223,7 @@ div#date {
 
 @media screen and (max-width: 899px){
 	.show-form {
-
+		display: block;
 	}
 
 	.hide-form #car-form {

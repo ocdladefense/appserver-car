@@ -1,9 +1,11 @@
 <script>
+    const isUpdate = <?php $update ? print($update) : print("false") ?>;
+    const car = <?php $car ? print($car) : print("null") ?>;
     const newFields = <?php print($newFieldsJson) ?>;
     const existingFields = <?php print($listOptionsJson) ?>;
 </script>
 
-<h1>Create Criminal Apellate Review</h1>
+<h1><?php $update ? print("Update") : print("Create") ?> Criminal Apellate Review</h1>
 
 <div id="car-create-content">
 

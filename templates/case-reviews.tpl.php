@@ -27,7 +27,9 @@ const loadOffset = <?php print($loadOffset) ?>;
 		?>
 
 		<div class="car-instance">
-		
+			<div id="car-id">
+				<?php print $case["id"]; ?>
+			</div>
 			<hr />
 			<div id="title" class="car-field-container">
 					<div class='car-title'>
@@ -93,6 +95,7 @@ const loadOffset = <?php print($loadOffset) ?>;
 					 	 ?>
 				</div>
 			</div>
+			<a onClick="linkToCarUpdate(<?php print $case["id"]; ?>)" href="#">Update</a>
 		</div>
 	<?php endforeach; ?>
 </div>

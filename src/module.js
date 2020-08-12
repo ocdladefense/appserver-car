@@ -47,11 +47,17 @@ function sendQuery() {
 
 function style() {
     if (window.innerWidth >= 900) {
-
+        document.getElementById("car-form").style.display = "block";
     } else {
         let topStyle = (document.getElementById("header").offsetHeight - 2) + "px";
         document.getElementById("car-form").style.top = topStyle;
     }
+}
+
+//Called by an eventhandler declared on the template
+function linkToCarUpdate(carId) {
+    let url = "car-update?carId=" + carId;
+    window.location.href = url;
 }
 
 function subject1CustomParse(data) {

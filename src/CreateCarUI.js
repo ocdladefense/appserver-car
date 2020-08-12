@@ -33,7 +33,7 @@ class CreateCarUI extends BaseComponent {
                     ),
                     super.createVNode(
                         type,
-                        { id: id, "data-field": field, "data-row-id": 1 },
+                        { id: id, class: "car-create-field", "data-field": field, "data-row-id": 1, rows: 5 },
                         [],
                         this
                     )
@@ -66,11 +66,20 @@ class CreateCarUI extends BaseComponent {
         let hiddenFields = hiddenFieldNames.map(field => {
             return super.createVNode(
                 "input",
-                { type: "hidden", id: "insert-" + field, "data-field": field, "data-row-id": 1 },
+                { type: "hidden", id: "insert-" + field, class: "car-create-field", "data-field": field, "data-row-id": 1 },
                 [],
                 this
             );
         });
+
+        if (isUpdate) {
+            hiddenFields.push(super.createVNode(
+                "input",
+                {type: "hidden", id: "insert-id", class: "car-create-field", "data-field": "id"},
+                [],
+                this
+            ));
+        }
 
         let hiddenFieldsVNode = super.createVNode(
             "div",
@@ -109,14 +118,18 @@ class CreateCarUI extends BaseComponent {
         this.fillDateFields(new Date());
 
         this.attachSelectEvents();
+
+        if (isUpdate) {
+            this.fillUpdateFields();
+        }
     }
 
     existingOptionVNode(field, values) {
-        let options = values.map(option => {
+        let options = values.map(value => {
             return super.createVNode(
                 "option",
-                { value: option.value },
-                option.value,
+                { value: value },
+                value,
                 this
             );
         });
@@ -139,7 +152,7 @@ class CreateCarUI extends BaseComponent {
 
         let inputVNode = super.createVNode(
             "input",
-            { id: "insert-" + field, class: "existing-input", "data-field": field, "data-row-id": 1 },
+            { id: "insert-" + field, class: "existing-input car-create-field", "data-field": field, "data-row-id": 1 },
             [],
             this
         );
@@ -185,7 +198,7 @@ class CreateCarUI extends BaseComponent {
         }
     }
 
-    prepareExistingOptionFields() {
+    selectExistingOptionFields() {
         let selects = document.getElementsByTagName("SELECT");
         for (let i = 0; i < selects.length; i++) {
             let select = selects[i];
@@ -212,7 +225,7 @@ class CreateCarUI extends BaseComponent {
         let thisContext = this;
 
         function theHandler() {
-            thisContext.prepareExistingOptionFields();
+            thisContext.selectExistingOptionFields();
 
             if (thisContext.validateForm()) {
                 fn();
@@ -225,13 +238,13 @@ class CreateCarUI extends BaseComponent {
     validateForm() {
         this.clearErrors();
 
-        let formFields = [];
-        formFields.push(...this.form.getElementsByTagName("input"));
-        formFields.push(...this.form.getElementsByTagName("textarea"));
+        let formFields = document.getElementsByClassName("car-create-field");
+        //formFields.push(...this.form.getElementsByTagName("input"));
+        //formFields.push(...this.form.getElementsByTagName("textarea"));
 
         let errors = [];
 
-        for (let i in formFields) {
+        for (let i = 0; i < formFields.length; i++) {
             let formField = formFields[i];
 
             if (formField.value == null || formField.value.trim() == "") {
@@ -274,5 +287,21 @@ class CreateCarUI extends BaseComponent {
         let formElement = super.createElement(errorListVNode);
         
         document.getElementById(this.id).prepend(formElement);
+    }
+
+    fillUpdateFields() {
+        //let inputs = document.getElementsByTagName("INPUT");
+        //let textareas = document.getElementsByTagName("TEXTAREA");
+        let formFields = document.getElementsByClassName("car-create-field");
+        //formFields.push(...inputs);
+        //formFields.push(...textareas);
+        
+        for (let i = 0; i < formFields.length; i++) {
+            let formField = formFields[i];
+            let field = formField.dataset.field;
+            if (car[field]) {
+                formField.value = car[field];
+            }
+        }
     }
 }

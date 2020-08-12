@@ -14,20 +14,39 @@ window.onload = () => {
     parser.setSettings(settings);
 
     page.render();
-    page.onFormSubmit(submitForm);
+
+    let submitFunction = isUpdate ? confirmUpdate : submitForm;
+    page.onFormSubmit(submitFunction);
 
     style();
 }
 
-function submitForm() {        
+function submitForm(url = "/car-submit") {        
     let conditions = parser.parseConditions();
+    console.log(conditions);
 
-    let response = FormSubmission.send("/car-submit", JSON.stringify(conditions));
+    let response = FormSubmission.send(url, JSON.stringify(conditions));
     response.then(data => {
         window.location.href = '../cars';
-        //let container = document.getElementById("results");
-        //container.innerHTML = data;
     });  
+}
+
+function confirmUpdate() {
+    let confirmText = "Are you sure you want to update the following fields?\n"
+
+    let formFields = document.getElementsByClassName("car-create-field");
+
+    for (let i = 0; i < formFields.length; i++) {
+        let formField = formFields[i];
+        let field = formField.dataset.field;
+        if (car[field] && car[field] !== formField.value) {
+            confirmText += field + "\n";
+        }
+    }
+
+    if (confirm(confirmText)) {
+        submitForm("/car-submit-update");
+    }
 }
 
 function style() {
