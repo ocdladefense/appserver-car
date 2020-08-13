@@ -24,9 +24,10 @@ const loadOffset = <?php print($loadOffset) ?>;
 			$date = $case["month"] .DOM_SPACE .$case["day"] .DOM_COMMA.DOM_SPACE.$case["year"];
 			$subject = strtolower($case["subject_1"]);
 
+			$containerId = "car-container-".$case["id"];
 		?>
 
-		<div class="car-instance">
+		<div class="car-instance" id="<?php print $containerId ?>">
 			<div id="car-id">
 				<?php print $case["id"]; ?>
 			</div>
@@ -96,6 +97,7 @@ const loadOffset = <?php print($loadOffset) ?>;
 				</div>
 			</div>
 			<a onClick="linkToCarUpdate(<?php print $case["id"]; ?>)" href="#">Update</a>
+			<!--<a onClick="linkToCarDelete(<?php //print $case["id"]; ?>)" href="#">Delete</a>-->
 		</div>
 	<?php endforeach; ?>
 </div>

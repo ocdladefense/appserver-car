@@ -59,6 +59,14 @@ class CarModule extends Module {
 			"car-submit-update" => array(
 				"callback" => "carSubmitUpdate",
 				"Content-Type" => "text/html"
+			),
+			"car-delete" => array(
+				"callback" => "carDelete",
+				"Content-Type" => "text/html"
+			),
+			"car-delete-submit" => array(
+				"callback" => "carDeleteSubmit",
+				"Content-Type" => "text/html"
 			)
 		);
 	}
@@ -415,9 +423,6 @@ class CarModule extends Module {
 		$results = $this->formatResults($results, $config);
 		Template::addPath(__DIR__ . "/templates");
 
-		// Doesn't work
-		// return Template::renderTemplate("case-reviews",array('cases'=>$results));
-
 		return Template::renderTemplate("case-reviews",array('cases'=>$results));
 		//return $cars;
 	}
@@ -436,6 +441,35 @@ class CarModule extends Module {
 
 	function carSubmitUpdate() {
 		updateCar();
+	}
+
+	function carDelete() {
+		$carId = file_get_contents('php://input');
+		$car = getCarById($carId);
+
+		$config = array(
+			'teaserWordLength' => 40, 'teaserCutoff' => 350, 'useTeasers' => true
+		);
+		$car = $this->formatResults(array($car), $config);
+
+		
+		Template::addPath(__DIR__ . "/templates");
+
+		return Template::renderTemplate("case-reviews",array('cases'=>$car));
+	}
+
+	function carDeleteSubmit() {
+		$json = file_get_contents('php://input');
+		$json = urldecode($json);
+		$condition = json_decode($json);
+
+		$builder = new QueryBuilder();
+		$builder->setTable("car");
+		$builder->setType("delete");
+		$builder->setConditions(array($condition));
+		$sql = $builder->compile();
+		print($sql);
+		MysqlDatabase::query($sql, "delete");
 	}
 }
 
@@ -463,6 +497,7 @@ function fetchCarsFromDb($json){
 	}*/
 	$builder = new QueryBuilder();
 	$builder->setTable("car");
+	$builder->setType("select");
 	$builder->setConditions($conditions);
 	$builder->setSortConditions($sortConditions);
 	$builder->setLimitCondition($limitCondition);
