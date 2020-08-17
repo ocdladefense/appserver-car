@@ -12,9 +12,26 @@ class PageUI extends BaseComponent {
 
     attachAttributes() {
         for(let i = 0; i < this.form.elements.length; i++) {
+            let elem = this.form.elements[i];
             let a = document.createAttribute("data-form-id");
             a.value = this.id;
-            this.form.elements[i].setAttributeNode(a);
+            elem.setAttributeNode(a);
+        }
+    }
+
+    attachSelectDataAttributes(target) {
+        if (target.tagName == "SELECT") {       
+            let option = target.options[target.selectedIndex];
+            for (let i in option.attributes) {
+                let att = option.attributes[i];
+                if (att.name && att.name.startsWith("data-")) {
+                    if (target[att.name]) {
+                        target[att.name].value = att.value;
+                    } else {
+                        target.setAttribute(att.name, att.value);
+                    }
+                }
+            }
         }
     }
 
@@ -53,7 +70,7 @@ class PageUI extends BaseComponent {
             this
         );
 
-        let selectOptions = options.map(option => {
+        let selectOptions = subjects.options.map(option => {
             return super.createVNode(
                 "option",
                 { value: option.value },
@@ -73,12 +90,12 @@ class PageUI extends BaseComponent {
 
         let selectVNode = super.createVNode(
             "select",
-            { id: "car-subject_1", class: "car-form-field" },
+            { id: "car-subject_1", class: "car-form-field", "data-field": subjects.field },
             selectOptions,
             this
         );
 
-        let dateOptions = dateRanges.map(option => {
+        let dateOptions = dateRanges.options.map(option => {
             if (option.value == "space") {
                 return super.createVNode(
                     "option",
@@ -98,7 +115,7 @@ class PageUI extends BaseComponent {
 
         let selectDateVNode = super.createVNode(
             "select",
-            { id: "car-dates", class: "car-form-field" },
+            { id: "car-dates", class: "car-form-field", "data-field": dateRanges.field, "data-op": dateRanges.op },
             dateOptions,
             this
         );
@@ -136,7 +153,7 @@ class PageUI extends BaseComponent {
         let sortOptions = sorts.map(option => {
             return super.createVNode(
                 "option",
-                { value: option.value },
+                { value: option.value, "data-desc": option.desc },
                 option.name,
                 this
             );
@@ -144,7 +161,7 @@ class PageUI extends BaseComponent {
 
         let selectSortVNode = super.createVNode(
             "select",
-            { id: "car-sort", class: "car-form-field" },
+            { id: "car-sort", class: "car-form-field", "data-desc": true},
             sortOptions,
             this
         );
@@ -184,10 +201,17 @@ class PageUI extends BaseComponent {
             this
         );
 
+        let carCreateLink = super.createVNode(
+            "a",
+            { href: "../car-create" },
+            "Create Criminal Apellate Review",
+            this
+        );
+
         let formVNode = super.createVNode(
             "form",
-            { id: "car-form" },
-            [formSearchVNode, mobileSeparatorVNode, formFilterVNode],
+            { id: this.id },
+            [formSearchVNode, mobileSeparatorVNode, formFilterVNode, carCreateLink],
             this
         );
 
@@ -243,6 +267,60 @@ class PageUI extends BaseComponent {
         
     }
 
+    getCheckedCheckboxes() {
+        let checkboxes = document.getElementsByClassName("search-checkbox");
+        let checkedBoxes = [];
+        for (let i in checkboxes) {
+            if (checkboxes[i].checked) {
+                checkedBoxes.push(checkboxes[i]);
+            }
+        }
+        return checkedBoxes;
+    }
+
+    addSearchBoxValues() {
+        if (!!document.getElementById("car-search-box-values")) {
+            document.getElementById("car-search-box-values").remove();
+        }
+        let removeWheres = [];
+        settings.whereFields.map((field) => {
+            if (!field.startsWith("car-hiddenValue-")) {
+                removeWheres.push(field);
+            }
+        });
+        settings.whereFields = removeWheres;
+
+        let checkedBoxes = this.getCheckedCheckboxes();
+        let valueNodes = [];
+        for (let i in checkedBoxes) {
+            let checkbox = checkedBoxes[i];
+            let id = "car-hiddenValue-" + checkbox.id;
+            valueNodes.push(
+                super.createVNode(
+                    "input",
+                    { id: id, style: "display: none;", value: JSON.stringify({
+                        field: checkbox.value,
+                        value: document.getElementById("car-search-box").value,
+                        op: "LIKE"
+                    }) },
+                    [],
+                    this
+                )
+            );
+            settings.whereFields.push(id);
+        }
+
+        let searchBoxValueVNode = super.createVNode(
+            "div",
+            { id: "car-search-box-values" },
+            valueNodes,
+            this
+        );
+
+        let element = super.createElement(searchBoxValueVNode);
+        document.getElementById("car-search-container").append(element);
+    }
+
     handleCheckboxGroup() {
         if (target.parentNode.id == "checkbox-group") {
             document.getElementById("car-search-box").placeholder = searchPlaceholderText();
@@ -255,16 +333,20 @@ class PageUI extends BaseComponent {
         function theHandler(e, context = thisContext) {
             let target = e.target;
 
-            const ignore = ["car-limit"];
+            const ignore = ["car-limit", "car-create-link"];
             if (e.type != "input" || ignore.includes(target.id) || 
                 (target.parentNode.id == "checkbox-group" && document.getElementById("car-search-box").value == "")) {
                 return false;
             }   
-
-            scroller.reset();
-            
+           
             clearTimeout(context.timer);
-            context.timer = setTimeout(fn, context.timerLength);
+            context.timer = setTimeout(() => {
+                thisContext.attachSelectDataAttributes(target);
+
+                scroller.reset();
+
+                fn();
+            }, context.timerLength);
 
             return false;
         }

@@ -19,7 +19,7 @@ class CarModule extends Module {
 	public function __construct(){
 		parent::__construct();
 		$this->routes = $this->carRoutes();
-		$this->files = array("Car.php","CarUrlParser.php","CarParserException.php","CarDB.php","CarIterator.php","CarParserStatus.php");
+		$this->files = array("Car.php","CarUrlParser.php","CarParserException.php","CarDB.php","CarIterator.php","CarParserStatus.php","CarCreate.php");
 		$this->name = "car";
 	}
 
@@ -28,6 +28,7 @@ class CarModule extends Module {
 			"cars"		=> array(
 				"callback" => "carSearchForm",
 				"Content-Type" => "text/html"
+				//"access" => true
 			),
 			"load-cars" => array(
 				"callback" => "loadCarsData",
@@ -67,6 +68,24 @@ class CarModule extends Module {
 			),
 			"car-load-more" => array(
 				"callback" => "loadMore",
+				"Content-Type" => "text/html"
+			),
+			"car-create" => array(
+				"callback" => "carCreate",
+				"Content-Type" => "text/html"
+			),
+			"car-submit" => array(
+				"callback" => "carSubmit",
+				"Content-Type" => "text/html"
+			),
+			"car-update" => array(
+				"callback" => "carUpdate",
+				"Content-Type" => "text/html",
+				"parameters" => ["carId"]
+				//"access" => is_user_profile("staffUser")
+			),
+			"car-submit-update" => array(
+				"callback" => "carSubmitUpdate",
 				"Content-Type" => "text/html"
 			)
 		);
@@ -155,7 +174,11 @@ class CarModule extends Module {
 		$defaultSubject->name = "All Subjects";
 		$defaultSubject->value = "";
 
-		$subjectJson = empty($subjects) ? json_encode(array($defaultSubject)) : json_encode($subjects);
+		$subjectSettings = new stdClass();
+		$subjectSettings->field = "subject_1";
+		$subjectSettings->options = $subjects;
+
+		$subjectJson = empty($subjects) ? json_encode(array($defaultSubject)) : json_encode($subjectSettings);
 
 		//$subjectJson = "";
 
@@ -177,6 +200,10 @@ class CarModule extends Module {
 			["This Month", $this->thisMonth()]
 		);
 
+		$dateSettings = new stdClass();
+		$dateSettings->field = "datediff(curdate(), full_date)";
+		$dateSettings->op = "<";
+
 		$parsedDates = array();
 		foreach($dateRanges as $dateRange) {
 			$option = new stdClass();
@@ -185,22 +212,23 @@ class CarModule extends Module {
 			$parsedDates[] = $option;
 		}
 
-		$dateRangesJson = json_encode($parsedDates);
+		$dateSettings->options = $parsedDates;
 
-		$sorts = array(/*
-			["By Date Descending", "ORDER BY str_to_date(concat(month, ' ', day, ' ', year), '%M %d %Y') DESC"],
-			["By Date Ascending", "ORDER BY str_to_date(concat(month, ' ', day, ' ', year), '%M %d %Y')"],
-			["By Title Alphabetically", "ORDER BY title"]*/
-			["Newest to Oldest ", "full_date=DESC"],
-			["Oldest to Newest", "full_date"],
-			["Title Alphabetically", "title"]
+		$dateRangesJson = json_encode($dateSettings);
+
+		//Nested arrays describe the field to be ordered by and if it should order by desc
+		$sorts = array(
+			["Newest to Oldest ", ["full_date", true]],
+			["Oldest to Newest", ["full_date", false]],
+			["Title Alphabetically", ["title", false]]
 		);
 
 		$parsedSorts = array();
 		foreach($sorts as $sort) {
 			$option = new stdClass();
 			$option->name = $sort[0];
-			$option->value = $sort[1];
+			$option->value = $sort[1][0];
+			$option->desc = $sort[1][1];
 			$parsedSorts[] = $option;
 		}
 
@@ -551,6 +579,22 @@ class CarModule extends Module {
 		return Template::renderTemplate("case-reviews",array('cases'=>$results));
 		//return $cars;
 	}
+
+	function carCreate() {
+		return carCreatePage();
+	}
+
+	function carSubmit() {
+		submitNewCar();
+	}
+
+	function carUpdate($carId) {
+		return carCreatePage($carId);
+	}
+
+	function carSubmitUpdate() {
+		updateCar();
+	}
 }
 
 
@@ -575,7 +619,6 @@ function fetchCarsFromDb($json){
 	if ($phpJson->value == "ALL") {
 		return MysqlDatabase::query("SELECT * FROM car ORDER BY year DESC");
 	}*/
-
 	$builder = new QueryBuilder();
 	$builder->setTable("car");
 	$builder->setConditions($conditions);
@@ -650,8 +693,6 @@ function loadCarsData($xml,$url){
 	}
 	return $cars;
 }
-
-
 
 //----------Testing Functions-----------------
 //route that takes an int number of days starting today tho attempts to load urls for without execution of calluserfunc line

@@ -24,9 +24,6 @@ const InfiniteScroller = (function(){
 
         parser.setResultsOffset(offset);
         let conditions = parser.parseConditions();
-
-        //Revist to match syntax in module.js
-        //conditions.push(parser.parseLimitInput([loadLimit, offset]));
     
         return FormSubmission.send("car-load-more", JSON.stringify(conditions));
     }
