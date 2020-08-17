@@ -57,9 +57,10 @@ function submitNewCar() {
     //$this->carCreate();
     $builder = new QueryBuilder();
     $builder->setTable("car");
+    $builder->setType("insert");
     $builder->setColumns($columns);
     $builder->setValues($values);
-    $sql = $builder->compile("insert");
+    $sql = $builder->compile();
     MysqlDatabase::query($sql, "insert");
 }
 
@@ -81,9 +82,10 @@ function updateCar() {
     
     $builder = new QueryBuilder();
     $builder->setTable("car");
+    $builder->setType("update");
     $builder->setConditions($conditions);
     $builder->setUpdateFields($updateFields);
-    $sql = $builder->compile("update");
+    $sql = $builder->compile();
     MysqlDatabase::query($sql, "update");
 }
 

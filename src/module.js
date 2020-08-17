@@ -60,6 +60,60 @@ function linkToCarUpdate(carId) {
     window.location.href = url;
 }
 
+function linkToCarDelete(carId) {
+
+    let response = FormSubmission.send("/car-delete", carId);
+    response.then(data => {
+        /*let container = document.getElementById("car-results");
+        container.innerHTML = data;
+
+        confirmDelete(carId);*/
+        
+        var carToDelete = document.getElementById("car-container-" + carId);
+        var myModal = new Modal({}, false);
+        console.log(myModal);
+        myModal.render(carToDelete.cloneNode(true));
+        //myModal.content = carToDelete.cloneNode(true);
+        myModal.cancel = function () { return false; };
+        myModal.submit = function () { 
+            deleteCar(carId); 
+            carToDelete.parentElement.removeChild(carToDelete);
+        };
+        
+        /*let promise = new Promise((resolve, reject) => {
+            addHtml();
+            resolve("done");
+        });
+
+        //promise.then(() => {
+        //    confirmDelete(carId);
+        //});
+        
+        let result = await promise;
+
+        alert(result);*/
+        
+    });
+}
+
+function confirmDelete(carId) {
+    if (confirm("Are you sure you want to permanently delete this Criminal Apellate Review?")) {
+        deleteCar(carId);
+    } else {
+        window.location.href = "/cars";
+    }
+};
+
+function deleteCar(carId) {
+    let whereCondition = DBQuery.createCondition("id", carId);
+
+    let response = FormSubmission.send("/car-delete-submit", JSON.stringify(whereCondition));
+    response.then(data => {
+        console.log(data);
+        window.location.href = "/cars";
+    });
+}
+
 function subject1CustomParse(data) {
     let checkboxes = document.getElementsByClassName("search-checkbox");
     let searchConditions = [];
