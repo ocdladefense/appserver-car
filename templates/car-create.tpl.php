@@ -1,6 +1,7 @@
 <script>
     const isUpdate = <?php $update ? print($update) : print("false") ?>;
     const car = <?php $car ? print($car) : print("null") ?>;
+    const token = "<?php print($token) ?>";
     const newFields = <?php print($newFieldsJson) ?>;
     const existingFields = <?php print($listOptionsJson) ?>;
 </script>

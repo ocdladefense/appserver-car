@@ -1,6 +1,10 @@
 <?php
 
 function carCreatePage($carId = -1) {
+    //if (empty($_SESSION['token'])) {
+        $_SESSION['token'] = bin2hex(random_bytes(32));
+    //}
+
     $carJson;
     $update = false;
 
@@ -26,6 +30,7 @@ function carCreatePage($carId = -1) {
     $content = Template::renderTemplate("car-create", array(
         'update' => $update,
         'car' => $carJson,
+        'token' => $_SESSION['token'],
         'newFieldsJson' => $newFieldsJson,
         'listOptionsJson' => $listOptionsJson
     ));
@@ -71,8 +76,11 @@ function updateCar() {
 	$conditions = array();
 	$updateFields = array();
 
-	//This removes queries that return everything
 	foreach($phpJson as $cond) {
+        if ($cond->type == "token" && $_SESSION['token'] != $cond->value) {
+            return "Invalid session token";
+        }
+
 		if (is_array($cond) || $cond->type == "condition") {
 			$conditions[] = $cond;
 		} else if ($cond->type == "insertCondition") {

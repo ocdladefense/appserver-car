@@ -97,7 +97,7 @@ const loadOffset = <?php print($loadOffset) ?>;
 				</div>
 			</div>
 			<a onClick="linkToCarUpdate(<?php print $case["id"]; ?>)" href="#">Update</a>
-			<!--<a onClick="linkToCarDelete(<?php //print $case["id"]; ?>)" href="#">Delete</a>-->
+			<a onClick="linkToCarDelete(<?php print $case["id"]; ?>)" href="#">Delete</a>
 		</div>
 	<?php endforeach; ?>
 </div>

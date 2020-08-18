@@ -102,10 +102,17 @@ class CreateCarUI extends BaseComponent {
             this
         );
 
+        let tokenVNode = super.createVNode(
+            "input",
+            { type: "hidden", id: "car-create-token", value: token },
+            [],
+            this
+        );
+
         let formVNode = super.createVNode(
             "form",
             { id: this.id },
-            [visibleFieldsVNode, hiddenFieldsVNode, buttonVNode, carsLinkVNode],
+            [tokenVNode, visibleFieldsVNode, hiddenFieldsVNode, buttonVNode, carsLinkVNode],
             this
         );
 
