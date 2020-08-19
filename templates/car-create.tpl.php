@@ -8,6 +8,10 @@
 
 <h1><?php $update ? print("Update") : print("Create") ?> Criminal Apellate Review</h1>
 
+<div id="car-create-results">
+
+</div>
+
 <div id="car-create-content">
 
 </div>

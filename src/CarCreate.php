@@ -1,15 +1,20 @@
 <?php
 
 function carCreatePage($carId = -1) {
-    //if (empty($_SESSION['token'])) {
+    /*print_r($_SESSION);
+    if (empty($_SESSION['token'])) {
         $_SESSION['token'] = bin2hex(random_bytes(32));
-    //}
+    }*/
 
     $carJson;
     $update = false;
 
     if ($carId != -1) {
         $car = getCarById($carId);
+        if ($car["full_date"]) {
+            $createDate = new DateTime($car["full_date"]);
+            $car["full_date"] = $createDate->format('Y-m-d');
+        }
         $carJson = json_encode($car);
         $update = true;
     }
@@ -17,7 +22,7 @@ function carCreatePage($carId = -1) {
     $template = attachTemplateFiles();
 
     $existingOptionFields = ["subject_1", "plaintiff", "circut", "majority"];
-    $newFields = ["title", "subject_2", "summary", "result", "defendant", "citation", "judges", "url"];
+    $newFields = ["title", "subject_2", "summary", "result", "defendant", "citation", "judges", "url", "full_date"];
     $listOptions = [];
 
     foreach ($existingOptionFields as $field) {
@@ -30,7 +35,7 @@ function carCreatePage($carId = -1) {
     $content = Template::renderTemplate("car-create", array(
         'update' => $update,
         'car' => $carJson,
-        'token' => $_SESSION['token'],
+        //'token' => $_SESSION['token'],
         'newFieldsJson' => $newFieldsJson,
         'listOptionsJson' => $listOptionsJson
     ));
@@ -66,7 +71,7 @@ function submitNewCar() {
     $builder->setColumns($columns);
     $builder->setValues($values);
     $sql = $builder->compile();
-    MysqlDatabase::query($sql, "insert");
+    return MysqlDatabase::query($sql, "insert");
 }
 
 function updateCar() {
@@ -77,9 +82,9 @@ function updateCar() {
 	$updateFields = array();
 
 	foreach($phpJson as $cond) {
-        if ($cond->type == "token" && $_SESSION['token'] != $cond->value) {
+        /*if ($cond->type == "token" && $_SESSION['token'] != $cond->value) {
             return "Invalid session token";
-        }
+        }*/
 
 		if (is_array($cond) || $cond->type == "condition") {
 			$conditions[] = $cond;
@@ -94,7 +99,7 @@ function updateCar() {
     $builder->setConditions($conditions);
     $builder->setUpdateFields($updateFields);
     $sql = $builder->compile();
-    MysqlDatabase::query($sql, "update");
+    return MysqlDatabase::query($sql, "update");
 }
 
 function getCarById($carId) {

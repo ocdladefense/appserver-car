@@ -50,15 +50,25 @@ class PageUI extends BaseComponent {
         readMore(ellipsis, moreText, btnText);
     }
 
-    handleButton() {
+    toggleForm() {
         let form = document.getElementById("car-form");
         let button = document.getElementById("car-form-button");
-        if (button.value == "Show Form") {
+        if (button.value == "Show Search Form") {
             form.style.display = "block";
-            button.value = "Hide Form";
+            button.value = "Hide Search Form";
         } else {
             form.style.display = "none";
-            button.value = "Show Form";
+            button.value = "Show Search Form";
+        }
+    }
+
+    displayForm() {
+        let form = document.getElementById("car-form");
+        let button = document.getElementById("car-form-button");
+        if (button.value == "Show Search Form") {
+            form.style.display = "none";
+        } else {
+            form.style.display = "block";
         }
     }
 
@@ -201,31 +211,36 @@ class PageUI extends BaseComponent {
             this
         );
 
-        let carCreateLink = super.createVNode(
-            "a",
-            { href: "../car-create" },
-            "Create Criminal Apellate Review",
-            this
-        );
-
         let formVNode = super.createVNode(
             "form",
             { id: this.id },
-            [formSearchVNode, mobileSeparatorVNode, formFilterVNode, carCreateLink],
+            [formSearchVNode, mobileSeparatorVNode, formFilterVNode],
             this
         );
 
         let buttonVNode = super.createVNode(
             "input",
-            { type: "button", id: "car-form-button", value: "Show Form" },
+            { type: "button", id: "car-form-button", value: "Show Search Form" },
             [],
+            this
+        );
+
+        let carCreateLink = super.createVNode(
+            "a",
+            { id: "car-create-link", class: "car-link-btn", href: "../car-create" },
+            [super.createVNode(
+                "span",
+                {},
+                "Create New Criminal Apellate Review",
+                this
+            )],
             this
         );
 
         let completeVNode = super.createVNode(
             "div",
             {},
-            [headingVNode, buttonVNode, formVNode],
+            [headingVNode, buttonVNode, formVNode, carCreateLink],
             this
         );
 
@@ -240,7 +255,7 @@ class PageUI extends BaseComponent {
         //Check the first checkbox
         (document.getElementsByClassName("search-checkbox"))[0].checked = true;
 
-        document.getElementById("car-form-button").addEventListener("click", this.handleButton);
+        document.getElementById("car-form-button").addEventListener("click", this.toggleForm);
         
         searchPlaceholderText();
     }  
@@ -261,6 +276,24 @@ class PageUI extends BaseComponent {
                     if (checkbox.type == "checkbox") {
                         checkbox.addEventListener("input", callback);
                     }
+                }
+                break;
+            case "carUpdate":
+                let updateBtns = document.getElementsByClassName("car-update-link");
+                for (let i = 0; i < updateBtns.length; i++) {
+                    updateBtns[i].addEventListener("click", (e) => {
+                        e.preventDefault();
+                        callback(updateBtns[i].dataset.carid);
+                    });
+                }
+                break;
+            case "carDelete":
+                let deleteBtns = document.getElementsByClassName("car-delete-link");
+                for (let i = 0; i < deleteBtns.length; i++) {
+                    deleteBtns[i].addEventListener("click", (e) => {
+                        e.preventDefault();
+                        callback(deleteBtns[i].dataset.carid);
+                    });
                 }
                 break;
         }

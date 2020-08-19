@@ -1,3 +1,13 @@
+#container-left.column{
+	display: none;
+}
+
+#stage{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 h1 {
     text-align: center;
 }
@@ -48,5 +58,9 @@ h1 {
 }
 
 .errors {
+    color: red;
+}
+
+#car-create-results {
     color: red;
 }

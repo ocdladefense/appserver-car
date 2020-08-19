@@ -26,7 +26,12 @@ function submitForm(url = "/car-submit") {
 
     let response = FormSubmission.send(url, JSON.stringify(conditions));
     response.then(data => {
-        window.location.href = '../cars';
+        if (data != "") {
+            window.scrollTo(0, 0);
+            document.getElementById("car-create-results").innerHTML = data;
+        } else {
+            window.location.href = '../cars';
+        }      
     });  
 }
 
@@ -38,8 +43,8 @@ function confirmUpdate() {
     for (let i = 0; i < formFields.length; i++) {
         let formField = formFields[i];
         let field = formField.dataset.field;
-        if (car[field] && car[field] !== formField.value) {
-            confirmText += field + "\n";
+        if (!["day", "month", "year"].includes(field) && car[field] && car[field] !== formField.value) {
+            confirmText += page.formatLabel(field) + "\n";
         }
     }
 

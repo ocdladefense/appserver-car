@@ -10,15 +10,15 @@ class CreateCarUI extends BaseComponent {
     render() {
         let visibleFieldNames = newFields;
         let existingFieldNames = existingFields;
-        let hiddenFieldNames = ["full_date", "day", "month", "year"];
+        let hiddenFieldNames = ["day", "month", "year"];
 
-        let fieldOrder = ["title", "subject_1", "subject_2", "summary", "result", "plaintiff", "defendant", "citation", "circut", "majority", "judges", "url"];
+        let fieldOrder = ["title", "full_date", "subject_1", "subject_2", "summary", "result", "plaintiff", "defendant", "citation", "circut", "majority", "judges", "url"];
 
         let visibleFields = visibleFieldNames.map(field => {
             let id = "insert-" + field;
-            let type = "input";
+            let tag = "input";
             if (field == "summary" || field == "result") {
-                type = "textarea";
+                tag = "textarea";
             }
 
             return super.createVNode(
@@ -28,12 +28,12 @@ class CreateCarUI extends BaseComponent {
                     super.createVNode(
                     "label",
                     { id: id + "-label", for: id },
-                    field + ": ",
+                    this.formatLabel(field) + ": ",
                     this
                     ),
                     super.createVNode(
-                        type,
-                        { id: id, class: "car-create-field", "data-field": field, "data-row-id": 1, rows: 5 },
+                        tag,
+                        { id: id, type: field == "full_date" ? "date" : "text", class: "car-create-field", "data-field": field, "data-row-id": 1, rows: 5 },
                         [],
                         this
                     )
@@ -102,17 +102,17 @@ class CreateCarUI extends BaseComponent {
             this
         );
 
-        let tokenVNode = super.createVNode(
+        /*let tokenVNode = super.createVNode(
             "input",
             { type: "hidden", id: "car-create-token", value: token },
             [],
             this
-        );
+        );*/
 
         let formVNode = super.createVNode(
             "form",
             { id: this.id },
-            [tokenVNode, visibleFieldsVNode, hiddenFieldsVNode, buttonVNode, carsLinkVNode],
+            [visibleFieldsVNode, hiddenFieldsVNode, buttonVNode, carsLinkVNode],
             this
         );
 
@@ -121,8 +121,6 @@ class CreateCarUI extends BaseComponent {
         document.getElementById("car-create-content").prepend(formElement);
 
         this.form = document.getElementById(this.id);
-
-        this.fillDateFields(new Date());
 
         this.attachSelectEvents();
 
@@ -174,7 +172,7 @@ class CreateCarUI extends BaseComponent {
         let labelVNode = super.createVNode(
             "label",
             { id: "insert-" + field + "-label" },
-            field + ": ",
+            this.formatLabel(field) + ": ",
             this
         );
 
@@ -184,6 +182,21 @@ class CreateCarUI extends BaseComponent {
             [labelVNode, divVNode],
             this
         );
+    }
+
+    formatLabel(field) {
+        switch(field) {
+            case "circut":
+                return "circuit";
+            case "subject_1":
+                return "subject 1";
+            case "subject_2":
+                return "subject 2";
+            case "full_date":
+                return "date";
+            default:
+                return field;
+        }
     }
 
     attachSelectEvents() {
@@ -217,14 +230,19 @@ class CreateCarUI extends BaseComponent {
         }
     }
 
-    fillDateFields(date) {
-        let today = date;
-        let day = today.getDate();
-        let month = today.toLocaleString('default', { month: 'long' });
-        let year = today.getFullYear();
-        document.getElementById("insert-full_date").value = today.toISOString().slice(0, 19).replace('T', ' '); //Formating for MySQL
+    fillDateFields() {
+        let date = document.getElementById("insert-full_date").value;
+        let [year, month, day] = date.split("-");
+        month -= 1;
+        //let today = new Date(year, month, day);
+        //let day = today.getDate();
+        var monthName = [ "January", "February", "March", "April", "May", "June", 
+           "July", "August", "September", "October", "November", "December" ];
+        //let month = today.toLocaleString('default', { month: 'long' });
+        //let year = today.getFullYear();
+        document.getElementById("insert-full_date").value = date;//(year + "/" + month + "/" + day).toISOString().slice(0, 19).replace('T', ' '); //Formating for MySQL
         document.getElementById("insert-day").value = day;
-        document.getElementById("insert-month").value = month;
+        document.getElementById("insert-month").value = monthName[month];
         document.getElementById("insert-year").value = year;
     }
 
@@ -235,6 +253,10 @@ class CreateCarUI extends BaseComponent {
             thisContext.selectExistingOptionFields();
 
             if (thisContext.validateForm()) {
+                //let date = document.getElementById("insert-full_date").value;
+                //let [year, month, day] = date.split("-");
+                //month -= 1;
+                thisContext.fillDateFields();
                 fn();
             }           
         }
@@ -253,6 +275,9 @@ class CreateCarUI extends BaseComponent {
 
         for (let i = 0; i < formFields.length; i++) {
             let formField = formFields[i];
+            if (["day", "month", "year"].includes(formField.dataset.field)) {
+                continue;
+            }
 
             if (formField.value == null || formField.value.trim() == "") {
                 errors.push(formField.dataset.field);
@@ -279,7 +304,7 @@ class CreateCarUI extends BaseComponent {
             return super.createVNode(
                 "li",
                 { class: "errors" },
-                error + " is required.",
+                this.formatLabel(error) + " is required.",
                 this
             );
         });
@@ -307,7 +332,12 @@ class CreateCarUI extends BaseComponent {
             let formField = formFields[i];
             let field = formField.dataset.field;
             if (car[field]) {
-                formField.value = car[field];
+                if (existingFields[field]) {
+                    document.getElementById(field + "-select").value = car[field];
+                    formField.disabled = true;
+                } else {
+                    formField.value = car[field];
+                }
             }
         }
     }

@@ -26,6 +26,8 @@ window.onload = () => {
     page.addFeature("readMoreSummary", page.readMoreClick);
     page.addFeature("infiniteScroll", scroller);
     page.addFeature("searchBoxPlaceholder", searchPlaceholderText);
+    page.addFeature("carUpdate", linkToCarUpdate);
+    page.addFeature("carDelete", openCarDeleteModal);
 
     page.onUserSearch(sendQuery);
 
@@ -42,10 +44,17 @@ function sendQuery() {
     response.then(data => {
         let container = document.getElementById("car-results");
         container.innerHTML = data;
+        reloadButtons();
     });
 }
 
+function reloadButtons() {
+    page.addFeature("carUpdate", linkToCarUpdate);
+    page.addFeature("carDelete", openCarDeleteModal);
+}
+
 function style() {
+    page.displayForm();
     if (window.innerWidth >= 900) {
         document.getElementById("car-form").style.display = "block";
     } else {
@@ -59,13 +68,12 @@ function styleModal() {
     carModal.style.top = "10%";
 }
 
-//Called by an eventhandler declared on the template
 function linkToCarUpdate(carId) {
     let url = "car-update?carId=" + carId;
     window.location.href = url;
 }
 
-function linkToCarDelete(carId) {
+function openCarDeleteModal(carId) {
     var carToDelete = document.getElementById("car-container-" + carId);
     var myModal = modal;
     myModal.renderElement = function (el) {
@@ -85,8 +93,14 @@ function linkToCarDelete(carId) {
     myModelElement = addModalElements(myModelElement);
     myModal.renderElement(myModelElement);
     myModal.show();
-    document.getElementById("car-modal-cancel").addEventListener("click", myModal.cancel);
-    document.getElementById("car-modal-confirm").addEventListener("click", myModal.confirm);
+    document.getElementById("car-modal-cancel").addEventListener("click", (e) => {
+        e.preventDefault();
+        myModal.cancel();
+    });
+    document.getElementById("car-modal-confirm").addEventListener("click", (e) => {
+        e.preventDefault();
+        myModal.confirm();
+    });
     $("body").addClass("stop-scrolling");
 }
 
