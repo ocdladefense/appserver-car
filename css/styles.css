@@ -192,6 +192,7 @@ div#date {
 }
 
 #modal{
+	position: fixed;
 	color: rgba(0,0,0,0.7);
 	top: 300px;
 	width: 70%;
