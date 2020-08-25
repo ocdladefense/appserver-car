@@ -444,21 +444,6 @@ class CarModule extends Module {
 	}
 
 	function carDelete() {
-		$carId = file_get_contents('php://input');
-		$car = getCarById($carId);
-
-		$config = array(
-			'teaserWordLength' => 40, 'teaserCutoff' => 350, 'useTeasers' => true
-		);
-		$car = $this->formatResults(array($car), $config);
-
-		
-		Template::addPath(__DIR__ . "/templates");
-
-		return Template::renderTemplate("case-reviews",array('cases'=>$car));
-	}
-
-	function carDeleteSubmit() {
 		$json = file_get_contents('php://input');
 		$json = urldecode($json);
 		$condition = json_decode($json);
@@ -468,7 +453,6 @@ class CarModule extends Module {
 		$builder->setType("delete");
 		$builder->setConditions(array($condition));
 		$sql = $builder->compile();
-		print($sql);
 		MysqlDatabase::query($sql, "delete");
 	}
 }

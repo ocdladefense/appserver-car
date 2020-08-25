@@ -36,6 +36,7 @@ const InfiniteScroller = (function(){
         let results = container.innerHTML;
         results += responseResults;
         container.innerHTML = results;
+        reloadButtons();
     }
 
     const reset = () => {
