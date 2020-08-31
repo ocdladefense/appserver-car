@@ -1,13 +1,18 @@
 <?php
 
-define("DOM_SPACE"," ");	
-
 
 if($subjectJson == "") {
 	$subjectJson = "[]";
 }
-
 ?>
+
+
+<?php if(count($cases) <= 0): ?> 
+	<h4 style="text-align: center;">There are no results that match your search.</h4>
+<?php exit; endif; ?>
+
+
+
 <script> 
 const subjects = <?php print($subjectJson) ?>;
 const dateRanges = <?php print($dateRangesJson) ?>;
@@ -16,6 +21,8 @@ const sorts = <?php print($sortsJson) ?>;
 const loadLimit = <?php print($loadLimit) ?>;
 const loadOffset = <?php print($loadOffset) ?>;
 </script>
+
+
 <!-- <input placeholder="For demonstrating event framework" type="text" style="width: 400px; position: relative; top: -140px;"></input> -->
 
 <div id="car-results">
