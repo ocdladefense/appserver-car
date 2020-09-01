@@ -84,10 +84,8 @@ class CaseReviewsDb {
 	}
 
 
-	public function delete($carId) {
-		$json = file_get_contents('php://input');
-		$json = urldecode($json);
-		$condition = json_decode($json);
+	public function delete($json) {
+		$condition = $this->parseJson($json);
 
 		$builder = new QueryBuilder();
 		$builder->setTable("car");
@@ -112,24 +110,11 @@ class CaseReviewsDb {
 
 		$loadLimit = 10;
 
-		// Perform a query for CARs in the database.
-		// @todo - should return an iterable list of SObjects.
-		// If conditons have been passed in then use them to build the query
-		// otherwise use the next line for the query
-		if(!empty($params)){
-			$builder = new QueryBuilder();
-			$builder->setTable("car");
-			$builder->setConditions(json_decode($params));
-			$sql = $builder->compile();
-
-			return MysqlDatabase::query($sql);
-		}
-		else {
+		if ($json === null) {
 			return MysqlDatabase::query("SELECT * FROM car ORDER BY full_date DESC LIMIT " . $loadLimit);
 		}
 
-		$json = urldecode($json);
-		$phpJson = json_decode($json);
+		$phpJson = $this->parseJson($json);
 		$conditions = array();
 		$sortConditions = array();
 		$limitCondition = "";
@@ -175,4 +160,8 @@ class CaseReviewsDb {
 
 
 
+	function parseJson($json) {
+		$json = urldecode($json);
+		return json_decode($json);
+	}
 }

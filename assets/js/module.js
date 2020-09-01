@@ -43,7 +43,7 @@ function sendQuery() {
     let response = FormSubmission.send("/car-results", JSON.stringify(conditions));
     response.then(data => {
         let container = document.getElementById("car-results");
-        container.innerHTML = data;
+        container.innerHTML = getElementByIdFromString(data, "car-results").innerHTML;
         reloadButtons();
     });
 }
@@ -182,7 +182,16 @@ function subject1CustomParse(data) {
     }
 }
 
+function getElementByIdFromString (string, id) {
+    let temp = createElement(vNode(
+        "div",
+        {},
+        []
+    ));
 
+    temp.innerHTML = string;
+    return temp.querySelector("#" + id);
+};
 
 function readMore(ellipsis, moreText, btnText) {
 

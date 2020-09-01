@@ -34,7 +34,8 @@ const InfiniteScroller = (function(){
         }               
         let container = document.getElementById("car-results");
         let results = container.innerHTML;
-        results += responseResults;
+        let newPage = getElementByIdFromString(responseResults, "car-results");
+        results += responseResults; //newPage.innerHTML;
         container.innerHTML = results;
         reloadButtons();
     }

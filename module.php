@@ -2,6 +2,7 @@
 
 use \Html\HtmlLink;
 use function \Html\createElement as createElement;
+use \Http;
 
 
 define("DOM_SECTION_BREAK","<p>&nbsp;</p>");
@@ -28,7 +29,7 @@ class CarModule extends Module {
 			"Content-Type" => "application/json"
 		),
 		"car-results" => array(
-			"callback" => "getCarResults",
+			"callback" => "nextPage",
 			"Content-Type" => "text/html"
 		),
 		"car-build-select-list" => array(
@@ -36,8 +37,8 @@ class CarModule extends Module {
 			"Content-Type" => "application/json"
 		),
 		"car-load-more" => array(
-			"callback" => "loadMore",
-			"Content-Type" => "text/html"
+			"callback" => "nextPage",
+			"content-type" => Http\MIME_TEXT_HTML_PARTIAL
 		),
 		"car-create" => array(
 			"callback" => "carCreate",
@@ -58,7 +59,7 @@ class CarModule extends Module {
 			"Content-Type" => "text/html"
 		),
 		"car-delete" => array(
-			"callback" => "carDelete",
+			"callback" => "delete",
 			"Content-Type" => "text/html"
 		),
 		"car-delete-submit" => array(
@@ -107,7 +108,7 @@ class CarModule extends Module {
 	
 
 	
-	public function getPage($page = 1, $withForm = true) {
+	public function getPage($page = 1, $withForm = true, $json = null) {
 		// Prepare data for the template.
 		$db = new CaseReviewsDb();
 		
@@ -115,7 +116,7 @@ class CarModule extends Module {
 		$tpl->addPath(__DIR__ . "/templates");
 
 
-		$tpl->formatResults($db->select(), array(
+		$tpl->formatResults($db->select($json), array(
 			"teaserWordLength" => 40, "teaserCutoff" => 350, "useTeasers" => true));
 
 		// Return something that can be converted into a string!
@@ -142,6 +143,10 @@ class CarModule extends Module {
 
 
 	
+
+	public function loadRecords($json) {
+		return $this->getPage(1, false, $json);
+	}
 
 
 
@@ -183,7 +188,11 @@ class CarModule extends Module {
 
 	// @todo callout to CaseReviewsDb.
 	function delete() {
+		$json = file_get_contents('php://input');
 		
+		$db = new CaseReviewsDb();
+
+		return $db->delete($json);
 	}
 	
 	
