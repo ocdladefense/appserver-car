@@ -4,23 +4,41 @@ class CaseReviewsTemplate extends Template {
 
 		// Component styles.
 		private $css = array(
-			"active" => true,
-			"href" => "/modules/car/assets/css/styles.css",
+			array(
+				"active" => true,
+				"href" => "/modules/car/assets/css/styles.css",
+			),
+			array(
+				"active" => true,
+				"href" => "/modules/car/assets/css/carCreateStyles.css"
+			)
 		);
 		
 
 		// Component scripts.
-		private $js = array(
-			// "/modules/car/src/settings.js",
-			"BaseComponent.js",
-			"FormParser.js",
-			"FormSubmission.js",
-			"DBQuery.js",
-			// "EventFramework.js",
-			"car.js",
-			"InfiniteScroller.js",
-			"module.js",
-			"PageUI.js"
+		private $core = array(
+			
+			"/content/libraries/database/DBQuery.js",
+			"/content/libraries/component/BaseComponent.js",
+			"/content/libraries/form/FormParser.js",
+			"/content/libraries/form/FormSubmission.js"
+		);
+
+		/*
+		<script src="/modules/car/assets/js/InfiniteScroller.js"></script>
+		<script src="/modules/car/assets/js/PageUI.js"></script>
+		<script src="/modules/car/assets/js/module.js"></script>
+		<!--<script src="/modules/car/assets/js/CreateCarUI.js"></script>
+		<script src="/modules/car/assets/js/CarCreateModule.js"></script>-->
+		*/
+		private $module = array(
+			"InfiniteScroller.js", // maybe
+			
+			// all custom below here.
+			"PageUI.js",
+			// "CreateCarUI.js",
+			// "CarCreateModule.js",
+			"module.js"
 		);
 
 
@@ -30,13 +48,17 @@ class CaseReviewsTemplate extends Template {
 			
 			$this->addStyles($this->css);
 
+			$scripts = array();
 			
-			$js = array_map(function($name) {
-				return array("/modules/car/assets/js/" . $name);
-			}, $this->js);
+			foreach($this->core as $name) {
+				$scripts [] = array("src" => $name);			
+			}
+			foreach($this->module as $name) {
+				$scripts [] = array("src" => "/modules/car/assets/js/".$name);			
+			}
 			
 			
-			$this->addScripts($js);
+			$this->addScripts($scripts);
 		}
 	
 
