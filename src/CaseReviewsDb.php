@@ -2,9 +2,10 @@
 
 
 // Assume that this model/helper might apply to several other objects.
-class CaseReviewsDb {
+class CaseReviewsDb extends GenericDb {
 
 	private $model;
+	private $table = "car";
 
 	public function __construct($modelName = null) {
 	
@@ -32,12 +33,12 @@ class CaseReviewsDb {
 			$values = [];
 
 			foreach ($phpJson as $insertCondition) {
-					if ($insertCondition->type == "insertCondition") {
-							if (!in_array($insertCondition->field, $columns)) {
-									$columns[] = $insertCondition->field;					
-							}
-							$values[$insertCondition->rowId][$insertCondition->field] = $insertCondition->value;
+				if ($insertCondition->type == "insertCondition") {
+					if (!in_array($insertCondition->field, $columns)) {
+							$columns[] = $insertCondition->field;					
 					}
+					$values[$insertCondition->rowId][$insertCondition->field] = $insertCondition->value;
+				}
 			}
 
 			//$values = array($phpJson->row);
@@ -70,94 +71,72 @@ class CaseReviewsDb {
 			} else if ($cond->type == "insertCondition") {
 				$updateFields[] = $cond;
 			}
-			}
+		}
+	
+		$builder = new QueryBuilder();
+		$builder->setTable("car");
+		$builder->setType("update");
+		$builder->setConditions($conditions);
+		$builder->setUpdateFields($updateFields);
+		$sql = $builder->compile();
 		
-			$builder = new QueryBuilder();
-			$builder->setTable("car");
-			$builder->setType("update");
-			$builder->setConditions($conditions);
-			$builder->setUpdateFields($updateFields);
-			$sql = $builder->compile();
-			
-			
-			return MysqlDatabase::query($sql, "update");
+		
+		return MysqlDatabase::query($sql, "update");
 	}
 
 
 	public function delete($json) {
-		$condition = $this->parseJson($json);
+		$conds = $this->parseJson($json);
+		$test = parent::setUpQueryBuilder([$conds], $this->table, "delete");
+		return parent::query("delete");
+
+		/*$condition = $this->parseJson($json);
 
 		$builder = new QueryBuilder();
 		$builder->setTable("car");
 		$builder->setType("delete");
 		$builder->setConditions(array($condition));
 		$sql = $builder->compile();
-		MysqlDatabase::query($sql, "delete");
-	}
-	
-	
-	function fromId($carId) {
-			$query = MysqlDatabase::query("SELECT * FROM car WHERE id = $carId");
-			$parsedQuery = array();
-			foreach($query as $row) {
-					$parsedQuery[] = $row;
-			}
-			return $parsedQuery[0];
+		MysqlDatabase::query($sql, "delete");*/
 	}
 
 
 	public function select($json = null) {
-
-		$loadLimit = 10;
+		$table = $this->table;
 
 		if ($json === null) {
-			return MysqlDatabase::query("SELECT * FROM car ORDER BY full_date DESC LIMIT " . $loadLimit);
+			return MysqlDatabase::query("SELECT * FROM $table ORDER BY full_date DESC");
 		}
 
-		$phpJson = $this->parseJson($json);
-		$conditions = array();
-		$sortConditions = array();
-		$limitCondition = "";
+		$conds = $this->parseJson($json);
 
-		//This removes queries that return everything
-		foreach($phpJson as $cond) {
-			if (is_array($cond) || ($cond->type == "condition" && $cond->value != "ALL")) {
-				$conditions[] = $cond;
-			} else if ($cond->type == "sortCondition") {
-				$sortConditions[] = $cond;
-			} else if ($cond->type == "limitCondition") {
-				$limitCondition = $cond;
+		foreach($conds as $cond) {
+			if ($cond->type == "limitCondition") {
+				$cond->type = "none";
 			}
 		}
 
-		$builder = new QueryBuilder();
-		$builder->setTable("car");
-		$builder->setType("select");
-		$builder->setConditions($conditions);
-		$builder->setSortConditions($sortConditions);
-		$builder->setLimitCondition($limitCondition);
-		$sql = $builder->compile();
-		//print($sql);
-		$results = MysqlDatabase::query($sql);
-		//if results has an error returned as json
-		$results->getIterator();
-	
-	
+		parent::setUpQueryBuilder($conds, $table);
+		$results = parent::query();
+
 		return $results;
 	}
 
+	function getNumOfPages($json) {
+		$conds = $this->parseJson($json);
+		parent::setUpQueryBuilder($conds, $this->table);
+		$count = parent::getPageCount();
 
-
-
-	function getSelectList($field) {
-			$dbResults = MysqlDatabase::query("SELECT DISTINCT {$field} FROM car ORDER BY {$field}");
-			$parsedResults = array();
-			foreach($dbResults as $result) {
-					$parsedResults[] = $result[$field];
-			}
-			return $parsedResults;
+		return $count;
 	}
 
+	function getNextPage($json) {
+		$conds = $this->parseJson($json);
+		parent::setUpQueryBuilder($conds, $this->table);
+		$page = parent::getCurrentPage();
+
+		return $page;
+	}
 
 
 	function parseJson($json) {

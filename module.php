@@ -2,7 +2,7 @@
 
 use \Html\HtmlLink;
 use function \Html\createElement as createElement;
-use \Http;
+//use Http;
 
 
 define("DOM_SECTION_BREAK","<p>&nbsp;</p>");
@@ -19,9 +19,9 @@ define("DOM_SPACE"," ");
 class CarModule extends Module {
 
 	protected $routes = array(
-		"cars"		=> array(
+		"cars" => array(
 			"callback" => "home",
-			"Content-Type" => "text/html"
+			"content-type" => Http\MIME_TEXT_HTML
 			//"access" => true
 		),
 		"car-form" => array(
@@ -30,7 +30,7 @@ class CarModule extends Module {
 		),
 		"car-results" => array(
 			"callback" => "nextPage",
-			"Content-Type" => "text/html"
+			"content-type" => "text/html"
 		),
 		"car-build-select-list" => array(
 			"callback" => "getSelectList",
@@ -81,6 +81,7 @@ class CarModule extends Module {
 		parent::__construct(__DIR__);
 
 		$this->name = "car";
+		$this->loadLimit = 10;
 	}
 
 
@@ -90,9 +91,6 @@ class CarModule extends Module {
 	 * @description Show a list of CARs together with a search form.
 	 *  CAR data is stored in a database.  After loading the data we can build the
 	 *  HTML page using the new case-reviews template.
-	 * 
-	 * Sample parameter with one condition
-	 * $params = '[{"field":"summary","op":"LIKE","value":"duii"}]';
 	 *
 	 * @return String The HTML markup, including the case reviews.
 	 */
@@ -109,18 +107,22 @@ class CarModule extends Module {
 
 	
 	public function getPage($page = 1, $withForm = true, $json = null) {
+		$loadLimit = $this->loadLimit;
+
 		// Prepare data for the template.
 		$db = new CaseReviewsDb();
 		
 		$tpl = new CaseReviewsTemplate("case-reviews");
 		$tpl->addPath(__DIR__ . "/templates");
 
+		$results = $db->select($json);
+		$cases = $this->getResultsFromPage($page, $results, $loadLimit);
 
-		$tpl->formatResults($db->select($json), array(
+		$tpl->formatResults($cases, array(
 			"teaserWordLength" => 40, "teaserCutoff" => 350, "useTeasers" => true));
 
 		// Return something that can be converted into a string!
-		return !$withForm ? $tpl : $tpl->bind(new SearchForm());
+		return !$withForm ? $tpl : $tpl->bind(new SearchForm($loadLimit));
 	}
 	
 	
@@ -129,27 +131,38 @@ class CarModule extends Module {
 		return $this->getPage(1, $withForm);
 	}
 	
-	public function nextPage() {
-		$json = file_get_contents('php://input');
-		
-		return $this->loadRecords($json);
+	public function nextPage($withForm = false) {
+		$db = new CaseReviewsDb();
+		$json = $this->request->getBody();
+		$page = $db->getNextPage($json);
+
+		return $this->getPage($page, $withForm, $json);
 	}	
 	
 	public function getLastPage($withForm = false) {
-		$pages = 10;
+		$db = new CaseReviewsDb();
+		$json = $this->request->getBody();
+		$page = $db->getNumOfPages($json);
 		
-		return $this->getPage($pages - 1, $withForm);
+		return $this->getPage($page, $withForm, $json);
 	}
 
+	function getResultsFromPage($page, $results, $perPage) {
+		$pageResults = array();
+		
+		$start = ($page - 1) * $perPage;
+		$end = $start + $perPage;
+		$i = 0;
+		foreach ($results as $result) {
+			if ($i >= $start && $i < $end) {			
+				$pageResults[] = $result;
+			}
+			$i++;
+		}
 
+		return $pageResults;
+	}
 	
-
-	public function loadRecords($json) {
-		return $this->getPage(1, false, $json);
-	}
-
-
-
 
 	// Find a better name?
 	// For now indicates the user's intent to "edit" something.
@@ -167,6 +180,15 @@ class CarModule extends Module {
 	 */
 	function save() {
 		submitNewCar();
+	}
+
+	function select() {
+		$json = file_get_contents('php://input');
+
+		$db = new CaseReviewsDb();
+		
+		$results = $db->select($json);
+		print_r($results); exit;
 	}
 	
 	function update($carId) {
@@ -188,7 +210,7 @@ class CarModule extends Module {
 
 	// @todo callout to CaseReviewsDb.
 	function delete() {
-		$json = file_get_contents('php://input');
+		$json = $this->request->getBody();
 		
 		$db = new CaseReviewsDb();
 

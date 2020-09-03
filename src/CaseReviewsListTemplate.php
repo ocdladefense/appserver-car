@@ -78,25 +78,25 @@ class CaseReviewsTemplate extends Template {
 		
 			$cases = [];
 
+			//try {			
+				foreach($results as $result) {
 
+					$case = $result;
 
-			foreach($results as $result) {
+					$case["month"] = substr($case["month"], 0, 3);
+					$case["month"] .= ".";
 
-				$case = $result;
+					$summaryArray =  explode(" " , $case["summary"]);
+					$case['useTeaser'] = $useTeasers === true && strlen($case["summary"]) > $teaserCutoff;
 
-				$case["month"] = substr($case["month"], 0, 3);
-				$case["month"] .= ".";
+					$case['teaser'] = implode(" ", array_slice($summaryArray, 0, $teaserWordLength));
+					$case['readMore'] = implode(" ", array_slice($summaryArray, $teaserWordLength));
 
-				$summaryArray =  explode(" " , $case["summary"]);
-				$case['useTeaser'] = $useTeasers === true && strlen($case["summary"]) > $teaserCutoff;
-
-				$case['teaser'] = implode(" ", array_slice($summaryArray, 0, $teaserWordLength));
-				$case['readMore'] = implode(" ", array_slice($summaryArray, $teaserWordLength));
-
-				$cases[] = $case;
-			} 
-
-
+					$cases[] = $case;
+				} 
+			//} catch(Exception $e) {
+				//return $this->bind("cases", $results);
+			//}
 			return $this->bind("cases",$cases);
 		}
 }

@@ -80,14 +80,18 @@ class PageUI extends BaseComponent {
             this
         );
 
-        let selectOptions = subjects.options.map(option => {
-            return super.createVNode(
-                "option",
-                { value: option.value },
-                option.name.toLowerCase(),
-                this
-            );
-        });
+        let selectOptions = [];
+        
+        if (subjects.options) {
+            selectOptions = subjects.options.map(option => {
+                return super.createVNode(
+                    "option",
+                    { value: option.value },
+                    option.name.toLowerCase(),
+                    this
+                );
+            });
+        }
 
         let allOption = super.createVNode(
             "option",

@@ -10,9 +10,7 @@ class SearchForm implements IRenderable {
 	}
 	
 	
-	public function __construct() {
-
-		$loadLimit = 10;
+	public function __construct($loadLimit) {
 		
 		$subjects = $this->getListOptions("subject_1");
 		$defaultSubject = new stdClass();

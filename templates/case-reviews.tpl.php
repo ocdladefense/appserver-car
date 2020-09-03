@@ -9,7 +9,7 @@ if($subjectJson == "") {
 
 <?php if(count($cases) <= 0): ?> 
 	<h4 style="text-align: center;">There are no results that match your search.</h4>
-<?php exit; endif; ?>
+<?php endif; ?>
 
 
 
@@ -24,7 +24,6 @@ const loadOffset = <?php print($loadOffset) ?>;
 
 
 <!-- <input placeholder="For demonstrating event framework" type="text" style="width: 400px; position: relative; top: -140px;"></input> -->
-
 <div id="car-results">
 	<?php
 		foreach($cases as $case):

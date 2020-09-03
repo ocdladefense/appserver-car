@@ -43,7 +43,8 @@ function sendQuery() {
     let response = FormSubmission.send("/car-results", JSON.stringify(conditions));
     response.then(data => {
         let container = document.getElementById("car-results");
-        container.innerHTML = getElementByIdFromString(data, "car-results").innerHTML;
+        let responseElement = getElementByIdFromString(data, "car-results");
+        container.innerHTML = responseElement ? responseElement.innerHTML : data;
         reloadButtons();
     });
 }
