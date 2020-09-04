@@ -78,8 +78,66 @@ function openCarCreateModal() {
 }
 
 function linkToCarUpdate(carId) {
-    let url = "car-update?carId=" + carId;
-    window.location.href = url;
+    document.body.classList.add("loading");
+    //let response = FormSubmission.send("/car-update?carId=" + carId, null);
+    let carResponse = FormSubmission.send("/car-get", carId);
+    let response = FormSubmission.send("/car-form", null);
+    response.then(data => {
+        let json = JSON.parse(JSON.parse(data));
+
+        let myModal = modal;
+        //addModalFunctions(myModal);
+        myModal.cancel = function () {
+            myModal.hide();
+            parser.setSettings(settings);
+            $("body").removeClass("stop-scrolling");
+        };
+        myModal.confirm = function () {
+            //updateHtml(json.car);
+            let carCondition = DBQuery.createCondition("id", carId);
+            console.log(carCondition);
+            let updatedCarResponse = FormSubmission.send("/car-results", JSON.stringify([carCondition]));
+            updatedCarResponse.then(data => {
+                let carContainer = document.getElementById("car-container-" + carId);
+                let tempCar = getElementByIdFromString(data, "car-results")
+                carContainer.innerHTML = tempCar.getElementsByClassName("car-instance")[0].innerHTML;
+                //let newCar = data.getElementById("car-container-" + carId);
+                //carContainer.innerHTML = newCar.innerHTML;
+                reloadButtons();
+                myModal.cancel();
+            });         
+        };
+
+        document.body.classList.remove("loading");
+
+        document.getElementById('modal-content').innerHTML = "";
+
+        json.modal = myModal;
+        //new CarCreateModule(json);
+
+        let props = {
+            id: "car-create-form",
+            newFields: json.inputs,
+            existingFields: json.selects,
+            //isUpdate: responseData.update,
+            //car: responseData.car
+        };
+
+        let form = new CreateCarUI(props);
+        myModal.render(form.render());
+
+        carResponse.then((carToUpdate) => {
+            form.populate(JSON.parse(carToUpdate));
+        });
+
+        form.renderMore();
+
+        document.getElementById("modal").classList.add("update-modal");
+        document.getElementById("car-create-cancel").addEventListener("click", myModal.cancel);
+        
+        myModal.show();
+        $("body").addClass("stop-scrolling");
+    });
 }
 
 function openCarDeleteModal(carId) {

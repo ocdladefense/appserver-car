@@ -1,15 +1,19 @@
 'use strict'
 
 class CreateCarUI extends BaseComponent {
-    constructor() {
+    constructor(props) {
         super();
 
-        this.id = "car-create-form";
+        this.id = props.id;
+        this.newFields = props.newFields;
+        this.existingFields = props.existingFields;
+        this.isUpdate = props.isUpdate;
+        //this.car = props.car;
     }
 
     render() {
-        let visibleFieldNames = newFields;
-        let existingFieldNames = existingFields;
+        let visibleFieldNames = this.newFields;
+        let existingFieldNames = this.existingFields;
         let hiddenFieldNames = ["day", "month", "year"];
 
         let fieldOrder = ["title", "full_date", "subject_1", "subject_2", "summary", "result", "plaintiff", "defendant", "citation", "circut", "majority", "judges", "url"];
@@ -72,7 +76,7 @@ class CreateCarUI extends BaseComponent {
             );
         });
 
-        if (isUpdate) {
+        if (this.isUpdate) {
             hiddenFields.push(super.createVNode(
                 "input",
                 {type: "hidden", id: "insert-id", class: "car-create-field", "data-field": "id"},
@@ -91,14 +95,21 @@ class CreateCarUI extends BaseComponent {
         let buttonVNode = super.createVNode(
             "button",
             { type: "button", id: "car-submit-button" },
-            "Submit",
+            "Submit Changes",
             this
         );
 
         let carsLinkVNode = super.createVNode(
             "a",
-            { href: "../cars" },
-            "Back",
+            { id: "car-create-cancel" },
+            [
+                super.createVNode(
+                    "span",
+                    {},
+                    "Cancel",
+                    this
+                )
+            ],
             this
         );
 
@@ -109,22 +120,40 @@ class CreateCarUI extends BaseComponent {
             this
         );*/
 
-        let formVNode = super.createVNode(
-            "form",
-            { id: this.id },
-            [visibleFieldsVNode, hiddenFieldsVNode, buttonVNode, carsLinkVNode],
+        let resultsVNode = super.createVNode(
+            "div",
+            { id: "car-create-results" },
+            [],
             this
         );
 
+        let formVNode = super.createVNode(
+            "form",
+            { id: this.id },
+            [resultsVNode, visibleFieldsVNode, hiddenFieldsVNode, carsLinkVNode, buttonVNode],
+            this
+        );
+
+        return formVNode;
         let formElement = super.createElement(formVNode);
         
-        document.getElementById("car-create-content").prepend(formElement);
+        document.getElementById("modal-content").prepend(formElement);
 
         this.form = document.getElementById(this.id);
 
         this.attachSelectEvents();
 
-        if (isUpdate) {
+        if (this.isUpdate) {
+            this.fillUpdateFields();
+        }
+    }
+
+    renderMore() {
+        this.form = document.getElementById(this.id);
+
+        this.attachSelectEvents();
+
+        if (this.isUpdate) {
             this.fillUpdateFields();
         }
     }
@@ -200,7 +229,7 @@ class CreateCarUI extends BaseComponent {
     }
 
     attachSelectEvents() {
-        let selects = document.getElementsByTagName("SELECT");
+        let selects = this.form.getElementsByTagName("SELECT");
         for (let i = 0; i < selects.length; i++) {
             let select = selects[i];
             select.addEventListener("input", this.handleExistingOption);
@@ -219,7 +248,7 @@ class CreateCarUI extends BaseComponent {
     }
 
     selectExistingOptionFields() {
-        let selects = document.getElementsByTagName("SELECT");
+        let selects = this.form.getElementsByTagName("SELECT");
         for (let i = 0; i < selects.length; i++) {
             let select = selects[i];
             let input = select.parentNode.getElementsByTagName("INPUT")[0];
@@ -288,7 +317,7 @@ class CreateCarUI extends BaseComponent {
             return true;
         } else {
             this.addErrors(errors);
-            window.scrollTo(0, 0);
+            document.getElementById("modal").scrollTo(0, 0);
             return false;
         }
     }
@@ -321,7 +350,7 @@ class CreateCarUI extends BaseComponent {
         document.getElementById(this.id).prepend(formElement);
     }
 
-    fillUpdateFields() {
+    populate(car) {
         //let inputs = document.getElementsByTagName("INPUT");
         //let textareas = document.getElementsByTagName("TEXTAREA");
         let formFields = document.getElementsByClassName("car-create-field");
@@ -332,7 +361,7 @@ class CreateCarUI extends BaseComponent {
             let formField = formFields[i];
             let field = formField.dataset.field;
             if (car[field]) {
-                if (existingFields[field]) {
+                if (this.existingFields[field]) {
                     document.getElementById(field + "-select").value = car[field];
                     formField.disabled = true;
                 } else {

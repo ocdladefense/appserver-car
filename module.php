@@ -26,7 +26,11 @@ class CarModule extends Module {
 		),
 		"car-form" => array(
 			"callback" => "edit",
-			"Content-Type" => "application/json"
+			"content-type" => Http\MIME_APPLICATION_JSON
+		),
+		"car-get" => array(
+			"callback" => "getCar",
+			"content-type" => Http\MIME_APPLICATION_JSON
 		),
 		"car-results" => array(
 			"callback" => "nextPage",
@@ -178,6 +182,14 @@ class CarModule extends Module {
 		// Do some other stuff configuring the form...
 		
 		return $json->toJson();
+	}
+
+	function getCar() {
+		$carId = $this->request->getBody();
+		$db = new GenericDb();
+		$car = $db->fromId($carId, "car");
+
+		return json_encode($car);
 	}
 
 	/**
