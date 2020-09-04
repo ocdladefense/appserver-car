@@ -26,6 +26,7 @@ window.onload = () => {
     page.addFeature("readMoreSummary", page.readMoreClick);
     page.addFeature("infiniteScroll", scroller);
     page.addFeature("searchBoxPlaceholder", searchPlaceholderText);
+    page.addFeature("carCreate", openCarCreateModal);
     page.addFeature("carUpdate", linkToCarUpdate);
     page.addFeature("carDelete", openCarDeleteModal);
 
@@ -67,6 +68,13 @@ function style() {
 function styleModal() {
     let carModal = document.getElementById("modal");
     carModal.style.top = "10%";
+}
+
+function openCarCreateModal() {
+    let response = FormSubmission.send("/car-create", null);
+    response.then(data => {
+        document.getElementById("car-results").innerHTML = data;
+    });
 }
 
 function linkToCarUpdate(carId) {

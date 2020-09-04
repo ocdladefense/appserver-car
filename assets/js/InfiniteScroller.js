@@ -38,6 +38,7 @@ const InfiniteScroller = (function(){
         results += newPage.innerHTML;
         container.innerHTML = results;
         reloadButtons();
+        console.log("limit: " + loadLimit + "     Offset: " + offset);
     }
 
     const reset = () => {

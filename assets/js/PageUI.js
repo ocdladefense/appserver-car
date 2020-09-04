@@ -231,7 +231,7 @@ class PageUI extends BaseComponent {
 
         let carCreateLink = super.createVNode(
             "a",
-            { id: "car-create-link", class: "car-link-btn", href: "../car-create" },
+            { id: "car-create-link", class: "car-link-btn" },
             [super.createVNode(
                 "span",
                 {},
@@ -281,6 +281,12 @@ class PageUI extends BaseComponent {
                         checkbox.addEventListener("input", callback);
                     }
                 }
+                break;
+            case "carCreate":
+                document.getElementById("car-create-link").addEventListener("click", (e) => {
+                    e.preventDefault();
+                    callback();
+                });
                 break;
             case "carUpdate":
                 let updateBtns = document.getElementsByClassName("car-update-link");

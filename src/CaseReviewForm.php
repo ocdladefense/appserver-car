@@ -14,7 +14,7 @@ class CaseReviewForm implements \Http\IJson {
 			$selects = [];
 
 			foreach ($selectsFields as $field) {
-					$selects[$field] = GenericDb::getSelectList($field);
+					$selects[$field] = GenericDb::getSelectList($field, "car");
 			}
 
 			return array(

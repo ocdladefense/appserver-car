@@ -41,8 +41,8 @@ class CarModule extends Module {
 			"content-type" => Http\MIME_TEXT_HTML_PARTIAL
 		),
 		"car-create" => array(
-			"callback" => "carCreate",
-			"Content-Type" => "text/html"
+			"callback" => "edit",
+			"content-type" => Http\MIME_TEXT_HTML_PARTIAL
 		),
 		"car-submit" => array(
 			"callback" => "carSubmit",
@@ -104,7 +104,13 @@ class CarModule extends Module {
 	}
 	
 	
+	function calculatePageNumber($limit, $offset) {
 
+	}
+
+	function getNumberOfPages($count, $limit) {
+
+	}
 	
 	public function getPage($page = 1, $withForm = true, $json = null) {
 		$loadLimit = $this->loadLimit;
@@ -116,9 +122,9 @@ class CarModule extends Module {
 		$tpl->addPath(__DIR__ . "/templates");
 
 		$results = $db->select($json);
-		$cases = $this->getResultsFromPage($page, $results, $loadLimit);
+		//$cases = $this->getResultsFromPage($page, $results, $loadLimit);
 
-		$tpl->formatResults($cases, array(
+		$tpl->formatResults($results, array(
 			"teaserWordLength" => 40, "teaserCutoff" => 350, "useTeasers" => true));
 
 		// Return something that can be converted into a string!
@@ -132,11 +138,11 @@ class CarModule extends Module {
 	}
 	
 	public function nextPage($withForm = false) {
-		$db = new CaseReviewsDb();
+		//$db = new CaseReviewsDb();
 		$json = $this->request->getBody();
-		$page = $db->getNextPage($json);
+		//$page = $db->getNextPage($json);
 
-		return $this->getPage($page, $withForm, $json);
+		return $this->getPage(1, $withForm, $json);
 	}	
 	
 	public function getLastPage($withForm = false) {
@@ -171,7 +177,7 @@ class CarModule extends Module {
 		$json = new CaseReviewForm();
 		// Do some other stuff configuring the form...
 		
-		return $json;
+		return $json->toJson();
 	}
 
 	/**

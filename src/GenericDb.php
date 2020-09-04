@@ -5,13 +5,17 @@ class GenericDb {
 
 	private $queryBuilder;
 
-	public function setUpQueryBuilder($conds, $table, $type = "select") {
+	public static function setUpQueryBuilder($conds/*, $table, $type = "select"*/) {
+		if (!is_array($conds)) {
+			$conds = [$conds];
+		}
+
 		$conditions = array();
 		$sortConditions = array();
 		$limitCondition = "";
 		$columns = [];
 		$values = [];
-		$updateFields = array();
+		//$updateFields = array();
 
 		foreach($conds as $cond) {
 			if (is_array($cond) || ($cond->type == "condition" && $cond->value != "ALL")) {
@@ -25,22 +29,22 @@ class GenericDb {
 						$columns[] = $cond->field;					
 				}
 				$values[$cond->rowId][$cond->field] = $cond->value;
-			} else if ($cond->type == "insertCondition" && $type == "update") {
-				$updateFields[] = $cond;
-			}
+			}// else if ($cond->type == "insertCondition" && $type == "update") {
+			//	$updateFields[] = $cond;
+			//}
 		}
 
 		$builder = new QueryBuilder();
-		$builder->setTable($table);
-		$builder->setType($type);
+		//$builder->setTable($table);
+		//$builder->setType($type);
 		$builder->setConditions($conditions);
 		$builder->setSortConditions($sortConditions);
 		$builder->setLimitCondition($limitCondition);
 		$builder->setColumns($columns);
 		$builder->setValues($values);
-		$builder->setUpdateFields($updateFields);
+		//$builder->setUpdateFields($updateFields);
 
-		$this->queryBuilder = $builder;
+		return $builder;
 	}
 
 	public function query($type = "select") {

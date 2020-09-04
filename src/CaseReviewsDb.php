@@ -86,9 +86,16 @@ class CaseReviewsDb extends GenericDb {
 
 
 	public function delete($json) {
-		$conds = $this->parseJson($json);
+		/*$conds = $this->parseJson($json);
 		$test = parent::setUpQueryBuilder([$conds], $this->table, "delete");
-		return parent::query("delete");
+		return parent::query("delete");*/
+		$builder = QueryBuilder::fromJson($json);
+		$builder->setTable($this->table);
+		$builder->setType("delete");
+		$sql = $builder->compile();
+		$results = MysqlDatabase::query($sql, "delete");
+
+		return $results;
 
 		/*$condition = $this->parseJson($json);
 
@@ -108,16 +115,20 @@ class CaseReviewsDb extends GenericDb {
 			return MysqlDatabase::query("SELECT * FROM $table ORDER BY full_date DESC");
 		}
 
-		$conds = $this->parseJson($json);
+		/*$conds = $this->parseJson($json);
 
 		foreach($conds as $cond) {
 			if ($cond->type == "limitCondition") {
 				$cond->type = "none";
 			}
-		}
+		}*/
 
-		parent::setUpQueryBuilder($conds, $table);
-		$results = parent::query();
+		//parent::setUpQueryBuilder($conds, $table);
+		$builder = QueryBuilder::fromJson($json);
+		$builder->setTable($table);
+		$builder->setType("select");
+		$sql = $builder->compile();
+		$results = MysqlDatabase::query($sql);
 
 		return $results;
 	}
