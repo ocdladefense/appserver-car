@@ -3,7 +3,7 @@ const CarCreateModule = (function() {
     let page;
     let parser;
 
-    let isUpdate;
+    let isUpdate = true;
     let car;
     let newFields;
     let existingFields;
@@ -58,8 +58,15 @@ const CarCreateModule = (function() {
         for (let i = 0; i < formFields.length; i++) {
             let formField = formFields[i];
             let field = formField.dataset.field;
-            if (!["day", "month", "year"].includes(field) && car[field] && car[field] !== formField.value) {
-                confirmText += page.formatLabel(field) + "\n";
+            if (!["day", "month", "year"].includes(field) && car[field]) {
+                let value = car[field];
+                if (value == "full_date") {
+                    value += " 00:00:00";
+                }
+
+                if (value !== formField.value) {               
+                    confirmText += page.formatLabel(field) + "\n";
+                }
             }
         }
 

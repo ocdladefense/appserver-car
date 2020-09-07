@@ -11,6 +11,10 @@ class CaseReviewsTemplate extends Template {
 			array(
 				"active" => true,
 				"href" => "/modules/car/assets/css/carCreateStyles.css"
+			),
+			array(
+				"active" => true,
+				"href" => "/content/libraries/view/loading.css"
 			)
 		);
 		
@@ -39,7 +43,7 @@ class CaseReviewsTemplate extends Template {
 			// all custom below here.
 			"PageUI.js",
 			"CreateCarUI.js",
-			"CarCreateModule.js",
+			//"CarCreateModule.js",
 			"module.js"
 		);
 

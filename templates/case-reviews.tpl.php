@@ -34,10 +34,10 @@ const loadOffset = <?php print($loadOffset) ?>;
 		?>
 
 		<div class="car-instance" id="<?php print $containerId ?>">
+			<hr />
 			<div id="car-id">
 				<?php print $case["id"]; ?>
 			</div>
-			<hr />
 			<div id="title" class="car-field-container">
 					<div class='car-title'>
 						<?php print $case["title"]; ?>

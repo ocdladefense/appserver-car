@@ -48,14 +48,13 @@ class CarModule extends Module {
 			"callback" => "edit",
 			"content-type" => Http\MIME_TEXT_HTML_PARTIAL
 		),
-		"car-submit" => array(
-			"callback" => "carSubmit",
-			"Content-Type" => "text/html"
+		"car-insert" => array(
+			"callback" => "insert",
+			"content-type" => Http\MIME_TEXT_HTML_PARTIAL
 		),
 		"car-update" => array(
-			"callback" => "carUpdate",
-			"Content-Type" => "text/html",
-			"parameters" => ["carId"]
+			"callback" => "update",
+			"content-type" => Http\MIME_TEXT_HTML_PARTIAL
 			//"access" => is_user_profile("staffUser")
 		),
 		"car-submit-update" => array(
@@ -206,24 +205,23 @@ class CarModule extends Module {
 		$db = new CaseReviewsDb();
 		
 		$results = $db->select($json);
-		print_r($results); exit;
 	}
 	
-	function update($carId) {
+	function update() {
 		// updateCar(); // previously
-		$json = file_get_contents('php://input');
-		// $this->request->getBody();
-		$json = urldecode($json);
-		$phpJson = json_decode($json);	
+		$json = $this->request->getBody();
 		
 		$db = new CaseReviewsDb();
-		$db->update($phpJson);
+		$db->update($json);
 		
 		// What to return?  Some kind of 
 	}
 
 	function insert() {
-		return carCreatePage($carId);
+		$json = $this->request->getBody();
+		
+		$db = new CaseReviewsDb();
+		$db->insert($json);
 	}
 
 	// @todo callout to CaseReviewsDb.

@@ -1,6 +1,7 @@
 let page;
 let parser;
 let scroller;
+let myModal;
 
 //settings descript how the form parser should interpret each form field
 let settings = {
@@ -38,14 +39,16 @@ window.onload = () => {
 window.onresize = style;
 
 function sendQuery() {
+    document.body.classList.add("loading");
     let conditions = parser.parseConditions();
 
     console.log("Submitting Form Input");
-    let response = FormSubmission.send("/car-results", JSON.stringify(conditions));
+    let response = FormSubmission.send("/car-load-more", JSON.stringify(conditions));
     response.then(data => {
+        document.body.classList.remove("loading");
         let container = document.getElementById("car-results");
         let responseElement = getElementByIdFromString(data, "car-results");
-        container.innerHTML = responseElement ? responseElement.innerHTML : data;
+        container.innerHTML = responseElement.children.length > 0 ? responseElement.innerHTML : data;
         reloadButtons();
     });
 }
@@ -71,66 +74,51 @@ function styleModal() {
 }
 
 function openCarCreateModal() {
-    let response = FormSubmission.send("/car-create", null);
-    response.then(data => {
-        document.getElementById("car-results").innerHTML = data;
-    });
-}
-
-function linkToCarUpdate(carId) {
-    document.body.classList.add("loading");
-    //let response = FormSubmission.send("/car-update?carId=" + carId, null);
-    let carResponse = FormSubmission.send("/car-get", carId);
     let response = FormSubmission.send("/car-form", null);
     response.then(data => {
         let json = JSON.parse(JSON.parse(data));
 
-        let myModal = modal;
-        //addModalFunctions(myModal);
+        myModal = modal;
         myModal.cancel = function () {
             myModal.hide();
             parser.setSettings(settings);
             $("body").removeClass("stop-scrolling");
+            myModal = null;
         };
         myModal.confirm = function () {
-            //updateHtml(json.car);
-            let carCondition = DBQuery.createCondition("id", carId);
-            console.log(carCondition);
-            let updatedCarResponse = FormSubmission.send("/car-results", JSON.stringify([carCondition]));
-            updatedCarResponse.then(data => {
-                let carContainer = document.getElementById("car-container-" + carId);
+            let carCondition = DBQuery.createCondition("id", "(SQL)(SELECT max(id) FROM car)");
+            let newCarResponse = FormSubmission.send("/car-load-more", JSON.stringify([carCondition]));
+            newCarResponse.then(data => {
                 let tempCar = getElementByIdFromString(data, "car-results")
-                carContainer.innerHTML = tempCar.getElementsByClassName("car-instance")[0].innerHTML;
-                //let newCar = data.getElementById("car-container-" + carId);
-                //carContainer.innerHTML = newCar.innerHTML;
+                document.getElementById("car-results").prepend(tempCar.getElementsByClassName("car-instance")[0]);
                 reloadButtons();
                 myModal.cancel();
-            });         
+            }); 
         };
 
         document.body.classList.remove("loading");
 
         document.getElementById('modal-content').innerHTML = "";
 
-        json.modal = myModal;
-        //new CarCreateModule(json);
-
         let props = {
             id: "car-create-form",
             newFields: json.inputs,
-            existingFields: json.selects,
-            //isUpdate: responseData.update,
-            //car: responseData.car
+            existingFields: json.selects
         };
 
         let form = new CreateCarUI(props);
         myModal.render(form.render());
 
-        carResponse.then((carToUpdate) => {
-            form.populate(JSON.parse(carToUpdate));
-        });
-
         form.renderMore();
+        form.onFormSubmit(() => { submitForm("/car-insert"); });
+
+        let formSettings = { 
+            formId: "car-create-form", 
+            overides: {}, 
+            dontParse: ["insert-id"]
+        };
+
+        parser.setSettings(formSettings);
 
         document.getElementById("modal").classList.add("update-modal");
         document.getElementById("car-create-cancel").addEventListener("click", myModal.cancel);
@@ -140,9 +128,114 @@ function linkToCarUpdate(carId) {
     });
 }
 
+function linkToCarUpdate(carId) {
+    document.body.classList.add("loading");
+    let carResponse = FormSubmission.send("/car-get", carId);
+    let response = FormSubmission.send("/car-form", null);
+    response.then(data => {
+        let json = JSON.parse(JSON.parse(data));
+
+        myModal = modal;
+        myModal.cancel = function () {
+            myModal.hide();
+            parser.setSettings(settings);
+            $("body").removeClass("stop-scrolling");
+            myModal = null;
+        };
+        myModal.confirm = function () {
+            let carCondition = DBQuery.createCondition("id", carId);
+            let updatedCarResponse = FormSubmission.send("/car-load-more", JSON.stringify([carCondition]));
+            updatedCarResponse.then(data => {
+                let carContainer = document.getElementById("car-container-" + carId);
+                let tempCar = getElementByIdFromString(data, "car-results")
+                carContainer.innerHTML = tempCar.getElementsByClassName("car-instance")[0].innerHTML;
+                reloadButtons();
+                myModal.cancel();
+            });         
+        };
+
+        document.body.classList.remove("loading");
+
+        document.getElementById('modal-content').innerHTML = "";
+
+        let props = {
+            id: "car-create-form",
+            newFields: json.inputs,
+            existingFields: json.selects
+        };
+
+        let form = new CreateCarUI(props);
+        myModal.render(form.render());
+
+        let car;
+        carResponse.then((carToUpdate) => {
+            car = JSON.parse(JSON.parse(carToUpdate));
+            form.populate(car);
+        });
+
+        form.renderMore();
+        form.onFormSubmit(() => { confirmUpdate(car); });
+
+        let formSettings = { 
+            formId: "car-create-form", 
+            overides: {}, 
+            dontParse: [] 
+        };
+
+        parser.setSettings(formSettings);
+
+        document.getElementById("modal").classList.add("update-modal");
+        document.getElementById("car-create-cancel").addEventListener("click", myModal.cancel);
+        
+        myModal.show();
+        $("body").addClass("stop-scrolling");
+    });
+}
+
+function submitForm(url) {
+    document.body.classList.add("loading");        
+    let conditions = parser.parseConditions();
+
+    let response = FormSubmission.send(url, JSON.stringify(conditions));
+    response.then(data => {
+        document.body.classList.remove("loading");
+        if (data.trim() != "") {
+            document.getElementById("modal").scrollTo(0, 0);
+            document.getElementById("car-create-results").innerHTML = data;
+        } else {
+            myModal.confirm();
+        }      
+    });  
+};
+
+function confirmUpdate(car) {
+    let confirmText = "Are you sure you want to update the following fields?\n"
+
+    let formFields = document.getElementsByClassName("car-create-field");
+
+    for (let i = 0; i < formFields.length; i++) {
+        let formField = formFields[i];
+        let field = formField.dataset.field;
+        if (!["day", "month", "year"].includes(field) && car[field]) {
+            let value = car[field];
+            if (field == "full_date") {
+                value = value.split(" ")[0];
+            }
+
+            if (value !== formField.value) {               
+                confirmText += formatLabel(field) + "\n";
+            }
+        }
+    }
+
+    if (confirm(confirmText)) {
+        submitForm("/car-update");
+    }
+};
+
 function openCarDeleteModal(carId) {
     var carToDelete = document.getElementById("car-container-" + carId);
-    var myModal = modal;
+    myModal = modal;
     myModal.renderElement = function (el) {
         document.getElementById('modal-content').innerHTML = "";
         document.getElementById('modal-content').appendChild(el);
@@ -150,11 +243,13 @@ function openCarDeleteModal(carId) {
     myModal.cancel = function () {
             myModal.hide();
             $("body").removeClass("stop-scrolling");
+            myModal = null;
     };
     myModal.confirm = function () {
         myModal.cancel();
         deleteCar(carId); 
         carToDelete.parentElement.removeChild(carToDelete);
+        reloadButtons();
     };
     myModelElement = carToDelete.cloneNode(true);
     myModelElement = addModalElements(myModelElement);
@@ -271,4 +366,24 @@ function readMore(ellipsis, moreText, btnText) {
         btnText.innerHTML = "Read less";
         moreText.style.display = "inline";
       }
+}
+
+function formatLabel(field) {
+    switch(field) {
+        case "circut":
+            return "circuit";
+        case "subject_1":
+            return "subject 1";
+        case "subject_2":
+            return "subject 2";
+        case "full_date":
+            return "date";
+        default:
+            return field;
+    }
+}
+
+function clearEventListeners(element) {
+    elClone = element.cloneNode(true);
+    element.parentNode.replaceChild(elClone, element);
 }

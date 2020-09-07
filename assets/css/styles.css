@@ -268,7 +268,7 @@ div#date {
 	left: 0;
 }
 
-#modal #citation, #modal #circut, #modal #judges, #modal #date {
+#modal #citation.car-field-container, #modal #circut.car-field-container, #modal #judges.car-field-container, #modal #date.car-field-container {
 	display: inline-block;
 	position: absolute;
 	width: 20%;
@@ -277,24 +277,28 @@ div#date {
 	left: 0;
 }
 
-#modal #citation {
+#modal #citation.car-field-container {
 	margin-left: 0;
 }
 
-#modal #circut {
+#modal #circut.car-field-container {
 	margin-left: 20%;
 }
 
-#modal #judges {
+#modal #judges.car-field-container {
 	margin-left: 60%;
 }
 
-#modal #date {
+#modal #date.car-field-container {
 	margin-left: 80%;
 }
 
 #modal .readMoreButton {
 	display: none;
+}
+
+.update-modal {
+	overflow-y: auto;
 }
 
 .stop-scrolling {
@@ -347,7 +351,7 @@ div#date {
 		font-size:11px;
 		text-align: center;
 	}
-	div#citation {
+	div#citation.car-field-container {
 		position: absolute;
 		top: 0px;
 		left: 0px;

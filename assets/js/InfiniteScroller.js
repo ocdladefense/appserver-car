@@ -3,6 +3,7 @@ const InfiniteScroller = (function(){
     function InfiniteScroller() {}
 
     let moreResults = true;
+    let isLoading = false;
     let offset = 0;
 
     const loadMoreResults = () => {
@@ -11,7 +12,8 @@ const InfiniteScroller = (function(){
         }
         let current = $(window).scrollTop();
         let bottom = $(document).height() - $(window).height();
-        if(current >= bottom - 1) {
+        if(current >= bottom - 1 && !isLoading) {
+            addLoadingScreen();
             
             let response = getNextPage(loadLimit);
     
@@ -29,6 +31,9 @@ const InfiniteScroller = (function(){
     }
     
     const appendPage = (responseResults) => {
+        if (isLoading) {
+            removeLoadingScreen();
+        }
         if (responseResults == "") {
             moreResults = false;
         }               
@@ -38,8 +43,17 @@ const InfiniteScroller = (function(){
         results += newPage.innerHTML;
         container.innerHTML = results;
         reloadButtons();
-        console.log("limit: " + loadLimit + "     Offset: " + offset);
     }
+
+    const addLoadingScreen = () => {
+        isLoading = true;
+        document.body.classList.add("loading");
+    };
+
+    const removeLoadingScreen = () => {
+        isLoading = false;
+        document.body.classList.remove("loading");
+    };
 
     const reset = () => {
         moreResults = true;

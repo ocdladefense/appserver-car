@@ -24,7 +24,7 @@ class GenericDb {
 				$sortConditions[] = $cond;
 			} else if ($cond->type == "limitCondition") {
 				$limitCondition = $cond;
-			} else if ($cond->type == "insertCondition" && $type == "insert") {
+			} else if ($cond->type == "insertCondition") {
 				if (!in_array($cond->field, $columns)) {
 						$columns[] = $cond->field;					
 				}

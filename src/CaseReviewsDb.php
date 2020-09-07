@@ -25,63 +25,26 @@ class CaseReviewsDb extends GenericDb {
 			}
 	}
 
-	function insert() {
-			$json = file_get_contents('php://input');
-			$json = urldecode($json);
-			$phpJson = json_decode($json);
-			$columns = [];
-			$values = [];
+	function insert($json) {
+		$builder = QueryBuilder::fromJson($json);
+		$builder->setTable($this->table);
+		$builder->setType("insert");
+		$sql = $builder->compile();
+		$results = MysqlDatabase::query($sql, "insert");
 
-			foreach ($phpJson as $insertCondition) {
-				if ($insertCondition->type == "insertCondition") {
-					if (!in_array($insertCondition->field, $columns)) {
-							$columns[] = $insertCondition->field;					
-					}
-					$values[$insertCondition->rowId][$insertCondition->field] = $insertCondition->value;
-				}
-			}
-
-			//$values = array($phpJson->row);
-			//$this->carCreate();
-			$builder = new QueryBuilder();
-			$builder->setTable("car");
-			$builder->setType("insert");
-			$builder->setColumns($columns);
-			$builder->setValues($values);
-			$sql = $builder->compile();
-			
-			
-			return MysqlDatabase::query($sql, "insert");
+		return $results;
 	}
 
 
 
-	function update($phpJson) {
-
-		$conditions = array();
-		$updateFields = array();
-
-		foreach($phpJson as $cond) {
-					/*if ($cond->type == "token" && $_SESSION['token'] != $cond->value) {
-							return "Invalid session token";
-					}*/
-
-			if (is_array($cond) || $cond->type == "condition") {
-				$conditions[] = $cond;
-			} else if ($cond->type == "insertCondition") {
-				$updateFields[] = $cond;
-			}
-		}
-	
-		$builder = new QueryBuilder();
-		$builder->setTable("car");
+	function update($json) {
+		$builder = QueryBuilder::fromJson($json);
+		$builder->setTable($this->table);
 		$builder->setType("update");
-		$builder->setConditions($conditions);
-		$builder->setUpdateFields($updateFields);
 		$sql = $builder->compile();
-		
-		
-		return MysqlDatabase::query($sql, "update");
+		$results = MysqlDatabase::query($sql, "update");
+
+		return $results;
 	}
 
 
@@ -112,7 +75,7 @@ class CaseReviewsDb extends GenericDb {
 		$table = $this->table;
 
 		if ($json === null) {
-			return MysqlDatabase::query("SELECT * FROM $table ORDER BY full_date DESC");
+			return MysqlDatabase::query("SELECT * FROM $table ORDER BY full_date DESC LIMIT 10");
 		}
 
 		/*$conds = $this->parseJson($json);

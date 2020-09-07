@@ -291,6 +291,7 @@ class PageUI extends BaseComponent {
             case "carUpdate":
                 let updateBtns = document.getElementsByClassName("car-update-link");
                 for (let i = 0; i < updateBtns.length; i++) {
+                    clearEventListeners(updateBtns[i]);
                     updateBtns[i].addEventListener("click", (e) => {
                         e.preventDefault();
                         callback(updateBtns[i].dataset.carid);
@@ -300,6 +301,7 @@ class PageUI extends BaseComponent {
             case "carDelete":
                 let deleteBtns = document.getElementsByClassName("car-delete-link");
                 for (let i = 0; i < deleteBtns.length; i++) {
+                    clearEventListeners(deleteBtns[i]);
                     deleteBtns[i].addEventListener("click", (e) => {
                         e.preventDefault();
                         callback(deleteBtns[i].dataset.carid);
@@ -394,7 +396,7 @@ class PageUI extends BaseComponent {
             return false;
         }
 
-        document.addEventListener("input", theHandler);
+        this.form.addEventListener("input", theHandler);
     };
 }
 
