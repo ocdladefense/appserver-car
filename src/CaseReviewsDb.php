@@ -2,7 +2,7 @@
 
 
 // Assume that this model/helper might apply to several other objects.
-class CaseReviewsDb extends GenericDb {
+class CaseReviewsDb {
 
 	private $model;
 	private $table = "car";

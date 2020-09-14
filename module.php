@@ -18,73 +18,24 @@ define("DOM_SPACE"," ");
 
 class CarModule extends Module {
 
-	protected $routes = array(
-		"cars" => array(
-			"callback" => "home",
-			"content-type" => Http\MIME_TEXT_HTML
-			//"access" => true
-		),
-		"car-form" => array(
-			"callback" => "edit",
-			"content-type" => Http\MIME_APPLICATION_JSON
-		),
-		"car-get" => array(
-			"callback" => "getCar",
-			"content-type" => Http\MIME_APPLICATION_JSON
-		),
-		"car-results" => array(
-			"callback" => "nextPage",
-			"content-type" => "text/html"
-		),
-		"car-build-select-list" => array(
-			"callback" => "getSelectList",
-			"Content-Type" => "application/json"
-		),
-		"car-load-more" => array(
-			"callback" => "nextPage",
-			"content-type" => Http\MIME_TEXT_HTML_PARTIAL
-		),
-		"car-create" => array(
-			"callback" => "edit",
-			"content-type" => Http\MIME_TEXT_HTML_PARTIAL
-		),
-		"car-insert" => array(
-			"callback" => "insert",
-			"content-type" => Http\MIME_TEXT_HTML_PARTIAL
-		),
-		"car-update" => array(
-			"callback" => "update",
-			"content-type" => Http\MIME_TEXT_HTML_PARTIAL
-			//"access" => is_user_profile("staffUser")
-		),
-		"car-submit-update" => array(
-			"callback" => "carSubmitUpdate",
-			"Content-Type" => "text/html"
-		),
-		"car-delete" => array(
-			"callback" => "delete",
-			"Content-Type" => "text/html"
-		),
-		"car-delete-submit" => array(
-			"callback" => "carDeleteSubmit",
-			"Content-Type" => "text/html"
-		)
-	);
-		
-	protected $files =  array(
-		"GenericDb.php", // @todo, move this somewhere to core/includes.
-		"CaseReviewsDb.php",
-		"SearchForm.php",
-		"CaseReviewsListTemplate.php",
-		"CaseReviewForm.php"
-	);
-		
+
 	public function __construct() {
 	
 		parent::__construct(__DIR__);
 
 		$this->name = "car";
 		$this->loadLimit = 10;
+	}
+
+	/**
+	 * @method sayHello
+	 *
+	 * @description Provides an example method
+	 *  to demonstrate that this module can be consumed
+	 *  outside of a web request.
+	 */
+	public function sayHello() {
+		return "Hello World!";
 	}
 
 
@@ -107,38 +58,39 @@ class CarModule extends Module {
 	}
 	
 	
-	function calculatePageNumber($limit, $offset) {
-
-	}
-
-	function getNumberOfPages($count, $limit) {
-
+	public function getFirstPage($withForm = true) {
+		return $this->getPage($withForm);
 	}
 	
-	public function getPage($page = 1, $withForm = true, $json = null) {
+	 
+	public function getPage($withForm = true, $json = null) {
 		$loadLimit = $this->loadLimit;
 
 		// Prepare data for the template.
-		$db = new CaseReviewsDb();
+		$builder = QueryBuilder::fromJson($json);
 		
 		$tpl = new CaseReviewsTemplate("case-reviews");
 		$tpl->addPath(__DIR__ . "/templates");
 
-		$results = $db->select($json);
-		//$cases = $this->getResultsFromPage($page, $results, $loadLimit);
-
+		// $results = MysqlDatabase::query($builder->compile());
+		$results = MysqlDatabase::query("select * from car limit 10");
+		
 		$tpl->formatResults($results, array(
 			"teaserWordLength" => 40, "teaserCutoff" => 350, "useTeasers" => true));
 
 		// Return something that can be converted into a string!
+		// In this case any instance of Template can be returned.
+		//  It will be automatically rendered with the bound variables
+		//   and then converted into a string and packaged up as part
+		//   of the HttpResponse.
 		return !$withForm ? $tpl : $tpl->bind(new SearchForm($loadLimit));
 	}
 	
 	
 	
-	public function getFirstPage($withForm = true) {
-		return $this->getPage(1, $withForm);
-	}
+
+	
+	
 	
 	public function nextPage($withForm = false) {
 		//$db = new CaseReviewsDb();
@@ -147,6 +99,8 @@ class CarModule extends Module {
 
 		return $this->getPage(1, $withForm, $json);
 	}	
+	
+	
 	
 	public function getLastPage($withForm = false) {
 		$db = new CaseReviewsDb();
@@ -173,6 +127,16 @@ class CarModule extends Module {
 	}
 	
 
+
+
+	function getCar() {
+		$carId = $this->request->getBody();
+		
+		return new Car($carId);
+	}
+
+
+
 	// Find a better name?
 	// For now indicates the user's intent to "edit" something.
 	// Should return form metadata for client-side scripts.
@@ -182,14 +146,10 @@ class CarModule extends Module {
 		
 		return $json->toJson();
 	}
+	
+	
+	
 
-	function getCar() {
-		$carId = $this->request->getBody();
-		$db = new GenericDb();
-		$car = $db->fromId($carId, "car");
-
-		return json_encode($car);
-	}
 
 	/**
 	 * Either update or insert a CAR record.
@@ -199,6 +159,8 @@ class CarModule extends Module {
 		submitNewCar();
 	}
 
+
+
 	function select() {
 		$json = file_get_contents('php://input');
 
@@ -206,6 +168,8 @@ class CarModule extends Module {
 		
 		$results = $db->select($json);
 	}
+	
+	
 	
 	function update() {
 		// updateCar(); // previously
@@ -217,12 +181,17 @@ class CarModule extends Module {
 		// What to return?  Some kind of 
 	}
 
+
+
 	function insert() {
 		$json = $this->request->getBody();
 		
 		$db = new CaseReviewsDb();
 		$db->insert($json);
 	}
+
+
+
 
 	// @todo callout to CaseReviewsDb.
 	function delete() {
