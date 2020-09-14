@@ -80,14 +80,18 @@ class PageUI extends BaseComponent {
             this
         );
 
-        let selectOptions = subjects.options.map(option => {
-            return super.createVNode(
-                "option",
-                { value: option.value },
-                option.name.toLowerCase(),
-                this
-            );
-        });
+        let selectOptions = [];
+        
+        if (subjects.options) {
+            selectOptions = subjects.options.map(option => {
+                return super.createVNode(
+                    "option",
+                    { value: option.value },
+                    option.name.toLowerCase(),
+                    this
+                );
+            });
+        }
 
         let allOption = super.createVNode(
             "option",
@@ -227,7 +231,7 @@ class PageUI extends BaseComponent {
 
         let carCreateLink = super.createVNode(
             "a",
-            { id: "car-create-link", class: "car-link-btn", href: "../car-create" },
+            { id: "car-create-link", class: "car-link-btn" },
             [super.createVNode(
                 "span",
                 {},
@@ -278,9 +282,16 @@ class PageUI extends BaseComponent {
                     }
                 }
                 break;
+            case "carCreate":
+                document.getElementById("car-create-link").addEventListener("click", (e) => {
+                    e.preventDefault();
+                    callback();
+                });
+                break;
             case "carUpdate":
                 let updateBtns = document.getElementsByClassName("car-update-link");
                 for (let i = 0; i < updateBtns.length; i++) {
+                    clearEventListeners(updateBtns[i]);
                     updateBtns[i].addEventListener("click", (e) => {
                         e.preventDefault();
                         callback(updateBtns[i].dataset.carid);
@@ -290,6 +301,7 @@ class PageUI extends BaseComponent {
             case "carDelete":
                 let deleteBtns = document.getElementsByClassName("car-delete-link");
                 for (let i = 0; i < deleteBtns.length; i++) {
+                    clearEventListeners(deleteBtns[i]);
                     deleteBtns[i].addEventListener("click", (e) => {
                         e.preventDefault();
                         callback(deleteBtns[i].dataset.carid);
@@ -384,7 +396,7 @@ class PageUI extends BaseComponent {
             return false;
         }
 
-        document.addEventListener("input", theHandler);
+        this.form.addEventListener("input", theHandler);
     };
 }
 
