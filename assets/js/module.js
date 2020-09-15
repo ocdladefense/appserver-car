@@ -170,8 +170,7 @@ function openCarUpdateModal(carId) {
         parser.setSettings(formSettings);
 
         let car;
-        carResponse.then((carToUpdate) => {
-            car = JSON.parse(carToUpdate);
+        carResponse.then((car) => {
             modalForm.populate(car);
         });
         modalForm.onFormSubmit(() => { confirmUpdate(car); });
