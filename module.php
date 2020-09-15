@@ -128,10 +128,15 @@ class CarModule extends Module {
 	
 
 
+	/**
+	 * Updated: function should now be called:
+	 *  like /car/1
+	 *   Can't find the Car class.
+	 */
+	function getCar($carId) {
 
-	function getCar() {
-		$carId = $this->request->getBody();
-		
+		// $carId = $this->request->getBody(); // @jbernal - old way to retireve id.
+		//  now get passed in as the param by the framework.
 		return new Car($carId);
 	}
 
@@ -141,10 +146,7 @@ class CarModule extends Module {
 	// For now indicates the user's intent to "edit" something.
 	// Should return form metadata for client-side scripts.
 	function edit() {
-		$json = new CaseReviewForm();
-		// Do some other stuff configuring the form...
-		
-		return $json->toJson();
+		return new CaseReviewForm();
 	}
 	
 	

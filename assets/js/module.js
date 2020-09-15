@@ -130,11 +130,17 @@ function openCarCreateModal() {
 
 function linkToCarUpdate(carId) {
     document.body.classList.add("loading");
-    let carResponse = FormSubmission.send("/car-get", carId);
+    // let carResponse = FormSubmission.send("/car-get", carId);
+    // Let's use new Callout class for this.
+    let callout = new FormSubmission("/car/"+carId);
+    let carResponse = callout.sendMe();
+    
     let response = FormSubmission.send("/car-form", null);
     response.then(data => {
-        let json = JSON.parse(JSON.parse(data));
 
+    		// Hmmm... why are we parsing twice?
+        let json = JSON.parse(data);
+    		console.log(json);
         myModal = modal;
         myModal.cancel = function () {
             myModal.hide();
@@ -168,8 +174,9 @@ function linkToCarUpdate(carId) {
         myModal.render(form.render());
 
         let car;
-        carResponse.then((carToUpdate) => {
-            car = JSON.parse(JSON.parse(carToUpdate));
+        
+        carResponse.then((car) => {
+            // car = JSON.parse(JSON.parse(carToUpdate));
             form.populate(car);
         });
 
