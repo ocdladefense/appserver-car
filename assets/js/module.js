@@ -76,7 +76,7 @@ function buildModalForm() {
     document.body.classList.add("loading");
     let response = FormSubmission.send("/car-form", null);
     return response.then(data => {
-        let json = JSON.parse(JSON.parse(data));
+        let json = JSON.parse(data);
 
         myModal = modal;
 
@@ -171,7 +171,7 @@ function openCarUpdateModal(carId) {
 
         let car;
         carResponse.then((carToUpdate) => {
-            car = JSON.parse(JSON.parse(carToUpdate));
+            car = JSON.parse(carToUpdate);
             modalForm.populate(car);
         });
         modalForm.onFormSubmit(() => { confirmUpdate(car); });
