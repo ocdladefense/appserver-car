@@ -141,10 +141,13 @@ function openCarCreateModal() {
     });
 }
 
+
 function openCarUpdateModal(carId) {
-    let carResponse = FormSubmission.send("/car-get", carId);
+    let callout = new FormSubmission("/car/"+carId);
+    let carResponse = callout.sendMe();
     let response = buildModalForm();
     response.then(() => {
+
         myModal.confirm = function () {
             let carCondition = DBQuery.createCondition("id", carId);
             let updatedCarResponse = FormSubmission.send("/car-load-more", JSON.stringify([carCondition]));
@@ -156,6 +159,7 @@ function openCarUpdateModal(carId) {
                 myModal.cancel();
             });         
         };
+
 
         let formSettings = { 
             formId: "car-create-form", 
