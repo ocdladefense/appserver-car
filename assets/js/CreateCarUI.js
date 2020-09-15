@@ -91,9 +91,16 @@ class CreateCarUI extends BaseComponent {
         );
 
         let buttonVNode = super.createVNode(
-            "button",
-            { type: "button", id: "car-submit-button" },
-            "Submit Changes",
+            "a",
+            { id: "car-submit-button" },
+            [
+                super.createVNode(
+                    "span",
+                    {},
+                    "Submit Changes",
+                    this
+                )
+            ],
             this
         );
 
@@ -133,29 +140,12 @@ class CreateCarUI extends BaseComponent {
         );
 
         return formVNode;
-        let formElement = super.createElement(formVNode);
-        
-        document.getElementById("modal-content").prepend(formElement);
-
-        this.form = document.getElementById(this.id);
-
-        this.attachSelectEvents();
-
-        if (this.isUpdate) {
-            this.fillUpdateFields();
-        }
     }
 
     renderMore() {
-        this.form = document.getElementById(this.id);
-
         this.attachSelectEvents();
 
         this.styleForm();
-
-        if (this.isUpdate) {
-            this.fillUpdateFields();
-        }
     }
 
     existingOptionVNode(field, values) {
@@ -214,7 +204,7 @@ class CreateCarUI extends BaseComponent {
     }
 
     attachSelectEvents() {
-        let selects = this.form.getElementsByTagName("SELECT");
+        let selects = document.getElementById(this.id).getElementsByTagName("SELECT");
         for (let i = 0; i < selects.length; i++) {
             let select = selects[i];
             select.addEventListener("input", this.handleExistingOption);
@@ -233,7 +223,7 @@ class CreateCarUI extends BaseComponent {
     }
 
     selectExistingOptionFields() {
-        let selects = this.form.getElementsByTagName("SELECT");
+        let selects = document.getElementById(this.id).getElementsByTagName("SELECT");
         for (let i = 0; i < selects.length; i++) {
             let select = selects[i];
             let input = select.parentNode.getElementsByTagName("INPUT")[0];
@@ -282,8 +272,6 @@ class CreateCarUI extends BaseComponent {
         this.clearErrors();
 
         let formFields = document.getElementsByClassName("car-create-field");
-        //formFields.push(...this.form.getElementsByTagName("input"));
-        //formFields.push(...this.form.getElementsByTagName("textarea"));
 
         let errors = [];
 
@@ -360,7 +348,9 @@ class CreateCarUI extends BaseComponent {
         }
     }
 
-    styleForm() {
+    styleForm(windowWidth) {
+        let resetHeight = window.innerWidth < windowWidth;
+
         let fields = document.getElementsByClassName("form-field");
         for (let i = 0; i < fields.length; i++) {
             let field = fields[i];
@@ -369,7 +359,13 @@ class CreateCarUI extends BaseComponent {
                 continue;
             }
 
-            let inputHeight = children[1].offsetHeight + "px";
+            if (resetHeight) {
+                children[0].style.height = "auto";
+                continue;
+            }
+
+            let textarea = children[1];
+            let inputHeight = textarea.offsetHeight + "px";
             children[0].style.height = inputHeight;
         }
     };

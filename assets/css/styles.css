@@ -179,9 +179,6 @@ div#date {
 .car-judges{
 	display: none;
 }
-.car-judges{
-	display: none;
-}
 .car-subject-2{
 	display: none;
 }
@@ -192,7 +189,7 @@ div#date {
 #modal{
 	position: fixed;
 	color: rgba(0,0,0,0.7);
-	top: 300px;
+	top: 30%;
 	width: 70%;
 	min-height: 0;
 	left: 0;
@@ -411,4 +408,32 @@ div#date {
 	#car-mobile-separator {
 		display: block;
 	}
+
+	#modal #date.car-field-container {
+		position: relative;
+		margin-left: 0;
+		width: 100%;
+	}
+
+	#modal .car-citation{
+		display: none;
+	}
+	#modal .car-judges{
+		display: none;
+	}
+	#modal .car-subject-2{
+		display: none;
+	}
+	#modal .car-circut{
+		display: none;
+	}
+
+	#modal #car-modal-confirm, #modal #car-modal-cancel {
+		width: 35%;
+		margin-left: 10%;
+	}
+
+	/*#modal {
+		top: 200px;
+	}*/
 }

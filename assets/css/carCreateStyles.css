@@ -10,11 +10,15 @@
 
 #car-create-form {
     padding: 20px;
-    height: 500px;
+    height: 550px;
 }
 
 h1 {
     text-align: center;
+}
+
+.car-create-field {
+    padding: 4.1px;
 }
 
 .form-field {
@@ -48,7 +52,7 @@ h1 {
     width: 42.5%;
 }
 
-a#car-create-cancel, #car-submit-button {
+a#car-create-cancel, a#car-submit-button {
     display: inline-block;
     width: 20%;
     height: 40px;
@@ -56,18 +60,16 @@ a#car-create-cancel, #car-submit-button {
     border: black solid 1px;
     border-radius: 5px;
     margin-left: 20%;
+    margin-bottom: 20px;
+    line-height: 35px;
 }
 
-a#car-create-cancel:hover, #car-submit-button:hover {
+a#car-create-cancel:hover, a#car-submit-button:hover {
     background-color: darkgray;
     cursor: pointer;
 }
 
-a#car-create-cancel {
-    line-height: 35px;
-}
-
-a#car-create-cancel > span {
+a#car-create-cancel > span, a#car-submit-button > span {
     display: inline-block;
     width: 100%;
     color: black;
@@ -82,4 +84,26 @@ a#car-create-cancel > span {
 
 #car-create-results {
     color: red;
+}
+
+@media screen and (max-width: 899px){
+    .form-field > label {
+        display: block;
+        width: 100%;
+    }
+
+    .existing-input, .existing-select {
+        display: block;
+        width: 100%;
+    }
+
+    input.car-create-field, textarea.car-create-field {
+        display: block;
+        width: 100%;
+    }
+
+    a#car-create-cancel, a#car-submit-button {
+        width: 35%;
+        margin-left: 10%;
+    }
 }
