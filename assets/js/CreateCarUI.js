@@ -47,7 +47,9 @@ class CreateCarUI extends BaseComponent {
         });
 
         for (let field in existingFieldNames) {
-            visibleFields.push(this.existingOptionVNode(field, existingFieldNames[field]));
+
+            let lookupElement = new LookupElement(field, existingFieldNames[field]);
+            visibleFields.push(lookupElement.render());
         }
         
         let sortedVisibleFields = fieldOrder.map(field => {
@@ -149,30 +151,9 @@ class CreateCarUI extends BaseComponent {
     }
 
     existingOptionVNode(field, values) {
-        let options = values.map(value => {
-            return super.createVNode(
-                "option",
-                { value: value },
-                value,
-                this
-            );
-        });
 
-        options.unshift(
-            super.createVNode(
-                "option",
-                { value: "NEW" },
-                "--NEW--",
-                this
-            )
-        );
 
-        let selectVNode = super.createVNode(
-            "select",
-            { id: field + "-select", class: "existing-select" },
-            options,
-            this
-        );
+        let selectVNode = new SelectElement(field + '-select', values, { id: field + '-select', className: 'existing-select'});
 
         let inputVNode = super.createVNode(
             "input",

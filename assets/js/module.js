@@ -84,6 +84,14 @@ function buildModalForm() {
 
         document.getElementById('modal-content').innerHTML = "";
 
+
+
+
+
+
+
+
+        // Existing values
         let props = {
             id: "car-create-form",
             newFields: json.inputs,
@@ -91,8 +99,22 @@ function buildModalForm() {
         };
 
         modalForm = new CreateCarUI(props);
+
+
+
+
+        // application.render(modalForm.render(), document.getElementById('modal-content'));
         myModal.render(modalForm.render());
         modalForm.attachSelectEvents();
+
+
+
+
+
+
+
+
+
 
         document.getElementById("modal").classList.add("update-modal");
 
