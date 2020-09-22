@@ -169,11 +169,10 @@ function openCarUpdateModal(carId) {
 
         parser.setSettings(formSettings);
 
-        let car;
         carResponse.then((car) => {
             modalForm.populate(car);
+            modalForm.onFormSubmit(() => { confirmUpdate(car); });
         });
-        modalForm.onFormSubmit(() => { confirmUpdate(car); });
     });
 }
 
