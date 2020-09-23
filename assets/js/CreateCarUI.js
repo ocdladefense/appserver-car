@@ -47,8 +47,18 @@ class CreateCarUI extends BaseComponent {
         });
 
         for (let field in existingFieldNames) {
+            let lookupProps = {
+                lookup: {
+                    className: "form-field"
+                },
+                input: {
+                    className: "car-create-field",
+                    "data-field": field, 
+                    "data-row-id": 1
+                }
+            }
 
-            let lookupElement = new LookupElement(field, existingFieldNames[field]);
+            let lookupElement = new LookupElement(field, existingFieldNames[field], lookupProps);
             visibleFields.push(lookupElement.render());
         }
         
@@ -134,10 +144,38 @@ class CreateCarUI extends BaseComponent {
             this
         );
 
+        let values1 = "The Only One";
+
+        let values2 = ["first", "second", "third"];
+
+        let values3 = [
+            {"First": 1},
+            {"Second": 2},
+            {"Third": 3}
+        ];
+        
+        let values4 =[
+            {"First": 1},
+            "Second",
+            3
+        ];
+
+        let values5 = {
+            id: "special-option",
+            value: "star",
+            text: "star power!!"
+        };
+
+        let sandboxVNode = new SelectElement("test1", values1);
+        let sandboxVNode2 = new SelectElement("test2", values2);
+        let sandboxVNode3 = new SelectElement("test3", values3);
+        let sandboxVNode4 = new SelectElement("test4", values4);
+        let sandboxVNode5 = new SelectElement("test5", values5);
+
         let formVNode = super.createVNode(
             "form",
             { id: this.id },
-            [resultsVNode, visibleFieldsVNode, hiddenFieldsVNode, carsLinkVNode, buttonVNode],
+            [resultsVNode, visibleFieldsVNode, hiddenFieldsVNode, carsLinkVNode, buttonVNode, sandboxVNode.render(), sandboxVNode2.render(), sandboxVNode3.render(), sandboxVNode4.render(), sandboxVNode5.render()],
             this
         );
 

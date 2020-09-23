@@ -80,14 +80,14 @@ class PageUI extends BaseComponent {
             this
         );
 
-        let selectOptions = [];
+        /*let selectOptions = [];
         
         if (subjects.options) {
             selectOptions = subjects.options.map(option => {
                 return super.createVNode(
                     "option",
                     { value: option.value },
-                    option.name.toLowerCase(),
+                    option.text.toLowerCase(),
                     this
                 );
             });
@@ -102,26 +102,31 @@ class PageUI extends BaseComponent {
 
         selectOptions.unshift(allOption);
 
-        let selectVNode = super.createVNode(
+        let selectVNode1 = super.createVNode(
             "select",
             { id: "car-subject_1", class: "car-form-field", "data-field": subjects.field },
             selectOptions,
             this
-        );
+        );*/
 
-        let dateOptions = dateRanges.options.map(option => {
+        let selectOptions = subjects.options;
+        selectOptions.unshift({text: "--ALL-- (Select Subject)", value: "ALL"});
+        let selectSubject = new SelectElement("car-subject_1", selectOptions, {className: "car-form-field", "data-field": subjects.field});
+        let selectVNode = selectSubject.render();
+
+        /*let dateOptions = dateRanges.options.map(option => {
             if (option.value == "space") {
                 return super.createVNode(
                     "option",
                     { disabled: true },
-                    option.name,
+                    option.text,
                     this
                 );
             } else {
                 return super.createVNode(
                     "option",
                     { value: option.value },
-                    option.name,
+                    option.text,
                     this
                 );
             }
@@ -132,7 +137,17 @@ class PageUI extends BaseComponent {
             { id: "car-dates", class: "car-form-field", "data-field": dateRanges.field, "data-op": dateRanges.op },
             dateOptions,
             this
-        );
+        );*/
+
+        let dateOptions = dateRanges.options;
+        for (let i in dateOptions) {
+            let date = dateOptions[i];
+            if (date.value == "space") {
+                date.disabled = true;
+            }
+        }
+        let selectDate = new SelectElement("car-dates", dateRanges.options, {className: "car-form-field", "data-field": dateRanges.field, "data-op": dateRanges.op});
+        let selectDateVNode = selectDate.render();
 
         let searchCheckBoxes = searches.flatMap(checkBox => {
             return [super.createVNode(
@@ -164,11 +179,11 @@ class PageUI extends BaseComponent {
             this
         );
 
-        let sortOptions = sorts.map(option => {
+        /*let sortOptions = sorts.map(option => {
             return super.createVNode(
                 "option",
                 { value: option.value, "data-desc": option.desc },
-                option.name,
+                option.text,
                 this
             );
         });
@@ -178,7 +193,17 @@ class PageUI extends BaseComponent {
             { id: "car-sort", class: "car-form-field", "data-desc": true},
             sortOptions,
             this
-        );
+        );*/
+
+        let sortOptions = sorts.map(option => {
+            return {
+                value: option.value,
+                "data-desc": option.desc,
+                text: option.text
+            }
+        });
+        let selectSort = new SelectElement("car-sort", sortOptions, {className: "car-form-field", "data-desc": true});
+        let selectSortVNode = selectSort.render();
 
         let formSearchVNode = super.createVNode(
             "div",
@@ -248,7 +273,7 @@ class PageUI extends BaseComponent {
             this
         );
 
-        var formElement = super.createElement(completeVNode);
+        var formElement = createElement(completeVNode);
         
         document.getElementById('stage-content').prepend(formElement);
 

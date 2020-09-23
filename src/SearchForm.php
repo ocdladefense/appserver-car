@@ -14,7 +14,7 @@ class SearchForm implements IRenderable {
 		
 		$subjects = $this->getListOptions("subject_1");
 		$defaultSubject = new stdClass();
-		$defaultSubject->name = "All Subjects";
+		$defaultSubject->text = "All Subjects";
 		$defaultSubject->value = "";
 		$subjectSettings = new stdClass();
 		$subjectSettings->field = "subject_1";
@@ -42,7 +42,7 @@ class SearchForm implements IRenderable {
 		$parsedDates = array();
 		foreach($dateRanges as $dateRange) {
 			$option = new stdClass();
-			$option->name = $dateRange[0];
+			$option->text = $dateRange[0];
 			$option->value = $dateRange[1];
 			$parsedDates[] = $option;
 		}
@@ -58,7 +58,7 @@ class SearchForm implements IRenderable {
 
 		foreach($sorts as $sort) {
 			$option = new stdClass();
-			$option->name = $sort[0];
+			$option->text = $sort[0];
 			$option->value = $sort[1][0];
 			$option->desc = $sort[1][1];
 			$parsedSorts[] = $option;
@@ -96,7 +96,7 @@ class SearchForm implements IRenderable {
 		$parsedResults = array();
 		foreach($dbResults as $result) {
 			$option = new stdClass();
-			$option->name = $result[$field];
+			$option->text = $result[$field];
 			$option->value = $result[$field];
 			$parsedResults[] = $option;
 		}

@@ -25,7 +25,10 @@ class CaseReviewsTemplate extends Template {
 			"/content/libraries/database/DBQuery.js",
 			"/content/libraries/component/BaseComponent.js",
 			"/content/libraries/form/FormParser.js",
-			"/content/libraries/form/FormSubmission.js"
+			"/content/libraries/form/FormSubmission.js",
+			"/content/libraries/form/IFormElement.js",
+			"/content/libraries/form/LookupElement.js",
+			"/content/libraries/form/SelectElement.js"
 		);
 
 		/*
