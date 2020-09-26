@@ -332,7 +332,7 @@ function addModalElements(myModal) {
 }
 
 function subject1CustomParse(data) {
-    let checkboxes = document.getElementsByClassName("search-checkbox");
+    let checkboxes = document.getElementsByClassName("searchbox-checkbox");
     let searchConditions = [];
     for(let i = 0; i < checkboxes.length; i++) {
         let checkbox = checkboxes[i];

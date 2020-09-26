@@ -67,14 +67,14 @@ class SearchForm implements IRenderable {
  
 		$searches = array("summary", "title");
  
-		$parsedSearches = array();
+		/*$parsedSearches = array();
 		foreach($searches as $search) {
 			$option = new stdClass();
 			$option->name = $search;
 			$option->value = $search;
 			$parsedSearches[] = $option;
-		}
-		$searchesJson = json_encode($parsedSearches);
+		}*/
+		$searchesJson = json_encode($searches);
 		
 		
 		$this->context = array(

@@ -1,9 +1,7 @@
 'use strict'
 
-class CreateCarUI extends BaseComponent {
+class CreateCarUI {
     constructor(props) {
-        super();
-
         this.id = props.id;
         this.newFields = props.newFields;
         this.existingFields = props.existingFields;
@@ -25,24 +23,21 @@ class CreateCarUI extends BaseComponent {
                 tag = "textarea";
             }
 
-            return super.createVNode(
+            return vNode(
                 "div",
                 { id: field, class: "form-field" },
                 [
-                    super.createVNode(
+                    vNode(
                     "label",
                     { id: id + "-label", for: id },
-                    formatLabel(field) + ": ",
-                    this
+                    formatLabel(field) + ": "
                     ),
-                    super.createVNode(
+                    vNode(
                         tag,
                         { id: id, type: field == "full_date" ? "date" : "text", class: "car-create-field", "data-field": field, "data-row-id": 1, rows: 5 },
-                        [],
-                        this
+                        []
                     )
-                ],
-                this
+                ]
             );
         });
 
@@ -72,62 +67,54 @@ class CreateCarUI extends BaseComponent {
             }
         });
 
-        let visibleFieldsVNode = super.createVNode(
+        let visibleFieldsVNode = vNode(
             "div",
             { id: "form-fields" },
-            sortedVisibleFields,
-            this
+            sortedVisibleFields
         );     
 
         let hiddenFields = hiddenFieldNames.map(field => {
-            return super.createVNode(
+            return vNode(
                 "input",
                 { type: "hidden", id: "insert-" + field, class: "car-create-field", "data-field": field, "data-row-id": 1 },
-                [],
-                this
+                []
             );
         });
 
-        hiddenFields.push(super.createVNode(
+        hiddenFields.push(vNode(
             "input",
             {type: "hidden", id: "insert-id", class: "car-create-field", "data-field": "id"},
-            [],
-            this
+            []
         ));
 
-        let hiddenFieldsVNode = super.createVNode(
+        let hiddenFieldsVNode = vNode(
             "div",
             { id: "form-hidden-fields" },
-            hiddenFields,
-            this
+            hiddenFields
         );
 
-        let buttonVNode = super.createVNode(
+        let buttonVNode = vNode(
             "a",
             { id: "car-submit-button" },
             [
-                super.createVNode(
+                vNode(
                     "span",
                     {},
-                    "Submit Changes",
-                    this
+                    "Submit Changes"
                 )
-            ],
-            this
+            ]
         );
 
-        let carsLinkVNode = super.createVNode(
+        let carsLinkVNode = vNode(
             "a",
             { id: "car-create-cancel" },
             [
-                super.createVNode(
+                vNode(
                     "span",
                     {},
-                    "Cancel",
-                    this
+                    "Cancel"
                 )
-            ],
-            this
+            ]
         );
 
         /*let tokenVNode = super.createVNode(
@@ -137,11 +124,10 @@ class CreateCarUI extends BaseComponent {
             this
         );*/
 
-        let resultsVNode = super.createVNode(
+        let resultsVNode = vNode(
             "div",
             { id: "car-create-results" },
-            [],
-            this
+            []
         );
 
         let values1 = "The Only One";
@@ -172,11 +158,12 @@ class CreateCarUI extends BaseComponent {
         let sandboxVNode4 = new SelectElement("test4", values4);
         let sandboxVNode5 = new SelectElement("test5", values5);
 
-        let formVNode = super.createVNode(
+        let searchBoxVNode = new SearchBoxElement("test", "solo");
+
+        let formVNode = vNode(
             "form",
             { id: this.id },
-            [resultsVNode, visibleFieldsVNode, hiddenFieldsVNode, carsLinkVNode, buttonVNode, sandboxVNode.render(), sandboxVNode2.render(), sandboxVNode3.render(), sandboxVNode4.render(), sandboxVNode5.render()],
-            this
+            [resultsVNode, visibleFieldsVNode, hiddenFieldsVNode, carsLinkVNode, buttonVNode, sandboxVNode.render(), sandboxVNode2.render(), sandboxVNode3.render(), sandboxVNode4.render(), sandboxVNode5.render(), searchBoxVNode.render()]
         );
 
         return formVNode;
@@ -186,40 +173,6 @@ class CreateCarUI extends BaseComponent {
         this.attachSelectEvents();
 
         this.styleForm();
-    }
-
-    existingOptionVNode(field, values) {
-
-
-        let selectVNode = new SelectElement(field + '-select', values, { id: field + '-select', className: 'existing-select'});
-
-        let inputVNode = super.createVNode(
-            "input",
-            { id: "insert-" + field, class: "existing-input car-create-field", "data-field": field, "data-row-id": 1 },
-            [],
-            this
-        );
-
-        let divVNode = super.createVNode(
-            "div",
-            { id: field + "-group", class: "existing-group" },
-            [selectVNode, inputVNode],
-            this
-        );
-
-        let labelVNode = super.createVNode(
-            "label",
-            { id: "insert-" + field + "-label" },
-            formatLabel(field) + ": ",
-            this
-        );
-
-        return super.createVNode(
-            "div",
-            { id: field, class: "form-field" },
-            [labelVNode, divVNode],
-            this
-        );
     }
 
     attachSelectEvents() {
@@ -322,22 +275,20 @@ class CreateCarUI extends BaseComponent {
 
     addErrors(errors) {
         let errorItems = errors.map(error => {
-            return super.createVNode(
+            return vNode(
                 "li",
                 { class: "errors" },
-                formatLabel(error) + " is required.",
-                this
+                formatLabel(error) + " is required."
             );
         });
 
-        let errorListVNode = super.createVNode(
+        let errorListVNode = vNode(
             "ul",
             { id: "form-errors" },
-            errorItems,
-            this
+            errorItems
         );
 
-        let formElement = super.createElement(errorListVNode);
+        let formElement = createElement(errorListVNode);
         
         document.getElementById(this.id).prepend(formElement);
     }
