@@ -42,7 +42,6 @@ function sendQuery() {
     document.body.classList.add("loading");
     let conditions = parser.parseConditions();
 
-    console.log("Submitting Form Input");
     let response = FormSubmission.send("/car-load-more", JSON.stringify(conditions));
     response.then(data => {
         document.body.classList.remove("loading");
@@ -84,6 +83,14 @@ function buildModalForm() {
 
         document.getElementById('modal-content').innerHTML = "";
 
+
+
+
+
+
+
+
+        // Existing values
         let props = {
             id: "car-create-form",
             newFields: json.inputs,
@@ -91,8 +98,22 @@ function buildModalForm() {
         };
 
         modalForm = new CreateCarUI(props);
+
+
+
+
+        // application.render(modalForm.render(), document.getElementById('modal-content'));
         myModal.render(modalForm.render());
         modalForm.attachSelectEvents();
+
+
+
+
+
+
+
+
+
 
         document.getElementById("modal").classList.add("update-modal");
 
@@ -115,6 +136,9 @@ function closeModalForm() {
     modalForm = null;
 }
 
+"SELECT * from car where id = (SELECT max(id) FROM car)"
+"SELECT * from car where id in (SELECT max(id) FROM car)"
+
 function openCarCreateModal() {
     let response = buildModalForm();
     response.then(() => {
@@ -132,7 +156,7 @@ function openCarCreateModal() {
         let formSettings = { 
             formId: "car-create-form", 
             overides: {}, 
-            dontParse: ["insert-id"]
+            dontParse: ["id-input"]
         };
 
         parser.setSettings(formSettings);
@@ -173,6 +197,7 @@ function openCarUpdateModal(carId) {
             modalForm.populate(car);
             modalForm.onFormSubmit(() => { confirmUpdate(car); });
         });
+
     });
 }
 
@@ -219,9 +244,12 @@ function confirmUpdate(car) {
 
 function openCarDeleteModal(carId) {
     var carToDelete = document.getElementById("car-container-" + carId);
-    carToDelete.getElementsByClassName("ellipsis")[0].style.display = "inline";
-    carToDelete.getElementsByClassName("readMoreButton")[0].innerHTML = "Read more";
-    carToDelete.getElementsByClassName("more")[0].style.display = "none";
+
+    if (carToDelete.getElementsByClassName("ellipsis")[0]) {
+        carToDelete.getElementsByClassName("ellipsis")[0].style.display = "inline";
+        carToDelete.getElementsByClassName("readMoreButton")[0].innerHTML = "Read more";
+        carToDelete.getElementsByClassName("more")[0].style.display = "none";
+    }
     
     myModal = modal;
     myModal.renderElement = function (el) {
@@ -309,7 +337,7 @@ function addModalElements(myModal) {
 }
 
 function subject1CustomParse(data) {
-    let checkboxes = document.getElementsByClassName("search-checkbox");
+    let checkboxes = document.getElementsByClassName("searchbox-checkbox");
     let searchConditions = [];
     for(let i = 0; i < checkboxes.length; i++) {
         let checkbox = checkboxes[i];

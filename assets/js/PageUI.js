@@ -1,9 +1,7 @@
 'use strict'
 
-class PageUI extends BaseComponent {
+class PageUI {
     constructor() {
-        super();
-
         this.id = "car-form";
 
         this.timer;
@@ -73,21 +71,20 @@ class PageUI extends BaseComponent {
     }
 
     render() {
-        let headingVNode = super.createVNode(
+        let headingVNode = vNode(
             "h2",
             {},
-            "OCDLA Criminal Apellate Review Search",
-            this
+            "OCDLA Criminal Apellate Review Search"
         );
 
-        let selectOptions = [];
+        /*let selectOptions = [];
         
         if (subjects.options) {
             selectOptions = subjects.options.map(option => {
                 return super.createVNode(
                     "option",
                     { value: option.value },
-                    option.name.toLowerCase(),
+                    option.text.toLowerCase(),
                     this
                 );
             });
@@ -102,26 +99,31 @@ class PageUI extends BaseComponent {
 
         selectOptions.unshift(allOption);
 
-        let selectVNode = super.createVNode(
+        let selectVNode1 = super.createVNode(
             "select",
             { id: "car-subject_1", class: "car-form-field", "data-field": subjects.field },
             selectOptions,
             this
-        );
+        );*/
 
-        let dateOptions = dateRanges.options.map(option => {
+        let selectOptions = subjects.options;
+        selectOptions.unshift({text: "--ALL-- (Select Subject)", value: "ALL"});
+        let selectSubject = new SelectElement("car-subject_1", selectOptions, {className: "car-form-field", "data-field": subjects.field});
+        let selectVNode = selectSubject.render();
+
+        /*let dateOptions = dateRanges.options.map(option => {
             if (option.value == "space") {
                 return super.createVNode(
                     "option",
                     { disabled: true },
-                    option.name,
+                    option.text,
                     this
                 );
             } else {
                 return super.createVNode(
                     "option",
                     { value: option.value },
-                    option.name,
+                    option.text,
                     this
                 );
             }
@@ -132,9 +134,19 @@ class PageUI extends BaseComponent {
             { id: "car-dates", class: "car-form-field", "data-field": dateRanges.field, "data-op": dateRanges.op },
             dateOptions,
             this
-        );
+        );*/
 
-        let searchCheckBoxes = searches.flatMap(checkBox => {
+        let dateOptions = dateRanges.options;
+        for (let i in dateOptions) {
+            let date = dateOptions[i];
+            if (date.value == "space") {
+                date.disabled = true;
+            }
+        }
+        let selectDate = new SelectElement("car-dates", dateRanges.options, {className: "car-form-field", "data-field": dateRanges.field, "data-op": dateRanges.op});
+        let selectDateVNode = selectDate.render();
+
+        /*let searchCheckBoxes = searches.flatMap(checkBox => {
             return [super.createVNode(
                 "label",
                 { for: checkBox.name },
@@ -162,13 +174,13 @@ class PageUI extends BaseComponent {
             { id: "car-search-box" }, 
             [], 
             this
-        );
+        );*/
 
-        let sortOptions = sorts.map(option => {
+        /*let sortOptions = sorts.map(option => {
             return super.createVNode(
                 "option",
                 { value: option.value, "data-desc": option.desc },
-                option.name,
+                option.text,
                 this
             );
         });
@@ -178,20 +190,29 @@ class PageUI extends BaseComponent {
             { id: "car-sort", class: "car-form-field", "data-desc": true},
             sortOptions,
             this
-        );
+        );*/
 
-        let formSearchVNode = super.createVNode(
+        let sortOptions = sorts.map(option => {
+            return {
+                value: option.value,
+                "data-desc": option.desc,
+                text: option.text
+            }
+        });
+        let selectSort = new SelectElement("car-sort", sortOptions, {className: "car-form-field", "data-desc": true});
+        let selectSortVNode = selectSort.render();
+
+        /*let formSearchVNode = super.createVNode(
             "div",
             { id: "car-search-container" },
             [checkBoxesVNode, inputVNode],//selectSearchLabelVNode, selectSearchVNode, inputVNode],
             this
-        );
+        );*/
 
-        let formFilterVNode = super.createVNode(
+        let formFilterVNode = vNode(
             "div",
             {},
-            [selectVNode, selectDateVNode, selectSortVNode],
-            this
+            [selectVNode, selectDateVNode, selectSortVNode]
         );
         /*
         let limitVNode = super.createVNode(
@@ -208,48 +229,48 @@ class PageUI extends BaseComponent {
             this
         );*/
 
-        let mobileSeparatorVNode = super.createVNode(
+        let searchBoxProps = {
+            input: { id: "car-search-box" },
+            checkboxes: { id: "checkbox-group" },
+            checkbox: { id: "" }
+        };
+        let searchBox = new SearchBoxElement("car-search-container", searches, searchBoxProps);
+        let formSearchVNode = searchBox.render();
+
+        let mobileSeparatorVNode = vNode(
             "hr",
             { id: "car-mobile-separator" },
-            [],
-            this
+            []
         );
 
-        let formVNode = super.createVNode(
+        let formVNode = vNode(
             "form",
             { id: this.id },
-            [formSearchVNode, mobileSeparatorVNode, formFilterVNode],
-            this
+            [formSearchVNode, mobileSeparatorVNode, formFilterVNode]
         );
 
-        let buttonVNode = super.createVNode(
+        let buttonVNode = vNode(
             "input",
             { type: "button", id: "car-form-button", value: "Show Search Form" },
-            [],
-            this
+            []
         );
 
-        let carCreateLink = super.createVNode(
+        let carCreateLink = vNode(
             "a",
             { id: "car-create-link", class: "car-link-btn" },
-            [super.createVNode(
+            [vNode(
                 "span",
                 {},
-                "Create New Criminal Apellate Review",
-                this
-            )],
-            this
+                "Create New Criminal Apellate Review"
+            )]
         );
 
-        let completeVNode = super.createVNode(
+        let completeVNode = vNode(
             "div",
             {},
-            [headingVNode, buttonVNode, formVNode, carCreateLink],
-            this
+            [headingVNode, buttonVNode, formVNode, carCreateLink]
         );
-
-        var formElement = super.createElement(completeVNode);
-        
+        var formElement = createElement(completeVNode);
         document.getElementById('stage-content').prepend(formElement);
 
         this.form = document.getElementById(this.id); // used by component
@@ -257,7 +278,7 @@ class PageUI extends BaseComponent {
         this.attachAttributes();
 
         //Check the first checkbox
-        (document.getElementsByClassName("search-checkbox"))[0].checked = true;
+        (document.getElementsByClassName("searchbox-checkbox"))[0].checked = true;
 
         document.getElementById("car-form-button").addEventListener("click", this.toggleForm);
         
@@ -268,7 +289,16 @@ class PageUI extends BaseComponent {
         switch (feature) {
             case "infiniteScroll":
                 let infiniteScroller = callback;
-                document.addEventListener('scroll', infiniteScroller.loadMoreResults);
+                document.addEventListener('scroll', () => {
+                    let newPage = infiniteScroller.loadMoreResults();
+                    if (newPage) {
+                        newPage.then((data) => {
+                            if (data === true) {                        
+                                reloadButtons();
+                            }
+                        });
+                    }
+                });
                 break;  
             case "readMoreSummary":
                 document.addEventListener('click', callback);
@@ -313,7 +343,7 @@ class PageUI extends BaseComponent {
     }
 
     getCheckedCheckboxes() {
-        let checkboxes = document.getElementsByClassName("search-checkbox");
+        let checkboxes = document.getElementsByClassName("searchbox-checkbox");
         let checkedBoxes = [];
         for (let i in checkboxes) {
             if (checkboxes[i].checked) {
@@ -341,28 +371,26 @@ class PageUI extends BaseComponent {
             let checkbox = checkedBoxes[i];
             let id = "car-hiddenValue-" + checkbox.id;
             valueNodes.push(
-                super.createVNode(
+                vNode(
                     "input",
                     { id: id, style: "display: none;", value: JSON.stringify({
                         field: checkbox.value,
                         value: document.getElementById("car-search-box").value,
                         op: "LIKE"
                     }) },
-                    [],
-                    this
+                    []
                 )
             );
             settings.whereFields.push(id);
         }
 
-        let searchBoxValueVNode = super.createVNode(
+        let searchBoxValueVNode = vNode(
             "div",
             { id: "car-search-box-values" },
-            valueNodes,
-            this
+            valueNodes
         );
 
-        let element = super.createElement(searchBoxValueVNode);
+        let element = createElement(searchBoxValueVNode);
         document.getElementById("car-search-container").append(element);
     }
 
@@ -403,7 +431,7 @@ class PageUI extends BaseComponent {
 function searchPlaceholderText() {
     let placeholder = "Search case reviews by ";
 
-    let checkboxes = document.getElementsByClassName("search-checkbox");
+    let checkboxes = document.getElementsByClassName("searchbox-checkbox");
     let searchBys = [];
     for(let i = 0; i < checkboxes.length; i++) {
         let checkbox = checkboxes[i];

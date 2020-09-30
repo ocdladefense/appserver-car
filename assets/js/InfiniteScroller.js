@@ -5,6 +5,9 @@ const InfiniteScroller = (function(){
     let moreResults = true;
     let isLoading = false;
     let offset = 0;
+    //loadlimit
+    //car-load-more
+    //car-results
 
     const loadMoreResults = () => {
         if (!moreResults) {       
@@ -17,7 +20,7 @@ const InfiniteScroller = (function(){
             
             let response = getNextPage(loadLimit);
     
-            response.then(appendPage);
+            return response.then(appendPage);
         }
     };
     
@@ -42,7 +45,7 @@ const InfiniteScroller = (function(){
         let newPage = getElementByIdFromString(responseResults, "car-results");
         results += newPage.innerHTML;
         container.innerHTML = results;
-        reloadButtons();
+        return true;
     }
 
     const addLoadingScreen = () => {
@@ -61,6 +64,17 @@ const InfiniteScroller = (function(){
         parser.setResultsOffset(0);
         window.scrollTo(0, 0);
     }
+
+    const getElementByIdFromString = (string, id) => {
+        let temp = createElement(vNode(
+            "div",
+            {},
+            []
+        ));
+    
+        temp.innerHTML = string;
+        return temp.querySelector("#" + id);
+    };
 
     let proto = {
         loadMoreResults: loadMoreResults,

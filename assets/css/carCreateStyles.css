@@ -39,16 +39,16 @@ h1 {
     text-transform: capitalize;
 }
 
-.existing-group {
+.lookup-group {
     display: inline;
 }
 
-.existing-select {
+.lookup-select {
     padding: 4.1px;
     width: 42.5%;
 }
 
-.existing-input {
+.lookup-input {
     width: 42.5%;
 }
 
@@ -92,7 +92,7 @@ a#car-create-cancel > span, a#car-submit-button > span {
         width: 100%;
     }
 
-    .existing-input, .existing-select {
+    .lookup-input, .lookup-select {
         display: block;
         width: 100%;
     }

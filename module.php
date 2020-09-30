@@ -73,7 +73,8 @@ class CarModule extends Module {
 		$tpl->addPath(__DIR__ . "/templates");
 
 		// $results = MysqlDatabase::query($builder->compile());
-		$results = MysqlDatabase::query("select * from car limit 10");
+		//$results = MysqlDatabase::query("select * from car limit 10");
+		$results = $this->select($json);
 		
 		$tpl->formatResults($results, array(
 			"teaserWordLength" => 40, "teaserCutoff" => 350, "useTeasers" => true));
@@ -97,7 +98,7 @@ class CarModule extends Module {
 		$json = $this->request->getBody();
 		//$page = $db->getNextPage($json);
 
-		return $this->getPage(1, $withForm, $json);
+		return $this->getPage($withForm, urldecode($json));
 	}	
 	
 	
@@ -163,12 +164,18 @@ class CarModule extends Module {
 
 
 
-	function select() {
-		$json = file_get_contents('php://input');
+	function select($json = null) {
+		if ($json === null) {
+			return MysqlDatabase::query("SELECT * FROM car ORDER BY full_date DESC LIMIT 10");
+		}
 
-		$db = new CaseReviewsDb();
-		
-		$results = $db->select($json);
+		$builder = QueryBuilder::fromJson($json);
+		$builder->setTable("car");
+		$builder->setType("select");
+		$sql = $builder->compile();
+		$results = MysqlDatabase::query($sql);
+
+		return $results;
 	}
 	
 	
@@ -176,20 +183,30 @@ class CarModule extends Module {
 	function update() {
 		// updateCar(); // previously
 		$json = $this->request->getBody();
+		$json = urldecode($json);
 		
-		$db = new CaseReviewsDb();
-		$db->update($json);
-		
-		// What to return?  Some kind of 
+		$builder = QueryBuilder::fromJson($json);
+		$builder->setTable("car");
+		$builder->setType("update");
+		$sql = $builder->compile();
+		$results = MysqlDatabase::query($sql, "update");
+
+		//return $results;
 	}
 
 
 
 	function insert() {
 		$json = $this->request->getBody();
-		
-		$db = new CaseReviewsDb();
-		$db->insert($json);
+		$json = urldecode($json);
+
+		$builder = QueryBuilder::fromJson($json);
+		$builder->setTable("car");
+		$builder->setType("insert");
+		$sql = $builder->compile();
+		$results = MysqlDatabase::query($sql, "insert");
+
+		//return $results;
 	}
 
 
@@ -198,10 +215,15 @@ class CarModule extends Module {
 	// @todo callout to CaseReviewsDb.
 	function delete() {
 		$json = $this->request->getBody();
-		
-		$db = new CaseReviewsDb();
+		$json = urldecode($json);
 
-		return $db->delete($json);
+		$builder = QueryBuilder::fromJson($json);
+		$builder->setTable("car");
+		$builder->setType("delete");
+		$sql = $builder->compile();
+		$results = MysqlDatabase::query($sql, "delete");
+
+		return $results;
 	}
 	
 	
