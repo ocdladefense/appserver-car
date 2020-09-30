@@ -197,7 +197,7 @@ function openCarUpdateModal(carId) {
             modalForm.populate(car);
             modalForm.onFormSubmit(() => { confirmUpdate(car); });
         });
-        
+
     });
 }
 
