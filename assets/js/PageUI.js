@@ -270,9 +270,7 @@ class PageUI {
             {},
             [headingVNode, buttonVNode, formVNode, carCreateLink]
         );
-        console.log(completeVNode);
         var formElement = createElement(completeVNode);
-        console.log(formElement);
         document.getElementById('stage-content').prepend(formElement);
 
         this.form = document.getElementById(this.id); // used by component
@@ -291,7 +289,16 @@ class PageUI {
         switch (feature) {
             case "infiniteScroll":
                 let infiniteScroller = callback;
-                document.addEventListener('scroll', infiniteScroller.loadMoreResults);
+                document.addEventListener('scroll', () => {
+                    let newPage = infiniteScroller.loadMoreResults();
+                    if (newPage) {
+                        newPage.then((data) => {
+                            if (data === true) {                        
+                                reloadButtons();
+                            }
+                        });
+                    }
+                });
                 break;  
             case "readMoreSummary":
                 document.addEventListener('click', callback);

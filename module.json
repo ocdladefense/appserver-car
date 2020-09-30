@@ -4,7 +4,6 @@
 	"description": "Retrieve OCDLA Case Reviews.",
 	"files": [
 		"Car.php",
-		"CaseReviewsDb.php",
 		"SearchForm.php",
 		"CaseReviewsListTemplate.php",
 		"CaseReviewForm.php"

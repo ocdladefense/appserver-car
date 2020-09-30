@@ -42,7 +42,6 @@ function sendQuery() {
     document.body.classList.add("loading");
     let conditions = parser.parseConditions();
 
-    console.log("Submitting Form Input");
     let response = FormSubmission.send("/car-load-more", JSON.stringify(conditions));
     response.then(data => {
         document.body.classList.remove("loading");
@@ -137,6 +136,9 @@ function closeModalForm() {
     modalForm = null;
 }
 
+"SELECT * from car where id = (SELECT max(id) FROM car)"
+"SELECT * from car where id in (SELECT max(id) FROM car)"
+
 function openCarCreateModal() {
     let response = buildModalForm();
     response.then(() => {
@@ -154,7 +156,7 @@ function openCarCreateModal() {
         let formSettings = { 
             formId: "car-create-form", 
             overides: {}, 
-            dontParse: ["insert-id"]
+            dontParse: ["id-input"]
         };
 
         parser.setSettings(formSettings);
@@ -242,9 +244,12 @@ function confirmUpdate(car) {
 
 function openCarDeleteModal(carId) {
     var carToDelete = document.getElementById("car-container-" + carId);
-    carToDelete.getElementsByClassName("ellipsis")[0].style.display = "inline";
-    carToDelete.getElementsByClassName("readMoreButton")[0].innerHTML = "Read more";
-    carToDelete.getElementsByClassName("more")[0].style.display = "none";
+
+    if (carToDelete.getElementsByClassName("ellipsis")[0]) {
+        carToDelete.getElementsByClassName("ellipsis")[0].style.display = "inline";
+        carToDelete.getElementsByClassName("readMoreButton")[0].innerHTML = "Read more";
+        carToDelete.getElementsByClassName("more")[0].style.display = "none";
+    }
     
     myModal = modal;
     myModal.renderElement = function (el) {

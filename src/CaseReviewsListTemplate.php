@@ -28,7 +28,9 @@ class CaseReviewsTemplate extends Template {
 			"/content/libraries/form/IFormElement.js",
 			"/content/libraries/form/LookupElement.js",
 			"/content/libraries/form/SelectElement.js",
-			"/content/libraries/form/SearchBoxElement.js"
+			"/content/libraries/form/SearchBoxElement.js",
+			"/content/libraries/form/TextInputElement.js",
+			"/content/libraries/form/InsertForm.js"
 		);
 
 		/*

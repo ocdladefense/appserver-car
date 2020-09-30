@@ -5,92 +5,81 @@ class CreateCarUI {
         this.id = props.id;
         this.newFields = props.newFields;
         this.existingFields = props.existingFields;
-        this.isUpdate = props.isUpdate;
-        //this.car = props.car;
+        this.components = [];
     }
 
     render() {
         let visibleFieldNames = this.newFields;
+
         let existingFieldNames = this.existingFields;
+        let fieldsFromExistingFields = [];
+        for (let eField in existingFieldNames) {
+            fieldsFromExistingFields.push(eField);
+        }
+
         let hiddenFieldNames = ["day", "month", "year"];
 
         let fieldOrder = ["title", "full_date", "subject_1", "subject_2", "summary", "result", "plaintiff", "defendant", "citation", "circut", "majority", "judges", "url"];
+        fieldOrder.push(...hiddenFieldNames);
 
-        let visibleFields = visibleFieldNames.map(field => {
-            let id = "insert-" + field;
-            let tag = "input";
-            if (field == "summary" || field == "result") {
-                tag = "textarea";
-            }
-
-            return vNode(
-                "div",
-                { id: field, class: "form-field" },
-                [
-                    vNode(
-                    "label",
-                    { id: id + "-label", for: id },
-                    formatLabel(field) + ": "
-                    ),
-                    vNode(
-                        tag,
-                        { id: id, type: field == "full_date" ? "date" : "text", class: "car-create-field", "data-field": field, "data-row-id": 1, rows: 5 },
-                        []
-                    )
-                ]
-            );
-        });
-
-        for (let field in existingFieldNames) {
-            let lookupProps = {
-                lookup: {
-                    className: "form-field"
-                },
-                input: {
-                    className: "car-create-field",
-                    "data-field": field, 
-                    "data-row-id": 1
-                }
-            }
-
-            let lookupElement = new LookupElement(field, existingFieldNames[field], lookupProps);
-            visibleFields.push(lookupElement.render());
-        }
-        
-        let sortedVisibleFields = fieldOrder.map(field => {
-            for (let i = 0; i < visibleFields.length; i++) {
-                let node = visibleFields[i];
-                let nodeField = node.props.id;
-                if (nodeField == field) {
-                    return node;
-                }
-            }
-        });
-
-        let visibleFieldsVNode = vNode(
+        let resultsVNode = vNode(
             "div",
-            { id: "form-fields" },
-            sortedVisibleFields
-        );     
-
-        let hiddenFields = hiddenFieldNames.map(field => {
-            return vNode(
-                "input",
-                { type: "hidden", id: "insert-" + field, class: "car-create-field", "data-field": field, "data-row-id": 1 },
-                []
-            );
-        });
-
-        hiddenFields.push(vNode(
-            "input",
-            {type: "hidden", id: "insert-id", class: "car-create-field", "data-field": "id"},
+            { id: "car-create-results" },
             []
-        ));
+        );
 
-        let hiddenFieldsVNode = vNode(
-            "div",
-            { id: "form-hidden-fields" },
-            hiddenFields
+        let idVNode = vNode(
+            "input",
+            {type: "hidden", id: "id-input", class: "car-create-field", "data-field": "id"},
+            []
+        );
+
+        let formFields = [];
+
+        for (let i in fieldOrder) {
+            let field = fieldOrder[i];
+            let formField = {
+                field: field,
+                label: formatLabel(field) + ":",
+                props: {
+                    textInput: { className: "form-field" },
+                    lookup: { className: "form-field" },
+                    input: { className: "car-create-field" }
+                }
+            };
+
+            if (visibleFieldNames.includes(field)) { //TextInputElement
+                if (["summary", "result"].includes(field)) { //TextInputElement of type textarea
+                    formField.type = "textinput-textarea";
+                    formField.props.input.rows = 5;
+                } else if (field === "full_date") { //TextInputElement of type input that needs a type attribute of "date"
+                    formField.props.input.type = "date";
+                }
+            } else if (fieldsFromExistingFields.includes(field)) { //LookupElement
+                formField.type = "lookup";
+                formField.values = existingFieldNames[field];
+            } else if (hiddenFieldNames.includes(field)) { //HiddenElement
+                formField.type = "hidden";
+            }
+
+            formFields.push(formField);
+        }
+
+        let formCom = new InsertForm(this.id, formFields);
+        let formVNode = formCom.render();
+
+        formVNode.children.unshift(resultsVNode, idVNode);
+        
+        let carsLinkVNode = vNode(
+            "a",
+            { id: "car-create-cancel" },
+            [
+                vNode(
+                    "span",
+                    {},
+                    "Cancel"
+                )
+            ]
         );
 
         let buttonVNode = vNode(
@@ -105,66 +94,7 @@ class CreateCarUI {
             ]
         );
 
-        let carsLinkVNode = vNode(
-            "a",
-            { id: "car-create-cancel" },
-            [
-                vNode(
-                    "span",
-                    {},
-                    "Cancel"
-                )
-            ]
-        );
-
-        /*let tokenVNode = super.createVNode(
-            "input",
-            { type: "hidden", id: "car-create-token", value: token },
-            [],
-            this
-        );*/
-
-        let resultsVNode = vNode(
-            "div",
-            { id: "car-create-results" },
-            []
-        );
-
-        let values1 = "The Only One";
-
-        let values2 = ["first", "second", "third"];
-
-        let values3 = [
-            {"First": 1},
-            {"Second": 2},
-            {"Third": 3}
-        ];
-        
-        let values4 =[
-            {"First": 1},
-            "Second",
-            3
-        ];
-
-        let values5 = {
-            id: "special-option",
-            value: "star",
-            text: "star power!!"
-        };
-
-        let sandboxVNode = new SelectElement("test1", values1);
-        let sandboxVNode2 = new SelectElement("test2", values2);
-        let sandboxVNode3 = new SelectElement("test3", values3);
-        let sandboxVNode4 = new SelectElement("test4", values4);
-        let sandboxVNode5 = new SelectElement("test5", values5);
-
-        let searchBoxVNode = new SearchBoxElement("test", "solo");
-
-        let formVNode = vNode(
-            "form",
-            { id: this.id },
-            [resultsVNode, visibleFieldsVNode, hiddenFieldsVNode, carsLinkVNode, buttonVNode, sandboxVNode.render(), sandboxVNode2.render(), sandboxVNode3.render(), sandboxVNode4.render(), sandboxVNode5.render(), searchBoxVNode.render()]
-        );
+        formVNode.children.push(carsLinkVNode, buttonVNode);
 
         return formVNode;
     }
@@ -181,6 +111,11 @@ class CreateCarUI {
             let select = selects[i];
             select.addEventListener("input", this.handleExistingOption);
         }
+
+        /*for (let i in this.components) {
+            let component = this.components[i];
+            component.attachEventListeners();
+        }*/
     }
 
     handleExistingOption(e) {
@@ -207,19 +142,15 @@ class CreateCarUI {
     }
 
     fillDateFields() {
-        let date = document.getElementById("insert-full_date").value;
+        let date = document.getElementById("full_date-input").value;
         let [year, month, day] = date.split("-");
         month -= 1;
-        //let today = new Date(year, month, day);
-        //let day = today.getDate();
         var monthName = [ "January", "February", "March", "April", "May", "June", 
            "July", "August", "September", "October", "November", "December" ];
-        //let month = today.toLocaleString('default', { month: 'long' });
-        //let year = today.getFullYear();
-        document.getElementById("insert-full_date").value = date;//(year + "/" + month + "/" + day).toISOString().slice(0, 19).replace('T', ' '); //Formating for MySQL
-        document.getElementById("insert-day").value = day;
-        document.getElementById("insert-month").value = monthName[month];
-        document.getElementById("insert-year").value = year;
+        document.getElementById("full_date-input").value = date;
+        document.getElementById("day-input").value = day;
+        document.getElementById("month-input").value = monthName[month];
+        document.getElementById("year-input").value = year;
     }
 
     onFormSubmit(fn) {    
@@ -229,9 +160,6 @@ class CreateCarUI {
             thisContext.selectExistingOptionFields();
 
             if (thisContext.validateForm()) {
-                //let date = document.getElementById("insert-full_date").value;
-                //let [year, month, day] = date.split("-");
-                //month -= 1;
                 thisContext.fillDateFields();
                 fn();
             }           
@@ -294,11 +222,7 @@ class CreateCarUI {
     }
 
     populate(car) {
-        //let inputs = document.getElementsByTagName("INPUT");
-        //let textareas = document.getElementsByTagName("TEXTAREA");
         let formFields = document.getElementsByClassName("car-create-field");
-        //formFields.push(...inputs);
-        //formFields.push(...textareas);
         
         for (let i = 0; i < formFields.length; i++) {
             let formField = formFields[i];
@@ -339,4 +263,47 @@ class CreateCarUI {
             children[0].style.height = inputHeight;
         }
     };
+}
+
+function exampleComponents() {
+    let values1 = "The Only One";
+
+    let values2 = ["first", "second", "third"];
+
+    let values3 = [
+        {"First": 1},
+        {"Second": 2},
+        {"Third": 3}
+    ];
+    
+    let values4 =[
+        {"First": 1},
+        "Second",
+        3
+    ];
+
+    let values5 = {
+        id: "special-option",
+        value: "star",
+        text: "star power!!"
+    };
+
+    let sandboxVNode = new SelectElement("test1", values1);
+    let sandboxVNode2 = new SelectElement("test2", values2);
+    let sandboxVNode3 = new SelectElement("test3", values3);
+    let sandboxVNode4 = new SelectElement("test4", values4);
+    let sandboxVNode5 = new SelectElement("test5", values5);
+
+    let searchBoxVNode = new SearchBoxElement("test", [1,2,3]);
+
+    let textInputVNode = new TextInputElement("test", "Some Stuff", {}, "textarea");
+
+    let lookupVNode = new LookupElement("test", ["one", 2]);
+
+    return vNode(
+        "div",
+        {},
+        [sandboxVNode.render(), sandboxVNode2.render(), sandboxVNode3.render(), sandboxVNode4.render(), sandboxVNode5.render(),
+        searchBoxVNode.render(), textInputVNode.render(), lookupVNode.render()]
+    );
 }
