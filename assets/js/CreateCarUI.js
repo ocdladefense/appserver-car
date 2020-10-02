@@ -3,25 +3,13 @@
 class CreateCarUI {
     constructor(props) {
         this.id = props.id;
-        this.newFields = props.newFields;
-        this.existingFields = props.existingFields;
+        this.allFields = props.allFields;
+        //this.newFields = props.newFields;
+        //this.existingFields = props.existingFields;
         this.components = [];
     }
 
     render() {
-        let visibleFieldNames = this.newFields;
-
-        let existingFieldNames = this.existingFields;
-        let fieldsFromExistingFields = [];
-        for (let eField in existingFieldNames) {
-            fieldsFromExistingFields.push(eField);
-        }
-
-        let hiddenFieldNames = ["day", "month", "year"];
-
-        let fieldOrder = ["title", "full_date", "subject_1", "subject_2", "summary", "result", "plaintiff", "defendant", "citation", "circut", "majority", "judges", "url"];
-        fieldOrder.push(...hiddenFieldNames);
-
         let resultsVNode = vNode(
             "div",
             { id: "car-create-results" },
@@ -30,42 +18,11 @@ class CreateCarUI {
 
         let idVNode = vNode(
             "input",
-            {type: "hidden", id: "id-input", class: "car-create-field", "data-field": "id"},
+            {type: "hidden", id: "id-input", class: "textInput-input", "data-field": "id"},
             []
         );
 
-        let formFields = [];
-
-        for (let i in fieldOrder) {
-            let field = fieldOrder[i];
-            let formField = {
-                field: field,
-                label: formatLabel(field) + ":",
-                props: {
-                    textInput: { className: "form-field" },
-                    lookup: { className: "form-field" },
-                    input: { className: "car-create-field" }
-                }
-            };
-
-            if (visibleFieldNames.includes(field)) { //TextInputElement
-                if (["summary", "result"].includes(field)) { //TextInputElement of type textarea
-                    formField.type = "textinput-textarea";
-                    formField.props.input.rows = 5;
-                } else if (field === "full_date") { //TextInputElement of type input that needs a type attribute of "date"
-                    formField.props.input.type = "date";
-                }
-            } else if (fieldsFromExistingFields.includes(field)) { //LookupElement
-                formField.type = "lookup";
-                formField.values = existingFieldNames[field];
-            } else if (hiddenFieldNames.includes(field)) { //HiddenElement
-                formField.type = "hidden";
-            }
-
-            formFields.push(formField);
-        }
-
-        let formCom = new InsertForm(this.id, formFields);
+        let formCom = new InsertForm(this.id, this.allFields);
         let formVNode = formCom.render();
 
         formVNode.children.unshift(resultsVNode, idVNode);
@@ -171,7 +128,10 @@ class CreateCarUI {
     validateForm() {
         this.clearErrors();
 
-        let formFields = document.getElementsByClassName("car-create-field");
+        let lookupFields = document.getElementsByClassName("textInput-input");
+        let textInputFields = document.getElementsByClassName("lookup-input");
+        //let formFields = document.getElementsByClassName("car-create-field");
+        let formFields = [...lookupFields, ...textInputFields];
 
         let errors = [];
 
@@ -222,7 +182,10 @@ class CreateCarUI {
     }
 
     populate(car) {
-        let formFields = document.getElementsByClassName("car-create-field");
+        let lookupFields = document.getElementsByClassName("textInput-input");
+        let textInputFields = document.getElementsByClassName("lookup-input");
+        //let formFields = document.getElementsByClassName("car-create-field");
+        let formFields = [...lookupFields, ...textInputFields];
         
         for (let i = 0; i < formFields.length; i++) {
             let formField = formFields[i];
@@ -232,7 +195,7 @@ class CreateCarUI {
                 if (field == "full_date") {
                     value = value.split(" ")[0];
                 }
-                if (this.existingFields[field]) {
+                if (formField.classList.contains("lookup-input")) {
                     document.getElementById(field + "-select").value = value;
                     formField.disabled = true;
                 } else {
@@ -245,7 +208,10 @@ class CreateCarUI {
     styleForm(windowWidth) {
         let resetHeight = window.innerWidth < windowWidth;
 
-        let fields = document.getElementsByClassName("form-field");
+        //let fields = document.getElementsByClassName("form-field");
+        let lookups = document.getElementsByClassName("lookup");
+        let textInputs = document.getElementsByClassName("textInput");
+        let fields = [...lookups, ...textInputs];
         for (let i = 0; i < fields.length; i++) {
             let field = fields[i];
             let children = field.childNodes;
