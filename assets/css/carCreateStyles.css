@@ -17,22 +17,22 @@ h1 {
     text-align: center;
 }
 
-.car-create-field, .textInput-input, .lookup-input {
+.textInput-input, .lookup-input {
     padding: 4.1px;
 }
 
-.form-field, .textInput, .lookup {
+.textInput, .lookup {
     width: 100%;
     display: block;
     margin-bottom: 20px;
     padding: 4.1px;
 }
 
-.form-field > input, .form-field > textarea, .textInput-input, .lookup-input {
+.textInput-input, .lookup-input {
     width: 85%;
 }
 
-.form-field > label, .lookup-label, .textInput-label {
+.lookup-label, .textInput-label {
     width: 15%;
     vertical-align: bottom;
     display: inline-block;
@@ -87,7 +87,7 @@ a#car-create-cancel > span, a#car-submit-button > span {
 }
 
 @media screen and (max-width: 899px){
-    .form-field > label, .lookup-label, .textInput-label {
+    .lookup-label, .textInput-label {
         display: block;
         width: 100%;
     }
@@ -97,7 +97,7 @@ a#car-create-cancel > span, a#car-submit-button > span {
         width: 100%;
     }
 
-    input.car-create-field, textarea.car-create-field, .textInput-input {
+    .textInput-input {
         display: block;
         width: 100%;
     }
