@@ -93,8 +93,9 @@ function buildModalForm() {
         // Existing values
         let props = {
             id: "car-create-form",
-            newFields: json.inputs,
-            existingFields: json.selects
+            allFields: json.allFields
+            //newFields: json.inputs,
+            //existingFields: json.selects
         };
 
         modalForm = new CreateCarUI(props);
@@ -220,7 +221,10 @@ function submitForm(url) {
 function confirmUpdate(car) {
     let confirmText = "Are you sure you want to update the following fields?\n"
 
-    let formFields = document.getElementsByClassName("car-create-field");
+    let lookupFields = document.getElementsByClassName("textInput-input");
+    let textInputFields = document.getElementsByClassName("lookup-input");
+    //let formFields = document.getElementsByClassName("car-create-field");
+    let formFields = [...lookupFields, ...textInputFields];
 
     for (let i = 0; i < formFields.length; i++) {
         let formField = formFields[i];
