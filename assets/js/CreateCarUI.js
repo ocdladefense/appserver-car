@@ -3,7 +3,8 @@
 class CreateCarUI {
     constructor(props) {
         this.id = props.id;
-        this.allFields = props.allFields;
+        this.setFields = props.setFields;
+        this.whereFields = props.whereFields;
         //this.newFields = props.newFields;
         //this.existingFields = props.existingFields;
         this.components = [];
@@ -16,16 +17,16 @@ class CreateCarUI {
             []
         );
 
-        let idVNode = vNode(
+        /*let idVNode = vNode(
             "input",
             {type: "hidden", id: "id-input", class: "textInput-input", "data-field": "id"},
             []
-        );
+        );*/
 
-        let formCom = new InsertForm(this.id, this.allFields);
+        let formCom = new UpdateForm(this.id, this.setFields, this.whereFields);
         let formVNode = formCom.render();
 
-        formVNode.children.unshift(resultsVNode, idVNode);
+        formVNode.children.unshift(resultsVNode);
         
         let carsLinkVNode = vNode(
             "a",

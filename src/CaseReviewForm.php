@@ -12,7 +12,7 @@ class CaseReviewForm implements \Http\IJson {
 		$fieldOrder = ["title", "full_date", "subject_1", "subject_2", "summary", "result", "plaintiff",
 			"defendant", "citation", "circut", "majority", "judges", "url", "day", "month", "year"];
 
-		$allFields = [];
+		$setFields = [];
 
 		foreach ($fieldOrder as $field) {
 			$fieldObj = new stdClass();
@@ -43,11 +43,22 @@ class CaseReviewForm implements \Http\IJson {
 					//$fieldObj->props->input->type = "date";
 				}
 			}
-			$allFields[] = $fieldObj;
+			$setFields[] = $fieldObj;
 		}
 
+
+
+		$whereField = new stdClass();
+		$whereField->field = "id";
+		$textInput = new stdClass();
+		$textInput->style = "display: none;";
+		$props = new stdClass();
+		$props->textInput = $textInput;
+		$whereField->props = $props;
+
 		return array(
-				'allFields' => $allFields   
+				'setFields' => $setFields,
+				'whereFields' => [$whereField]   
 		);
 	}
 

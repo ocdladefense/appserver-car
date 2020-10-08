@@ -30,7 +30,9 @@ class CaseReviewsTemplate extends Template {
 			"/content/libraries/form/SelectElement.js",
 			"/content/libraries/form/SearchBoxElement.js",
 			"/content/libraries/form/TextInputElement.js",
-			"/content/libraries/form/InsertForm.js"
+			"/content/libraries/form/FormFieldComponent.js",
+			"/content/libraries/form/InsertForm.js",
+			"/content/libraries/form/UpdateForm.js"
 		);
 
 		/*

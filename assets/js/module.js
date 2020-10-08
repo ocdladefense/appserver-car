@@ -93,7 +93,8 @@ function buildModalForm() {
         // Existing values
         let props = {
             id: "car-create-form",
-            allFields: json.allFields
+            setFields: json.setFields,
+            whereFields: json.whereFields
             //newFields: json.inputs,
             //existingFields: json.selects
         };
