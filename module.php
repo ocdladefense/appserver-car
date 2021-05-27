@@ -225,22 +225,30 @@ class CarModule extends Module {
 
 		return $results;
 	}
+
+	///////////////////// Trevor's Stuff	//////////////////////////////////////
 	
 	public function showCars() {
 
-		$cars = $this->getCars();
+		$filter = $_POST["filter"] != "none" ? $_POST["filter"] : null; 
 
-		//var_dump($cars);exit;
+		$cars = $this->getCars($filter);
+
+		$subjects = $this->getSubjects();
 
 		$tpl = new Template("car-list");
 		$tpl->addPath(__DIR__ . "/templates");
 
-		return $tpl->render(array("cars" => $cars));
+		return $tpl->render(array("cars" => $cars, "subjects" => $subjects, "filter" => $filter));
 	}
 
-	public function getCars() {
+	public function getCars($filter) {
 
-		$result = Database::query("SELECT * FROM car ORDER BY Year DESC");
+		$yesFilter = "SELECT * FROM car WHERE subject_1 = '$filter' ORDER BY Year DESC";
+
+		$noFilter = "SELECT * FROM car ORDER BY Year DESC";
+
+		$result = $filter == null ? Database::query($noFilter) : Database::query($yesFilter);
 
 		$records = $result->getIterator();
 
@@ -254,7 +262,24 @@ class CarModule extends Module {
 	}
 
 
+	public function getSubjects() {
 
+		$result = Database::query("SELECT subject_1 FROM car ORDER BY subject_1");
+
+		$records = $result->getIterator();
+
+		$subjects = array();
+
+		foreach($records as $subject) {
+
+			if(!in_array($subject["subject_1"], $subjects)){
+
+				$subjects[] = $subject["subject_1"];
+			}
+		}
+
+		return $subjects;
+	}
 }
 
 
