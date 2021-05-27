@@ -10,9 +10,9 @@
         <form id="filter-form" action="/car/list" method="post">
             <label><strong>Filter:</strong></label>
             <select id="subjects" name="filter" style="text-align:center;" onchange="submitForm()">
-                    <option value="<?php print $filter != null ? $filter : "SHOW ALL"; ?>"><?php print $filter != null ? $filter : "SHOW ALL"; ?></option>
+                    <option value="<?php print $filter != null ? $filter : ""; ?>"><?php print $filter != null ? $filter : "SHOW ALL"; ?></option>
                     <?php if($filter != null) : ?>
-                        <option value="SHOW ALL">SHOW ALL</option>
+                        <option value="">SHOW ALL</option>
                     <?php endif; ?>
                 <?php foreach($subjects as $subject) : ?>
                     <option value="<?php print $subject; ?>"><?php print $subject; ?></option>
