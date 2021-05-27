@@ -7,20 +7,23 @@
     <h1 class="list-header">Library of Defense Case Review Records</h1><br /><br />
 
     <div class="car-container">
+
         <form id="filter-form" action="/car/list" method="post">
             <label><strong>Filter:</strong></label>
+
             <select id="subjects" name="filter" style="text-align:center;" onchange="submitForm()">
-                    <option value="<?php print $filter != null ? $filter : ""; ?>"><?php print $filter != null ? $filter : "SHOW ALL"; ?></option>
-                    <?php if($filter != null) : ?>
-                        <option value="">SHOW ALL</option>
-                    <?php endif; ?>
+                <option value="<?php print $filter != null ? $filter : ""; ?>"><?php print $filter != null ? $filter : "SHOW ALL"; ?></option>
+                <?php if($filter != null) : ?>
+                    <option value="">SHOW ALL</option>
+                <?php endif; ?>
                 <?php foreach($subjects as $subject) : ?>
                     <option value="<?php print $subject; ?>"><?php print $subject; ?></option>
                 <?php endforeach; ?>
-
             </select>
+
             <label><strong><?php print "Showing " . count($cars) . " case review(s)."; ?></strong></label>
         </form>
+
     </div>
 
     <?php if(!empty($cars)) : ?>
