@@ -37,7 +37,7 @@
                 <label><strong>Judges: </strong><?php print $car->getJudges(); ?></label><br /><br />
                 <label><strong>Summary: </strong><?php print $car->getSummary(); ?></label><br /><br />
                 <label><strong>Result: </strong><?php print $car->getResult(); ?></label><br /><br />
-                <a href="<?php print $car->getUrl(); ?>">View at Library of Defense</a>
+                <a href="<?php print $car->getUrl(); ?>">View on the Library of Defense website</a>
             </div>
 
         <?php endforeach; ?>
