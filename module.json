@@ -19,7 +19,7 @@
 			"content-type":"application\/json"
 		},
 
-		"car/%carId": {
+		"car/get/%carId": {
 			"callback":"getCar",
 			"content-type":"application\/json"
 		},
@@ -63,9 +63,12 @@
 			"callback":"delete",
 			"content-type":"text\/html"
 		},
-
 		"car-delete-submit":{
 			"callback":"carDeleteSubmit",
+			"content-type":"text\/html"
+		},
+		"car/list":{
+			"callback":"showCars",
 			"content-type":"text\/html"
 		}
 	}
