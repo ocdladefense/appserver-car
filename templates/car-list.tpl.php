@@ -19,6 +19,7 @@
                 <?php endforeach; ?>
 
             </select>
+            <label><strong><?php print count($cars) . " records returned."; ?></strong></label>
         </form>
     </div>
 
