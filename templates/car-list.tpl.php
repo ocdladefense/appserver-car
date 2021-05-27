@@ -19,7 +19,8 @@
                 <label><strong>Majority: </strong><?php print $car->getMajority(); ?></label><br />
                 <label><strong>Judges: </strong><?php print $car->getJudges(); ?></label><br /><br />
                 <label><strong>Summary: </strong><?php print $car->getSummary(); ?></label><br /><br />
-                <label><strong>Result: </strong><?php print $car->getResult(); ?></label><br />
+                <label><strong>Result: </strong><?php print $car->getResult(); ?></label><br /><br />
+                <a href="<?php print $car->getUrl(); ?>">View at Library of Defense</a>
             </div>
 
         <?php endforeach; ?>
