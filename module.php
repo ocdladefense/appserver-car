@@ -240,7 +240,7 @@ class CarModule extends Module {
 
 	public function getCars() {
 
-		$result = Database::query("SELECT * FROM car");// ORDER BY full_date DESC LIMIT 10");
+		$result = Database::query("SELECT * FROM car ORDER BY Year DESC");
 
 		$records = $result->getIterator();
 
