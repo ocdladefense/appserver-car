@@ -30,6 +30,9 @@
         <?php foreach($cars as $car) : ?>
 
             <div id="car-container" class="car-container">
+                <div id="logo" style="float:right;">
+                    <a href="//www.ocdla.org"><img src="/content/images/logo.png"></a>
+				</div>
                 <label><strong>Title: </strong><?php print $car->getTitle(); ?></label><br />
                 <label><strong>Decision Date: </strong><?php print $car->getDate(); ?></label><br />
                 <label><strong>Citation: </strong><?php print $car->getCitation(); ?></label><br />
