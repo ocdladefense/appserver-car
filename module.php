@@ -242,7 +242,7 @@ class CarModule extends Module {
 		return $tpl->render(array("cars" => $cars, "subjects" => $subjects, "filter" => $filter));
 	}
 
-	public function getCars($filter) {
+	public function getCars($filter = null) {
 
 		$yesFilter = "SELECT * FROM car WHERE subject_1 = '$filter' ORDER BY Year DESC, Month DESC, Day DESC";
 
