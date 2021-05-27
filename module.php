@@ -244,7 +244,7 @@ class CarModule extends Module {
 
 	public function getCars($filter) {
 
-		$yesFilter = "SELECT * FROM car WHERE subject_1 = '$filter' ORDER BY Year DESC";
+		$yesFilter = "SELECT * FROM car WHERE subject_1 = '$filter' ORDER BY Year DESC, Month DESC, Day DESC";
 
 		$noFilter = "SELECT * FROM car ORDER BY Year DESC";
 
