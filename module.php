@@ -230,7 +230,7 @@ class CarModule extends Module {
 	
 	public function showCars() {
 
-		$filter = $_POST["filter"] != "none" ? $_POST["filter"] : null; 
+		$filter = $_POST["filter"] != "SHOW ALL" ? $_POST["filter"] : null; 
 
 		$cars = $this->getCars($filter);
 
