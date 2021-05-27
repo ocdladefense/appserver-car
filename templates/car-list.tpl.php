@@ -8,7 +8,7 @@
 
     <div class="car-container">
         <form id="filter-form" action="/car/list" method="post">
-            <label>Filter by subject:</label>
+            <label><strong>Filter:</strong></label>
             <select id="subjects" name="filter" style="text-align:center;" onchange="submitForm()">
                     <option value="<?php print $filter != null ? $filter : "SHOW ALL"; ?>"><?php print $filter != null ? $filter : "SHOW ALL"; ?></option>
                     <?php if($filter != null) : ?>
