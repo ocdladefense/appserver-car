@@ -244,7 +244,7 @@ class CarModule extends Module {
 
 	public function getCars($filter = null) {
 
-		$yesFilter = "SELECT * FROM car WHERE subject_1 = '$filter' ORDER BY Year DESC, Month DESC, Day DESC";
+		$yesFilter = "SELECT * FROM car WHERE subject_1 LIKE '%$filter%' ORDER BY Year DESC, Month DESC, Day DESC";
 
 		$noFilter = "SELECT * FROM car ORDER BY Year DESC";
 
@@ -272,9 +272,11 @@ class CarModule extends Module {
 
 		foreach($records as $subject) {
 
-			if(!in_array($subject["subject_1"], $subjects)){
+			$subject = trim($subject["subject_1"]);
 
-				$subjects[] = $subject["subject_1"];
+			if(!in_array($subject, $subjects)){
+
+				$subjects[] = $subject;
 			}
 		}
 
