@@ -15,7 +15,10 @@ function flagReview(e){
     fetch(url, {
         method: "POST",
         body: data,
+    }).then(response => {
+        console.log(response.json());
     }).catch(error => {
+        console.log(error);
         console.error("ERROR", error)
     });
 
