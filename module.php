@@ -297,7 +297,7 @@ class CarModule extends Module {
 		$database = new Database();
 		$result = $database->update($query);
 
-		print_r($result.getIterator());
+		return $result.getIterator();
 	}
 }
 
