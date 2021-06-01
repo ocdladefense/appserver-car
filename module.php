@@ -2,6 +2,8 @@
 
 use \Html\HtmlLink;
 use function \Html\createElement as createElement;
+use Mysql\Database;
+//use MySQLi;
 //use Http;
 
 
@@ -35,6 +37,7 @@ class CarModule extends Module {
 	 *  outside of a web request.
 	 */
 	public function sayHello() {
+
 		return "Hello World!";
 	}
 
@@ -57,13 +60,14 @@ class CarModule extends Module {
 		return $this->getFirstPage();
 	}
 	
-	
 	public function getFirstPage($withForm = true) {
+
 		return $this->getPage($withForm);
 	}
 	
 	 
 	public function getPage($withForm = true, $json = null) {
+
 		$loadLimit = $this->loadLimit;
 
 		// Prepare data for the template.
@@ -87,13 +91,8 @@ class CarModule extends Module {
 		return !$withForm ? $tpl : $tpl->bind(new SearchForm($loadLimit));
 	}
 	
-	
-	
-
-	
-	
-	
 	public function nextPage($withForm = false) {
+
 		//$db = new CaseReviewsDb();
 		$json = $this->request->getBody();
 		//$page = $db->getNextPage($json);
@@ -104,6 +103,7 @@ class CarModule extends Module {
 	
 	
 	public function getLastPage($withForm = false) {
+
 		$db = new CaseReviewsDb();
 		$json = $this->request->getBody();
 		$page = $db->getNumOfPages($json);
@@ -112,6 +112,7 @@ class CarModule extends Module {
 	}
 
 	function getResultsFromPage($page, $results, $perPage) {
+
 		$pageResults = array();
 		
 		$start = ($page - 1) * $perPage;
@@ -126,8 +127,6 @@ class CarModule extends Module {
 
 		return $pageResults;
 	}
-	
-
 
 	/**
 	 * Updated: function should now be called:
@@ -142,7 +141,6 @@ class CarModule extends Module {
 	}
 
 
-
 	// Find a better name?
 	// For now indicates the user's intent to "edit" something.
 	// Should return form metadata for client-side scripts.
@@ -151,21 +149,21 @@ class CarModule extends Module {
 	}
 	
 	
-	
-
-
 	/**
 	 * Either update or insert a CAR record.
 	 *
 	 */
 	function save() {
+		
 		submitNewCar();
 	}
 
 
 
-	function select($json = null) {
-		if ($json === null) {
+	public function select($json = null) {
+
+		if($json === null) {
+
 			return MysqlDatabase::query("SELECT * FROM car ORDER BY full_date DESC LIMIT 10");
 		}
 
@@ -173,14 +171,14 @@ class CarModule extends Module {
 		$builder->setTable("car");
 		$builder->setType("select");
 		$sql = $builder->compile();
-		$results = MysqlDatabase::query($sql);
 
-		return $results;
+		return MysqlDatabase::query($sql);
 	}
 	
 	
 	
-	function update() {
+	public function update() {
+
 		// updateCar(); // previously
 		$json = $this->request->getBody();
 		$json = urldecode($json);
@@ -196,7 +194,8 @@ class CarModule extends Module {
 
 
 
-	function insert() {
+	public function insert() {
+
 		$json = $this->request->getBody();
 		$json = urldecode($json);
 
@@ -213,7 +212,8 @@ class CarModule extends Module {
 
 
 	// @todo callout to CaseReviewsDb.
-	function delete() {
+	public function delete() {
+
 		$json = $this->request->getBody();
 		$json = urldecode($json);
 
@@ -225,11 +225,63 @@ class CarModule extends Module {
 
 		return $results;
 	}
+
+	///////////////////// Trevor's Stuff	//////////////////////////////////////
 	
-	
+	public function showCars() {
+
+		$filter = !empty($_POST["filter"]) ? $_POST["filter"] : null; 
+
+		$cars = $this->getCars($filter);
+
+		$subjects = $this->getSubjects();
+
+		$tpl = new Template("car-list");
+		$tpl->addPath(__DIR__ . "/templates");
+
+		return $tpl->render(array("cars" => $cars, "subjects" => $subjects, "filter" => $filter));
+	}
+
+	public function getCars($filter = null) {
+
+		$yesFilter = "SELECT * FROM car WHERE subject_1 LIKE '%$filter%' ORDER BY Year DESC, Month DESC, Day DESC";
+
+		$noFilter = "SELECT * FROM car ORDER BY Year DESC";
+
+		$result = $filter == null ? Database::query($noFilter) : Database::query($yesFilter);
+
+		$records = $result->getIterator();
+
+		$cars = array();
+		foreach($records as $record){
+
+			$cars[] = Car::from_query_result_record($record);
+		}
+
+		return $cars;
+	}
 
 
+	public function getSubjects() {
 
+		$result = Database::query("SELECT subject_1 FROM car ORDER BY subject_1");
+
+		$records = $result->getIterator();
+
+		$subjects = array();
+
+		foreach($records as $subject) {
+
+			$subject = trim($subject["subject_1"]);
+
+			if(!in_array($subject, $subjects)){
+
+				$subjects[] = $subject;
+			}
+		}
+
+		return $subjects;
+	}
 }
 
 
