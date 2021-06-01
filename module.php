@@ -299,7 +299,7 @@ class CarModule extends Module {
 			$database = new Database();
 			$result = $database->update($query);
 
-			return "successfuly flagged the case review record";
+			return "Successfuly updated the flag status for the record";
 
 		} catch(Exception $e) {
 
