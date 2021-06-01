@@ -10,13 +10,11 @@ function flagReview(e){
 
     var url = "http://localhost/car/flag";
 
-    console.log(url);
-
     fetch(url, {
         method: "POST",
         body: data,
     }).then(response => {
-        console.log(response.json());
+        console.log("FLAGGING RESULT:", response.json());
     }).catch(error => {
         console.log(error);
         console.error("ERROR", error)
