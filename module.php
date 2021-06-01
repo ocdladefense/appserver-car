@@ -282,6 +282,23 @@ class CarModule extends Module {
 
 		return $subjects;
 	}
+
+	public function flagReview(){
+
+		$req = $this->getRequest();
+		$body = $req->getBody();
+
+		$table = $body->tableName;
+		$id = $body->carId;
+		$isFlagged = $body->isFlagged;
+
+		$query = "UPDATE $table SET isFlagged = $isFlagged WHERE Id = '$id'";
+
+		$database = new Database();
+		$result = $database->update($query);
+
+		print_r($result.getIterator());
+	}
 }
 
 

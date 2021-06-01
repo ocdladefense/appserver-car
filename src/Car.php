@@ -18,6 +18,7 @@ class Car {
 	private $majority;
 	private $judges;
 	private $url;
+	private $isFlagged;
 
 
 	public function __construct($id = null) {}
@@ -41,6 +42,7 @@ class Car {
 		$car->majority = $record["majority"];
 		$car->judges = $record["judges"];
 		$car->url = $record["url"];
+		$car->isFlagged = $record["isFlagged"];
 
 
 		return $car;
@@ -137,5 +139,10 @@ class Car {
 		$formated = $date->format("l, F jS, Y");
 
 		return $formated;
+	}
+
+	public function isFlagged(){
+
+		return $this->isFlagged == 1 ? true : false;
 	}
 }

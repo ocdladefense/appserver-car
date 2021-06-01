@@ -1,5 +1,4 @@
 
-<link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/carlist.css" />
 
 
 <div id="car-list-container" class="list-containter">
@@ -28,10 +27,14 @@
 
     <?php if(!empty($cars)) : ?>
         <?php foreach($cars as $car) : ?>
+            
+            <?php $checked = $car->isFlagged() ? "checked" : ""; ?>
 
             <div id="car-container" class="car-container">
                 <div id="logo" style="float:right;">
-                    <a href="//www.ocdla.org"><img src="/content/images/logo.png"></a>
+                    <a href="//www.ocdla.org"><img src="/content/images/logo.png"></a><br />
+                    <label>Flag this review</label><br />
+                    <input class="flag-review" id="car-<?php print $car->getId(); ?>" data-car-id="<?php print $car->getId(); ?>" type="checkbox" <?php print $checked; ?> name="flagged" />
 				</div>
                 <label><strong>Title: </strong><?php print $car->getTitle(); ?></label><br />
                 <label><strong>Decision Date: </strong><?php print $car->getDate(); ?></label><br />
@@ -65,5 +68,6 @@
 </script>
 
 
-
+<link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/carlist.css" />
+<script src="<?php print module_path(); ?>/assets/js/carFlag.js"></script>
 
