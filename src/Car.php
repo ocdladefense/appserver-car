@@ -2,6 +2,8 @@
 
 class Car {
 
+	private static $counter = 0;
+
 	private $id;
 	private $subject_1;
 	private $subject_2;
@@ -130,10 +132,21 @@ class Car {
 		return $this->url;
 	}
 
+	public function getDateString() {
+	
+		return $this->year . "-" . $this->month . "-" . $this->day;
+	}
+	
+	
 	public function getDate(){
-
+		self::$counter++;
+		
+		
 		$dateString = $this->year . "-" . $this->month . "-" . $this->day;
 
+		if(self::$counter == 11) {
+			$dateString = "000-000-000--";
+		}
 		$date = new DateTime($dateString);
 
 		$formated = $date->format("l, F jS, Y");

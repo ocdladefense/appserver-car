@@ -44,10 +44,8 @@ class CarModule extends Module {
 		$tpl->addPath(__DIR__ . "/templates");
 
 
-		// var_dump($cars);exit;
-		// return "Hello World!";
 		return $tpl->render(array(
-				"cars" 				=>  $cars,
+				"cars" 				=>  $cars,//array($cars[0]),
 				"subjects" 		=> array(), // $subjects,
 				"filter" 			=> null // $filter
 		));
