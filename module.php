@@ -292,7 +292,7 @@ class CarModule extends Module {
 		$id = $body->carId;
 		$isFlagged = $body->isFlagged;
 
-		$query = "UPDATE $table SET isFlagged222 = $isFlagged WHERE Id = '$id'";
+		$query = "UPDATE $table SET isFlagged = $isFlagged WHERE Id = '$id'";
 
 		$database = new Database();
 		$result = $database->update($query);
