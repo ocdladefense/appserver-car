@@ -299,6 +299,11 @@ class CarModule extends Module {
 
 		return "success";
 	}
+
+	public function testCarRoute(){
+
+		return "Hello World!";
+	}
 }
 
 

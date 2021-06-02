@@ -74,6 +74,10 @@
 		"car/flag":{
 			"callback":"flagReview",
 			"content-type":"application/json"
+		},
+		"car/test":{
+			"callback":"testCarRoute",
+			"content-type":"text/html"
 		}
 	}
 }
