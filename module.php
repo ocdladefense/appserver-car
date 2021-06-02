@@ -28,6 +28,44 @@ class CarModule extends Module {
 		$this->name = "car";
 		$this->loadLimit = 10;
 	}
+	
+	
+	
+
+	public function showCars() {
+
+		$filter = !empty($_POST["filter"]) ? $_POST["filter"] : null; 
+
+		$cars = $this->getCars($filter);
+
+		$subjects = $this->getSubjects();
+
+		$tpl = new Template("car-list");
+		$tpl->addPath(__DIR__ . "/templates");
+
+
+		// var_dump($cars);exit;
+		// return "Hello World!";
+		return $tpl->render(array(
+				"cars" 				=>  $cars,
+				"subjects" 		=> array(), // $subjects,
+				"filter" 			=> null // $filter
+		));
+	}
+	
+	
+	
+	
+	
+	public function testCarRoute(){
+
+		return "Hello World!";
+	}
+	
+	
+	
+	
+	
 
 	/**
 	 * @method sayHello
@@ -228,19 +266,7 @@ class CarModule extends Module {
 
 	///////////////////// Trevor's Stuff	//////////////////////////////////////
 	
-	public function showCars() {
 
-		$filter = !empty($_POST["filter"]) ? $_POST["filter"] : null; 
-
-		$cars = $this->getCars($filter);
-
-		$subjects = $this->getSubjects();
-
-		$tpl = new Template("car-list");
-		$tpl->addPath(__DIR__ . "/templates");
-
-		return $tpl->render(array("cars" => $cars, "subjects" => $subjects, "filter" => $filter));
-	}
 
 	public function getCars($filter = null) {
 
@@ -300,10 +326,7 @@ class CarModule extends Module {
 		return "success";
 	}
 
-	public function testCarRoute(){
 
-		return "Hello World!";
-	}
 }
 
 
