@@ -25,6 +25,11 @@ a{
 p{
     font-weight: bold;
 }
+.error-pop-up-container{
+    text-align: center;
+    background-color: orange;
+    font-weight: bolder;
+}
 
 @media only screen and (max-width:750px){
     .car-container{
@@ -36,5 +41,8 @@ p{
     }
     select{
         max-width:65%;
+    }
+    .logo{
+        float: unset !important;
     }
 }

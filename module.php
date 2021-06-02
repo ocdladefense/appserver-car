@@ -285,27 +285,19 @@ class CarModule extends Module {
 
 	public function flagReview(){
 
-		try {
+		$req = $this->getRequest();
+		$body = $req->getBody();
 
-			$req = $this->getRequest();
-			$body = $req->getBody();
-	
-			$table = $body->tableName;
-			$id = $body->carId;
-			$isFlagged = $body->isFlagged;
-	
-			$query = "UPDATE $table SET isFlagged = $isFlagged WHERE Id = '$id'";
-	
-			$database = new Database();
-			$result = $database->update($query);
+		$table = $body->tableName;
+		$id = $body->carId;
+		$isFlagged = $body->isFlagged;
 
-			return "Successfuly updated the flag status for the record";
+		$query = "UPDATE $table SET isFlagged222 = $isFlagged WHERE Id = '$id'";
 
-		} catch(Exception $e) {
+		$database = new Database();
+		$result = $database->update($query);
 
-			return $e->getMessage();
-
-		}
+		return "success";
 	}
 }
 

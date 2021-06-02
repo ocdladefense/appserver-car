@@ -31,11 +31,11 @@
             <?php $checked = $car->isFlagged() ? "checked" : ""; ?>
 
             <div id="car-container" class="car-container">
-                <div id="logo" style="float:right;">
+                <div id="logo" class="logo" style="float:right;">
                     <a href="//www.ocdla.org"><img src="/content/images/logo.png"></a><br />
                     <label>Flag this review</label><br />
                     <input class="flag-review" id="car-<?php print $car->getId(); ?>" data-car-id="<?php print $car->getId(); ?>" type="checkbox" <?php print $checked; ?> name="flagged" />
-				</div>
+				</div><br />
                 <label><strong>Title: </strong><?php print $car->getTitle(); ?></label><br />
                 <label><strong>Decision Date: </strong><?php print $car->getDate(); ?></label><br />
                 <label><strong>Citation: </strong><?php print $car->getCitation(); ?></label><br />
