@@ -7,7 +7,7 @@
 
     <div class="car-container">
 
-        <form id="filter-form" action="/car/list" method="post">
+        <form id="filter-form" class="filter-form" action="/car/list" method="post">
             <label><strong>Filter:</strong></label>
 
             <select id="subjects" name="filter" style="text-align:center;" onchange="submitForm()">

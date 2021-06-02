@@ -268,9 +268,9 @@ class CarModule extends Module {
 
 	public function getCars($filter = null) {
 
-		$yesFilter = "SELECT * FROM car WHERE subject_1 LIKE '%$filter%' ORDER BY Year DESC, Month DESC, Day DESC";
+		$yesFilter = "SELECT * FROM car WHERE subject_1 LIKE '%$filter%' ORDER BY isFlagged DESC, Year DESC, Month DESC, Day DESC";
 
-		$noFilter = "SELECT * FROM car ORDER BY Year DESC";
+		$noFilter = "SELECT * FROM car ORDER BY isFlagged DESC, Year DESC, Month DESC, Day DESC";
 
 		$result = $filter == null ? Database::query($noFilter) : Database::query($yesFilter);
 
