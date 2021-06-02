@@ -45,9 +45,9 @@ class CarModule extends Module {
 
 
 		return $tpl->render(array(
-				"cars" 				=>  $cars,//array($cars[0]),
-				"subjects" 		=> array(), // $subjects,
-				"filter" 			=> null // $filter
+				"cars" 				=>  $cars,
+				"subjects" 			=> $subjects,
+				"filter" 			=> $filter
 		));
 	}
 	

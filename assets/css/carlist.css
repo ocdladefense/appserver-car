@@ -30,6 +30,9 @@ p{
     background-color: orange;
     font-weight: bolder;
 }
+label{
+    display: block;
+}
 
 @media only screen and (max-width:750px){
     .car-container{
