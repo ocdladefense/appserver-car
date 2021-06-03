@@ -1,4 +1,4 @@
-
+<link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/carlist.css" />
 
 
 <div id="car-list-container" class="list-containter">
@@ -136,6 +136,6 @@
 </script>
 
 
-<link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/carlist.css" />
+
 <script src="<?php print module_path(); ?>/assets/js/carFlag.js"></script>
 

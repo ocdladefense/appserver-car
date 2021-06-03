@@ -29,7 +29,7 @@ function flagReview(e){
     data.append("carId", e.srcElement.dataset.carId);
     data.append("isFlagged", e.target.checked);
 
-    var url = "http://localhost/car/flag";
+    var url = "/car/flag";
 
     fetch(url, {
         method: "POST",
