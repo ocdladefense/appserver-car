@@ -2,38 +2,42 @@
 
 class Car {
 
-	private $id;
-	private $subject_1;
-	private $subject_2;
-	private $summary;
-	private $result;
-	private $title;
-	private $plaintiff;
-	private $defendant;
-	private $citation;
-	private $month;
-	private $day;
-	private $year;
-	private $circuit;
-	private $majority;
-	private $judges;
-	private $url;
-	private $isFlagged;
+	public $id;
+	public $subject_1;
+	public $subject_2;
+	public $summary;
+	public $result;
+	public $title;
+	public $plaintiff;
+	public $defendant;
+	public $citation;
+	public $month;
+	public $day;
+	public $year;
+	public $circuit;
+	public $majority;
+	public $judges;
+	public $url;
+	public $is_flagged;
+	public $is_draft;
+	public $is_test;
 
 
 	public function __construct($id = null) {}
 
-	public static function from_query_result_record($record) {
+	public static function from_array_or_standard_object($record) {
+
+		$record = (array) $record;
 
 		$car = new Self();
-		$car->id = $record["id"];
+		$car->id = empty($record["id"]) ? null : $record["id"];
 		$car->subject_1 = $record["subject_1"];
 		$car->subject_2 = $record["subject_2"];
 		$car->summary = $record["summary"];
 		$car->result = $record["result"];
-		$car->title = $record["title"];
 		$car->plaintiff = $record["plaintiff"];
 		$car->defendant = $record["defendant"];
+		$car->title = $record["title"] != null ? $record["title"] : $record["plaintiff"] . " v. " . $record["defendant"]; 
 		$car->citation = $record["citation"];
 		$car->month = $record["month"];
 		$car->day = $record["day"];
@@ -42,8 +46,10 @@ class Car {
 		$car->majority = $record["majority"];
 		$car->judges = $record["judges"];
 		$car->url = $record["url"];
-		$car->isFlagged = $record["isFlagged"];
+		$car->is_flagged = $record["is_flagged"];
 
+		$car->is_draft = $record["is_draft"];
+		$car->is_test = $record["is_test"];
 
 		return $car;
 	}
@@ -149,6 +155,16 @@ class Car {
 
 	public function isFlagged(){
 
-		return $this->isFlagged == 1 ? true : false;
+		return $this->is_flagged == 1 ? true : false;
+	}
+
+	public function isDraft(){
+
+		return $this->is_draft == 1 ? true : false;
+	}
+
+	public function isTest(){
+
+		return $this->is_test == 1 ? true : false;
 	}
 }
