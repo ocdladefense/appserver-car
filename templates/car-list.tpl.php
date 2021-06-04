@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/carlist.css" />
+<link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/car-list.css" />
 
 
 <div id="car-list-container" class="list-containter">
@@ -11,24 +11,30 @@
             <label><strong>Filter:</strong></label>
 
             <select id="subjects" name="filter" style="text-align:center;" onchange="submitForm()">
+
+				<?php if($carId != null) : ?>
+					<option selected><?php print "showing review #$carId"; ?></option>
+				<?php endif; ?>
             
                 <option value="<?php print $filter != null ? $filter : ""; ?>">
                 <?php 	print $filter != null ? $filter : "SHOW ALL"; ?>
                 </option>
                 
                 <?php if($filter != null) : ?>
-									<option value="">SHOW ALL</option>
+					<option value="">SHOW ALL</option>
                 <?php endif; ?>
                 
                 <?php foreach($subjects as $subject) : ?>
-									<option value="<?php print $subject; ?>">
-										<?php print $subject; ?>
-									</option>
+					<option value="<?php print $subject; ?>">
+						<?php print $subject; ?>
+					</option>
                 <?php endforeach; ?>
                 
             </select>
 
             <label><strong><?php print "Showing " . count($cars) . " case review(s)."; ?></strong></label>
+			<?php if($isAdmin) : ?><a class="add-review" href="/car/new">Add Case Reviews</a><?php endif; ?>
+
         </form>
 
     </div>
@@ -60,13 +66,18 @@
 				
 				
 						<div id="logo" class="logo" style="float:right;">
-								<a href="//www.ocdla.org">
-									<img src="/content/images/logo.png" />
-								</a>
-								<br />
-								<label>Flag this review</label>
-								
+							<a href="//www.ocdla.org">
+								<img src="/content/images/logo.png" />
+							</a>
+							<br />
+							
+							<?php if($isAdmin) : ?>
 								<input class="flag-review" id="car-<?php print $car->getId(); ?>" data-car-id="<?php print $car->getId(); ?>" type="checkbox" <?php print $checked; ?> name="flagged" />
+								<label class="flag-review" style="display: inline-block;">Flag</label>
+								<a class="delete-review" href="/car/edit/<?php print $car->getId(); ?>">Edit</a>
+								<a class="delete-review" href="/car/delete/<?php print $car->getId(); ?>">Delete</a>
+							<?php endif; ?>
+							
 						</div>
 						
 						<label>
@@ -119,7 +130,9 @@
 							<?php print $car->getResult(); ?>
 						</label>
 						
-						<a href="<?php print $car->getUrl(); ?>" target="_blank">View on the Library of Defense website</a>
+						<?php if($car->getUrl() != null) : ?>
+							<a href="<?php print $car->getUrl(); ?>" target="_blank">View on the Library of Defense website</a>
+						<?php endif; ?>
 				</div>
 
 		<?php } ?>
