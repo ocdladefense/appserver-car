@@ -7,6 +7,8 @@
 
     <div class="car-container">
 
+				<a class="create-review" href="/car/create">New Case Review</a>
+
         <form id="filter-form" class="filter-form" action="/car/list" method="post">
             <label><strong>Filter:</strong></label>
 
@@ -74,7 +76,7 @@
 							<?php if($isAdmin) : ?>
 								<input class="flag-review" id="car-<?php print $car->getId(); ?>" data-car-id="<?php print $car->getId(); ?>" type="checkbox" <?php print $checked; ?> name="flagged" />
 								<label class="flag-review" style="display: inline-block;">Flag</label>
-								<a class="delete-review" href="/car/edit/<?php print $car->getId(); ?>">Edit</a>
+								<!-- <a class="edit-review" href="/car/edit/<?php print $car->getId(); ?>">Edit</a>-->
 								<a class="delete-review" href="/car/delete/<?php print $car->getId(); ?>">Delete</a>
 							<?php endif; ?>
 							

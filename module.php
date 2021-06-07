@@ -6,6 +6,10 @@ use Http\HttpHeader;
 use function Mysql\insert;
 use function Mysql\update;
 
+
+
+
+
 class CarModule extends Module {
 
 
@@ -45,6 +49,9 @@ class CarModule extends Module {
 		));
 	}
 
+
+
+
 	public function getCars($filter = null) {
 
 		$yesFilter = "SELECT * FROM car WHERE subject_1 LIKE '%$filter%' ORDER BY is_flagged DESC, Year DESC, Month DESC, Day DESC";
@@ -63,6 +70,9 @@ class CarModule extends Module {
 
 		return $cars;
 	}
+
+
+
 
 	public function getCar($id){
 
@@ -130,19 +140,54 @@ class CarModule extends Module {
 		return $tpl->render(array("car" => $car));
 	}
 
+
+	public function createCart($data) {
+
+		// $data->is_flagged = 1;
+		// $data->is_draft = 1;
+		$data->is_test = 1;
+
+		$car = Car::from_array_or_standard_object($data);
+	
+		return $redirect;
+	}
+	
+	
+	/**
+	 * For now only allow updates on test reviews.
+	 */
+	public function updateCart($data) {
+	
+		// Needs fixing: check that is_test is true before doing the update.
+		// boolean fields should not be set statically.
+		$data->is_flagged = 1;
+		$data->is_draft = 1;
+		$data->is_test = 1;
+	
+		$car = Car::from_array_or_standard_object($data);
+	
+		return $redirect;
+	}
+
+
+
+
 	public function saveCar(){
 
 		$req = $this->getRequest();
 		$data = $req->getBody();
 
-		$data->is_flagged = 1;
-		$data->is_draft = 1;
-		$data->is_test = 1;
-
-		$car = Car::from_array_or_standard_object($data);
-
 		if($car->getId() == null){
+			return $this->createCart($car);
+		} else {
+			return $this->updateCart($car);
+		}
+		
+	}
 
+
+	// needs to be merged into above.
+	public function oldSaveCar() {
 			$result = insert($car);
 			return $this->showCars($result->getId());
 		} else {
@@ -151,6 +196,7 @@ class CarModule extends Module {
 
 			if(!$result->hasError()){
 
+				// nope, return redirect.
 				return $this->showCars($car->getId());
 				
 			} else {
@@ -160,20 +206,26 @@ class CarModule extends Module {
 		}
 	}
 	
-	public function testCarRoute(){
 
-		return "Hello World!";
-	}
 
 	public function deleteCar($id){
-
-		$query = "DELETE FROM car WHERE Id = '$id'";
+		// nope, no deleting, but if we do make sure we're only deleting tests.
+		return false;
+		$query = "DELETE FROM car WHERE is_test = 1 AND Id = '$id'";
 
 		$db = new Database();
 
 		$result = $db->delete($query);
 
+		// nope, redirect.
 		return $this->showCars();
+	}
+	
+	
+	
+	public function testCarRoute(){
+
+		return "Hello World!";
 	}
 }
 
