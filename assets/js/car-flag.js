@@ -18,7 +18,9 @@ function displayErrorPopUp(element, data){
 
 function removeErrorPopUp(element){
 
-    element.parentElement.parentElement.firstChild.setAttribute("style", "display: none;");
+    let popup = element.parentElement.parentElement.firstChild;
+
+    popup.setAttribute("style", "display: none;");
 
 }
 
@@ -27,7 +29,10 @@ function flagReview(e){
     let data = new FormData();
     data.append("tableName", "car");
     data.append("carId", e.srcElement.dataset.carId);
-    data.append("isFlagged", e.target.checked);
+    console.log(e.target);
+    data.append("is_flagged", e.target.checked);
+
+    console.log(data);
 
     var url = "/car/flag";
 
@@ -53,7 +58,7 @@ function flagReview(e){
 
 }
 
-var elems = document.querySelectorAll(".flag-review");
+var elems = document.querySelectorAll(".checkbox-option");
 
 for(let i = 0; i <= elems.length -1; i++){
 	

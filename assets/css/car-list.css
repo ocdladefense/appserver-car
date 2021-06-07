@@ -7,9 +7,18 @@
     border-radius:5px;
     margin:0 auto;
     width:80%;
-    background-color:lightblue;
+    background-color: rgba(50,50,50,0.1);
     margin-bottom: 10px;
     padding: 10px;
+}
+.is-new{
+    background-color: rgba(255,255,0,0.4);;
+}
+.is-test::before{
+    content: "This is a test case review.";
+}
+.is-draft{
+    border: 1px dashed #ccc;    
 }
 input{
     height: 25px;
@@ -39,13 +48,39 @@ label{
 
     display: inline-block;
 }
-.flag-review, .add-review{
+.checkbox-option, .checkbox-label, .add-review{
     float: right;
     margin-left: 10px;
 }
-.logo{
+.admin-area{
     text-align: right;
+    float: right;
 }
+.title, .decision-date, .subject-1, .subject-2{
+    font-weight: 900;
+}
+.subject-2{
+    margin-bottom: 2%;
+}
+label{
+    margin-bottom: 5px;
+}
+.additional-info label{
+    display: inline-block;
+    margin-right: 10px;
+}
+.checkbox-label, .checkbox-option{
+    display: inline-block;
+}
+.delete-review{
+    margin-right: 10px;
+}
+
+.car-item.title {
+    font-size: 25px;
+    line-height: 45px;
+}
+
 
 @media only screen and (max-width:750px){
     .car-container{
@@ -57,8 +92,5 @@ label{
     }
     select{
         max-width:65%;
-    }
-    .logo{
-        float: unset !important;
     }
 }

@@ -7,16 +7,10 @@
 
     <div class="car-container">
 
-				<a class="create-review" href="/car/create">New Case Review</a>
-
         <form id="filter-form" class="filter-form" action="/car/list" method="post">
             <label><strong>Filter:</strong></label>
 
             <select id="subjects" name="filter" style="text-align:center;" onchange="submitForm()">
-
-				<?php if($carId != null) : ?>
-					<option selected><?php print "showing review #$carId"; ?></option>
-				<?php endif; ?>
             
                 <option value="<?php print $filter != null ? $filter : ""; ?>">
                 <?php 	print $filter != null ? $filter : "SHOW ALL"; ?>
@@ -58,53 +52,62 @@
 		
 		foreach($cars as $car) {
 				
-				$checked = $car->isFlagged() ? "checked" : "";
+				$isFlagged = $car->isFlagged() ? "checked" : "";
+				$isNewClass = $car->isNew() ? "is-new" : "";
+				$isTestClass = $car->isTest() ? "is-test" : "";
+				$isDraftClass = $car->isDraft() ? "is-draft" : "";
+
+				$classesArray = array($isNewClass, $isTestClass, $isDraftClass);
+
+				$classes = implode(" ", $classesArray);
 				
 				
 				?>
 
-				<div id="car-container" class="car-container">
+				<div class="car-container <?php print $classes; ?>">
 				
-				
-				
-						<div id="logo" class="logo" style="float:right;">
-							<a href="//www.ocdla.org">
-								<img src="/content/images/logo.png" />
-							</a>
-							<br />
-							
-							<?php if($isAdmin) : ?>
-								<input class="flag-review" id="car-<?php print $car->getId(); ?>" data-car-id="<?php print $car->getId(); ?>" type="checkbox" <?php print $checked; ?> name="flagged" />
-								<label class="flag-review" style="display: inline-block;">Flag</label>
-								<!-- <a class="edit-review" href="/car/edit/<?php print $car->getId(); ?>">Edit</a>-->
-								<a class="delete-review" href="/car/delete/<?php print $car->getId(); ?>">Delete</a>
-							<?php endif; ?>
-							
-						</div>
 						
-						<label>
-							<strong>Title:</strong>
-							<?php print $car->getTitle(); ?>
-						</label>
+					<?php if($isAdmin) : ?>
+						<div class="admin-area">
+							<a class="delete-review" href="/car/delete/<?php print $car->getId(); ?>">Delete</a>
+							<a class="edit-review" href="/car/edit/<?php print $car->getId(); ?>">Edit</a>
+							<label class="checkbox-label">Flag</label>
+							<input class="checkbox-option" id="car-<?php print $car->getId(); ?>" name="is_flagged" data-car-id="<?php print $car->getId(); ?>" type="checkbox" <?php print $isFlagged; ?> />
+
+						</div> <!-- end admin area  -->
+					<?php endif; ?>
 						
-						<label>
-							<strong>Decision Date:</strong>
-							<?php print $car->getDate(); ?>
-						</label>
-						
+					<div class="car-item title">
+						<?php print $car->getTitle(); ?>
+					</div>
+					
+					<div class="car-item decision-date">
+						<?php print $car->getDate(); ?>
+					</div>
+
+					<div class="car-item subject-1">
+						<?php print $car->getSubject1(); ?>
+					</div>
+					
+					<div class="car-item subject-2">
+						<?php print $car->getSubject2(); ?>
+					</div>
+
+					<label>
+						<strong>Summary:</strong>
+						<?php print $car->getSummary(); ?>
+					</label>
+
+					<label>
+						<strong>Result:</strong>
+						<?php print $car->getResult(); ?>
+					</label>
+
+					<div class="additional-info">
+
 						<label>
 							<strong>Citation: </strong>
 							<?php print $car->getCitation(); ?>
-						</label>
-						
-						<label>
-							<strong>Primary Subject:</strong>
-							<?php print $car->getSubject1(); ?>
-						</label>
-						
-						<label>
-							<strong>Secondary Subject:</strong>
-							<?php print $car->getSubject2(); ?>
 						</label>
 						
 						<label>
@@ -121,20 +124,11 @@
 							<strong>Judges:</strong>
 							<?php print $car->getJudges(); ?>
 						</label>
-						
-						<label>
-							<strong>Summary:</strong>
-							<?php print $car->getSummary(); ?>
-						</label>
-						
-						<label>
-							<strong>Result:</strong>
-							<?php print $car->getResult(); ?>
-						</label>
-						
-						<?php if($car->getUrl() != null) : ?>
-							<a href="<?php print $car->getUrl(); ?>" target="_blank">View on the Library of Defense website</a>
-						<?php endif; ?>
+					</div>
+					
+					<?php if($car->getUrl() != null) : ?>
+						<a href="<?php print $car->getUrl(); ?>" target="_blank">View on the Library of Defense website</a>
+					<?php endif; ?>
 				</div>
 
 		<?php } ?>
@@ -152,5 +146,5 @@
 
 
 
-<script src="<?php print module_path(); ?>/assets/js/carFlag.js"></script>
+<script src="<?php print module_path(); ?>/assets/js/car-flag.js"></script>
 

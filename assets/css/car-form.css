@@ -1,4 +1,5 @@
 
+ 
 .form-container{
     text-align: center;
 }
@@ -10,10 +11,10 @@ input, label{
     display: block;
     height: 20px;
 }
-input{
+input[type="text"]{
     margin-bottom: 3%;
     width: 70%;
-    height: 26px;
+    height: 34px;
 }
 label{
     margin-bottom: 5px;
@@ -29,17 +30,15 @@ form{
     width: 80%;
     margin: 0 auto;
 }
-.form-row{
-    display: inline-block;
-    width: unset;
-}
-.car-title{
-    text-align: center;
-}
-.two-digit{
-    width: 30px;
-    margin-right:5px;
-}
-.four-digit{
+.decision-date input[type="text"]{
     width: 50px;
+    display: inline-block;
+    margin-right: 10px;
+}
+.checkbox-option, .checkbox-label{
+    display:unset;
+    height:unset;
+}
+.checkbox-area{
+    margin-bottom: 5%;
 }

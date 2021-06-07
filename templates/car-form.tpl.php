@@ -11,48 +11,97 @@
 
     <h1 id="car-form-header" class="car-form-header"><?php print $headerMessage; ?></h1>
 
+    <?php
+        $isFlagged = $car->isFlagged() ? "1" : "0";
+        $checkFlagged = $isFlagged ? "checked" : "";
+        $isTest = $car->isTest() ? "1" : "0";
+        $isDraft = $car->isDraft() ? "1" : "0";
+    ?>
+
     <form id="car-form" class="car-form" action="/car/save" method="post">
 
-        <input type="hidden" name="id" value="<?php print $car->getId(); ?>" />
-        
-        <div class="car-title">
-            <label>Title</label>
-            <input class="form-row" name="plaintiff" value="<?php print $car->getPlaintiff(); ?>" placeholder="Enter Plaintiff" />
-            <label class="form-row">vs.</label>
-            <input class="form-row" name="defendant" value="<?php print $car->getDefendant(); ?>" placeholder="Enter Defendant" />
+        <?php if($car->getId() != null) : ?>
+
+            <div class="form-item">
+                <a class="delete-review" href="/car/delete/<?php print $car->getId(); ?>">Delete</a>
+            </div>
+        <?php endif; ?>
+
+        <div class="checkbox-area">
+            <div class="form-item">
+                <input class="checkbox-option" name="is_flagged" value ="<?php print $isFlagged; ?>" <?php print $checkFlagged; ?> type="checkbox" />
+                <label class="checkbox-label">Flag</label>
+            </div>
+
+            <div class="form-item">
+                <input class="checkbox-option" name="is_draft" value="0" type="checkbox" />
+                <label class="checkbox-label">Is Draft</label>
+            </div>
+
+            <div class="form-item">
+                <input class="checkbox-option" name="is_test" value="1" type="checkbox" checked />
+                <label class="checkbox-label">Is Test</label>
+            </div>
         </div>
 
-        <label>Decision Date</label>
-        <input class="form-row two-digit" name="month" value="<?php print $car->getMonth(); ?>" maxlength=2 placeholder="mm" />
-        <input class="form-row two-digit" name="day" value="<?php print $car->getDay(); ?>" maxlength=2 placeholder="dd" />
-        <input class="form-row four-digit" name="year" value="<?php print $car->getYear(); ?>" maxlength=4 placeholder="yyyy" />
+        <input type="hidden" name="id" value="<?php print $car->getId(); ?>" />
 
-        <label>Citation</label>
-        <input name="citation" value="<?php print $car->getCitation(); ?>" placeholder="Enter Citation...(ex. 311 Or App 542)" />
+        <div class="decision-date form-item">
+            <label>Decision Date</label>
+            <input type="text" class="form-row two-digit" name="month" value="<?php print $car->getMonth(); ?>" maxlength=2 placeholder="mm" />
+            <input type="text" class="form-row two-digit" name="day" value="<?php print $car->getDay(); ?>" maxlength=2 placeholder="dd" />
+            <input type="text" class="form-row four-digit" name="year" value="<?php print $car->getYear(); ?>" maxlength=4 placeholder="yyyy" />
+        </div>
 
-        <label>Primary Subject</label>
-        <input name="subject_1"value="<?php print $car->getSubject1(); ?>" placeholder="Enter Primary Subject..." />
+        <div class="form-item">
+            <label>Plaintiff</label>
+            <input type="text" name="plaintiff" value="<?php print $car->getPlaintiff(); ?>" placeholder="Enter plaintiff..." />
+        </div>
 
-        <label>Secondary Subject</label>
-        <input name="subject_2" value="<?php print $car->getSubject2(); ?>" placeholder="Enter Secondary Subject..." />
+        <div class="form-item">
+            <label>Defendant</label>
+            <input type="text" name="defendant" value="<?php print $car->getDefendant(); ?>" placeholder="Enter defendant..." />
+        </div>
 
-        <label>Circuit</label>
-        <input name="circuit" value="<?php print $car->getCircuit(); ?>" placeholder="Enter Circuit..." />
-        
-        <label>Majority</label>
-        <input name="majority" value="<?php print $car->getMajority(); ?>" placeholder="Enter majority names..." />
+        <div class="form-item">
+            <label>Citation</label>
+            <input type="text" name="citation" value="<?php print $car->getCitation(); ?>" placeholder="Enter Citation...(ex. 311 Or App 542)" />
+        </div>
 
-        <label>Judges</label>
-        <input name="judges" value="<?php print $car->getJudges(); ?>" placeholder="Enter additional judges..." />
+        <div class="form-item">
+            <label>Primary Subject</label>
+            <input type="text" name="subject_1"value="<?php print $car->getSubject1(); ?>" placeholder="Enter Primary Subject..." />
+        </div>
 
-        <label>Summary</label>
-        <textarea name="summary" placeholder="Enter the case summary..."><?php print $car->getSummary(); ?></textarea>
+        <div class="form-item">
+            <label>Secondary Subject</label>
+            <input type="text" name="subject_2" value="<?php print $car->getSubject2(); ?>" placeholder="Enter Secondary Subject..." />
+        </div>
 
-        <label>Result</label>
-        <textarea name="result" placeholder="Enter the result..."><?php print $car->getResult(); ?></textarea>
+        <div class="form-item">
+            <label>Circuit</label>
+            <input type="text" name="circuit" value="<?php print $car->getCircuit(); ?>" placeholder="Enter Circuit..." />
+        </div>
 
-        <label>L.O.D. URL</label>
-        <input name="url" value="<?php print $car->getUrl(); ?>" placeholder="Enter the url..." />
+        <div class="form-item">
+            <label>Majority</label>
+            <input type="text" name="majority" value="<?php print $car->getMajority(); ?>" placeholder="Enter majority names..." />
+        </div>
+
+        <div class="form-item">
+            <label>Judges</label>
+            <input type="text" name="judges" value="<?php print $car->getJudges(); ?>" placeholder="Enter additional judges..." />
+        </div>
+
+        <div class="form-item">
+            <label>Summary</label>
+            <textarea name="summary" placeholder="Enter the case summary..."><?php print $car->getSummary(); ?></textarea>
+        </div>
+
+        <div class="form-item">
+            <label>Result</label>
+            <textarea name="result" placeholder="Enter the result..."><?php print $car->getResult(); ?></textarea>
+        </div>
 
         <button type="submit" id="submit">Submit</button>
     </form>

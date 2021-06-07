@@ -6,6 +6,10 @@
 		"Car.php"
 	],
 	"routes": {
+		"car/list/%id":{
+			"callback":"showCars",
+			"content-type":"text\/html"
+		},
 		"car/list":{
 			"callback":"showCars",
 			"content-type":"text\/html"

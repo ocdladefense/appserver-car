@@ -22,6 +22,9 @@ class Car {
 	public $is_draft;
 	public $is_test;
 
+	// This is to hold the data that will not be used as a column when inserting data.
+	private $meta = array();
+
 
 	public function __construct($id = null) {}
 
@@ -46,10 +49,10 @@ class Car {
 		$car->majority = $record["majority"];
 		$car->judges = $record["judges"];
 		$car->url = $record["url"];
-		$car->is_flagged = $record["is_flagged"];
+		$car->is_flagged = !empty($record["is_flagged"]) ? $record["is_flagged"] : "0";
 
-		$car->is_draft = $record["is_draft"];
-		$car->is_test = $record["is_test"];
+		$car->is_draft = !empty($record["is_draft"]) ? $record["is_draft"] : "0";
+		$car->is_test = !empty($record["is_test"]) ? $record["is_test"] : "0";
 
 		return $car;
 	}
@@ -166,5 +169,15 @@ class Car {
 	public function isTest(){
 
 		return $this->is_test == 1 ? true : false;
+	}
+
+	public function isNew($new = null){
+
+		if(is_bool($new)){
+
+			$this->meta["is_new"] = $new;
+		}
+
+		return $this->meta["is_new"];
 	}
 }
