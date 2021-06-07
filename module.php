@@ -22,7 +22,7 @@ class CarModule extends Module {
 
 		if($carId == null){
 
-			$cars = $this->getCars();
+			$cars = $this->getCars($filter);
 		} else {
 
 			$cars[] = $this->getCar($carId);
