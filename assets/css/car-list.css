@@ -96,4 +96,13 @@ label{
     form#filter-form {
         height:4em;
     }
+    .add-review {
+        float: unset;
+        margin-left: 0px;
+        display: block;
+    }
+    .admin-area{
+        float:unset;
+        text-align:unset;
+    }
 }

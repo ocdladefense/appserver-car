@@ -22,7 +22,8 @@ function handleDelete(e){
         let carId = e.srcElement.dataset.carId;
 
         let link = document.createElement("a");
-        link.setAttribute("href", "/car/delete/" + carId);
+        let href = "/car/delete/" + carId;
+        link.setAttribute("href", href);
         link.click();
     }
 }
