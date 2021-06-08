@@ -20,19 +20,30 @@ class CarModule extends Module {
 		$this->name = "car";
 	}
 
+
+
+
 	public function showCars($carId = null) {
 
 		$filter = !empty($_POST["filter"]) ? $_POST["filter"] : null;
 
-		if($carId == null){
+		$cars = $this->getCars($filter);
 
-			$cars = $this->getCars($filter);
-		} else {
+		if(!empty($carId)) {
 
-			$cars[] = $this->getCar($carId);
+			$newCar = $this->getCar($carId);
+			$newCar->isNew(true);
+
+			for($i = 0; $i < count($cars); $i++){
+
+				if($cars[$i]->getId() == $newCar->getId()){
+	
+					unset($cars[$i]);
+				}
+			}
+
+			array_unshift($cars, $newCar);
 		}
-
-		//$cars = $carId == null ? $this->getCars($filter) : $this->getCar($carId);
 
 		$subjects = $this->getSubjects();
 
@@ -41,11 +52,10 @@ class CarModule extends Module {
 
 
 		return $tpl->render(array(
-				"cars" 				=>  $cars,
+				"cars" 					=> $cars,
 				"subjects" 			=> $subjects,
-				"filter" 			=> $filter,
-				"carId"				=> $carId,
-				"isAdmin"			=> true
+				"filter" 				=> $filter,
+				"isAdmin"				=> true
 		));
 	}
 
@@ -58,7 +68,7 @@ class CarModule extends Module {
 
 		$noFilter = "SELECT * FROM car ORDER BY is_flagged DESC, Year DESC, Month DESC, Day DESC";
 
-		$result = $filter == null ? Database::query($noFilter) : Database::query($yesFilter);
+		$result = empty($filter) ? Database::query($noFilter) : Database::query($yesFilter);
 
 		$records = $result->getIterator();
 
@@ -92,6 +102,8 @@ class CarModule extends Module {
 	}
 
 
+
+
 	public function getSubjects() {
 
 		$result = Database::query("SELECT subject_1 FROM car ORDER BY subject_1");
@@ -113,60 +125,19 @@ class CarModule extends Module {
 		return $subjects;
 	}
 
-	public function flagReview(){
 
-		$req = $this->getRequest();
-		$body = $req->getBody();
 
-		$table = $body->tableName;
-		$id = $body->carId;
-		$isFlagged = $body->isFlagged;
-
-		$query = "UPDATE $table SET is_flagged = $isFlagged WHERE Id = '$id'";
-
-		$database = new Database();
-		$result = $database->update($query);
-
-		return "success";
-	}
 
 	public function showCarForm($carId = null){
 
-		$car = $carId != null ? $this->getCar($carId) : new Car();
+		$car = !empty($carId) ? $this->getCar($carId) : new Car();
+
+		if(!empty($carId) && !$car->isTest()) throw new Exception("CAR_UPDATE_ERROR: You can only update cars that are marked as test");
 
 		$tpl = new Template("car-form");
 		$tpl->addPath(__DIR__ . "/templates");
 
 		return $tpl->render(array("car" => $car));
-	}
-
-
-	public function createCart($data) {
-
-		// $data->is_flagged = 1;
-		// $data->is_draft = 1;
-		$data->is_test = 1;
-
-		$car = Car::from_array_or_standard_object($data);
-	
-		return $redirect;
-	}
-	
-	
-	/**
-	 * For now only allow updates on test reviews.
-	 */
-	public function updateCart($data) {
-	
-		// Needs fixing: check that is_test is true before doing the update.
-		// boolean fields should not be set statically.
-		$data->is_flagged = 1;
-		$data->is_draft = 1;
-		$data->is_test = 1;
-	
-		$car = Car::from_array_or_standard_object($data);
-	
-		return $redirect;
 	}
 
 
@@ -177,50 +148,71 @@ class CarModule extends Module {
 		$req = $this->getRequest();
 		$data = $req->getBody();
 
-		if($car->getId() == null){
-			return $this->createCart($car);
-		} else {
-			return $this->updateCart($car);
-		}
-		
+		$car = Car::from_array_or_standard_object($data);
+
+		return empty($data->id) ? $this->createCar($car) : $this->updateCar($car);
 	}
 
 
-	// needs to be merged into above.
-	public function oldSaveCar() {
-			$result = insert($car);
-			return $this->showCars($result->getId());
-		} else {
 
-			$result = update($car);
 
-			if(!$result->hasError()){
+	public function createCar(Car $car) {
 
-				// nope, return redirect.
-				return $this->showCars($car->getId());
-				
-			} else {
+		$result = insert($car);
 
-				throw new Exception($result->getResult());
-			}
-		}
+		return redirect("/car/list/{$car->getId()}");
 	}
 	
+	
+	
+	
+	// For now only allow updates on test reviews.
+	public function updateCar(Car $car) {
+	
+		if(!$car->isTest()) throw new Exception("CAR_UPDATE_ERROR: You can only update cars that are marked as test");
+		
+		$result = update($car);
+
+		return redirect("/car/list/{$car->getId()}");
+	}
+
+
 
 
 	public function deleteCar($id){
-		// nope, no deleting, but if we do make sure we're only deleting tests.
-		return false;
+
+		$car = $this->getCar($id);
+
+		if(!$car->isTest()) throw new Exception("CAR_DELETE_ERROR: You can only delete cars that are marked as test");
+
 		$query = "DELETE FROM car WHERE is_test = 1 AND Id = '$id'";
 
 		$db = new Database();
 
 		$result = $db->delete($query);
 
-		// nope, redirect.
-		return $this->showCars();
+		return redirect("/car/list");
 	}
-	
+
+
+
+
+	public function flagReview(){
+
+		$req = $this->getRequest();
+		$body = $req->getBody();
+
+		$table = $body->tableName;
+		$id = $body->carId;
+		$isFlagged = $body->is_flagged;
+
+		$query = "UPDATE $table SET is_flagged = $isFlagged WHERE Id = '$id'";
+
+		$database = new Database();
+		$result = $database->update($query);
+
+		return "success";
+	}
 	
 	
 	public function testCarRoute(){
