@@ -18,7 +18,7 @@
     content: "This is a test case review.";
 }
 .is-draft{
-    border: 1px dashed #ccc;    
+    border: 6px dashed #ccc;
 }
 input{
     height: 25px;

@@ -42,3 +42,6 @@ form{
 .checkbox-area{
     margin-bottom: 5%;
 }
+form#car-form {
+    background-color: rgba(55,55,55,0.1);
+}

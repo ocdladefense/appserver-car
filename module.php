@@ -138,8 +138,6 @@ class CarModule extends Module {
 
 		$car = Car::from_array_or_standard_object($data);
 
-		//var_dump($data, $car);exit;
-
 		return empty($data->id) ? $this->createCar($car) : $this->updateCar($car);
 	}
 

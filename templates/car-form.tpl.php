@@ -12,10 +12,9 @@
     <h1 id="car-form-header" class="car-form-header"><?php print $headerMessage; ?></h1>
 
     <?php
-        $isFlagged = $car->isFlagged() ? "1" : "0";
-        $checkFlagged = $isFlagged ? "checked" : "";
-        $isTest = $car->isTest() ? "1" : "0";
-        $isDraft = $car->isDraft() ? "1" : "0";
+        $checkFlagged = $car->isFlagged() ? "checked" : "";
+        $checkTest = $car->isTest() ? "checked" : "";
+        $checkDraft = $car->isDraft() ? "checked" : "";
     ?>
 
     <form id="car-form" class="car-form" action="/car/save" method="post">
@@ -29,12 +28,12 @@
 
         <div class="checkbox-area">
             <div class="form-item">
-                <input class="checkbox-option" name="is_flagged" value ="<?php print $isFlagged; ?>" <?php print $checkFlagged; ?> type="checkbox" />
+                <input class="checkbox-option" name="is_flagged" value="1" <?php print $checkFlagged; ?> type="checkbox" />
                 <label class="checkbox-label">Flag</label>
             </div>
 
             <div class="form-item">
-                <input class="checkbox-option" name="is_draft" value="0" type="checkbox" />
+                <input class="checkbox-option" name="is_draft" value ="1" <?php print $checkDraft; ?> type="checkbox" />
                 <label class="checkbox-label">Is Draft</label>
             </div>
 
@@ -106,3 +105,20 @@
         <button type="submit" id="submit">Submit</button>
     </form>
 </div>
+
+<!-- <script>
+    let checkboxes = document.getElementsByClassName("checkbox-option");
+
+    for(let i = 0; i < checkboxes.length; i++){
+
+        checkboxes[i].addEventListener("change", changeValue);
+    } 
+
+    function changeValue(e){
+        let target = e.target;
+        let originalValue = target.value;
+        let newValue = originalValue == "0" ? "1" : "0";
+
+        target.setAttribute("value", newValue);
+    }
+</script> -->
