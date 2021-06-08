@@ -22,7 +22,7 @@
         <?php if($car->getId() != null) : ?>
 
             <div class="form-item">
-                <a class="delete-review"  data-car-id="<?php print $car->getId(); ?>" href="/car/delete/<?php print $car->getId(); ?>">Delete</a>
+                <a class="delete-review" data-car-id="<?php print $car->getId(); ?>" href="/car/delete/<?php print $car->getId(); ?>">Delete</a>
             </div>
         <?php endif; ?>
 
@@ -47,9 +47,7 @@
 
         <div class="decision-date form-item">
             <label>Decision Date</label>
-            <input type="text" class="form-row two-digit" name="month" style="text-align:center;" value="<?php print $car->getMonth(); ?>" maxlength=2 placeholder="mm" />
-            <input type="text" class="form-row two-digit" name="day" style="text-align:center;" value="<?php print $car->getDay(); ?>" maxlength=2 placeholder="dd" />
-            <input type="text" class="form-row four-digit" name="year" style="text-align:center;" value="<?php print $car->getYear(); ?>" maxlength=4 placeholder="yyyy" />
+            <input type="date" name="date" value="<?php print $car->getPickerCompatibleDate(); ?>">
         </div>
 
         <div class="form-item">

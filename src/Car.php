@@ -42,15 +42,24 @@ class Car {
 		$car->defendant = $record["defendant"];
 		$car->title = $record["title"] != null ? $record["title"] : $record["plaintiff"] . " v. " . $record["defendant"]; 
 		$car->citation = $record["citation"];
-		$car->month = $record["month"];
-		$car->day = $record["day"];
-		$car->year = $record["year"];
+
+		if(!empty($record["date"])){
+
+			list($car->year, $car->month, $car->day) = explode("-",$record["date"]);
+
+		} else {
+
+			$car->month = $record["month"];
+			$car->day = $record["day"];
+			$car->year = $record["year"];
+		}
+
 		$car->circuit = $record["circuit"];
 		$car->majority = $record["majority"];
 		$car->judges = $record["judges"];
 		$car->url = $record["url"];
-		$car->is_flagged = !empty($record["is_flagged"]) ? $record["is_flagged"] : "0";
 
+		$car->is_flagged = !empty($record["is_flagged"]) ? $record["is_flagged"] : "0";
 		$car->is_draft = !empty($record["is_draft"]) ? $record["is_draft"] : "0";
 		$car->is_test = !empty($record["is_test"]) ? $record["is_test"] : "0";
 
@@ -179,5 +188,20 @@ class Car {
 		}
 
 		return $this->meta["is_new"];
+	}
+
+	public function getPickerCompatibleDate(){
+
+		if(!empty($this->year)){
+
+			$dateString = $this->year ."-". $this->month ."-". $this->day;
+
+			$date = new \DateTime($dateString);
+			$compatibleDate = $date->format("Y-m-d");
+
+			return $compatibleDate;
+		}
+		//'2021-06-08' 
+
 	}
 }
