@@ -22,7 +22,7 @@
         <?php if($car->getId() != null) : ?>
 
             <div class="form-item">
-                <a class="delete-review" href="/car/delete/<?php print $car->getId(); ?>">Delete</a>
+                <a class="delete-review"  data-car-id="<?php print $car->getId(); ?>" href="/car/delete/<?php print $car->getId(); ?>">Delete</a>
             </div>
         <?php endif; ?>
 
