@@ -1,0 +1,96 @@
+
+.list-header{
+    text-align:center;
+    margin-bottom: 10px;
+}
+.car-container{
+    border-radius:5px;
+    margin:0 auto;
+    width:80%;
+    background-color: rgba(50,50,50,0.1);
+    margin-bottom: 10px;
+    padding: 10px;
+}
+.is-new{
+    background-color: rgba(255,255,0,0.4);;
+}
+.is-test::before{
+    content: "This is a test case review.";
+}
+.is-draft{
+    border: 6px dashed #ccc;
+}
+input{
+    height: 25px;
+    padding: 5px;
+    border-radius:5px;
+}
+button{
+    border-radius: 10px;
+    padding:5px;
+}
+a{
+    text-decoration: none;
+}
+p{
+    font-weight: bold;
+}
+.error-pop-up-container{
+    text-align: center;
+    background-color: orange;
+    font-weight: bolder;
+}
+label{
+    display: block;
+}
+
+.filter-form label, select{
+
+    display: inline-block;
+}
+.checkbox-option, .checkbox-label, .add-review{
+    float: right;
+    margin-left: 10px;
+}
+.admin-area{
+    text-align: right;
+    float: right;
+}
+.title, .decision-date, .subject-1, .subject-2{
+    font-weight: 900;
+}
+.subject-2{
+    margin-bottom: 2%;
+}
+label{
+    margin-bottom: 5px;
+}
+.additional-info label{
+    display: inline-block;
+    margin-right: 10px;
+}
+.checkbox-label, .checkbox-option{
+    display: inline-block;
+}
+.delete-review{
+    margin-right: 10px;
+}
+
+.car-item.title {
+    font-size: 25px;
+    line-height: 45px;
+}
+
+
+@media only screen and (max-width:750px){
+    .car-container{
+        width:100%;
+    }
+    .car-sub-container{
+        width: 100%;
+        padding: 15px;
+    }
+    select{
+        max-width:65%;
+    }
+}

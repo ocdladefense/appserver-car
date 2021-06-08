@@ -1,0 +1,109 @@
+/*#container-left.column{
+	display: none;
+}
+
+#stage{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}*/
+
+#car-create-form {
+    padding: 20px;
+    height: 550px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.textInput-input, .lookup-input {
+    padding: 4.1px;
+}
+
+.textInput, .lookup {
+    width: 100%;
+    display: block;
+    margin-bottom: 20px;
+    padding: 4.1px;
+}
+
+.textInput-input, .lookup-input {
+    width: 85%;
+}
+
+.lookup-label, .textInput-label {
+    width: 15%;
+    vertical-align: bottom;
+    display: inline-block;
+    text-transform: capitalize;
+}
+
+.lookup-group {
+    display: inline;
+}
+
+.lookup-select {
+    padding: 4.1px;
+    width: 42.5%;
+}
+
+.lookup-input {
+    width: 42.5%;
+}
+
+a#car-create-cancel, a#car-submit-button {
+    display: inline-block;
+    width: 20%;
+    height: 40px;
+    background-color: rgb(239, 239, 239);
+    border: black solid 1px;
+    border-radius: 5px;
+    margin-left: 20%;
+    margin-bottom: 20px;
+    line-height: 35px;
+}
+
+a#car-create-cancel:hover, a#car-submit-button:hover {
+    background-color: darkgray;
+    cursor: pointer;
+}
+
+a#car-create-cancel > span, a#car-submit-button > span {
+    display: inline-block;
+    width: 100%;
+    color: black;
+    text-align: center;
+	vertical-align: middle;
+	line-height: normal;
+}
+
+.errors {
+    color: red;
+}
+
+#car-create-results {
+    color: red;
+}
+
+@media screen and (max-width: 899px){
+    .lookup-label, .textInput-label {
+        display: block;
+        width: 100%;
+    }
+
+    .lookup-input, .lookup-select {
+        display: block;
+        width: 100%;
+    }
+
+    .textInput-input {
+        display: block;
+        width: 100%;
+    }
+
+    a#car-create-cancel, a#car-submit-button {
+        width: 35%;
+        margin-left: 10%;
+    }
+}

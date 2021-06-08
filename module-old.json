@@ -1,0 +1,85 @@
+{
+	"comment": "Module definition file.",
+	"name": "car",
+	"description": "Retrieve OCDLA Case Reviews.",
+	"files": [
+		"Car.php",
+		"SearchForm.php",
+		"CaseReviewsListTemplate.php",
+		"CaseReviewForm.php"
+	],
+	"routes": {
+		"car/list":{
+			"callback":"showCars",
+			"content-type":"text\/html"
+		},
+		"car/flag":{
+			"callback":"flagReview",
+			"content-type":"application/json"
+		},
+		"car/test":{
+			"callback":"testCarRoute",
+			"content-type":"text/html"
+		},
+		"car/add":{
+			"callback":"showCarForm",
+			"content-type":"text/html"
+		},
+		"car/edit/%id":{
+			"callback":"showCarForm",
+			"content-type":"text/html"
+		},
+		"car/upsert":{
+			"callback":"upsertCar",
+			"content-type":"text/html"
+		},
+		"cars": {
+			"callback":"home",
+			"content-type":"text\/html"
+		},
+		"car-form":{
+			"callback":"edit",
+			"content-type":"application\/json"
+		},
+		"car/get/%carId": {
+			"callback":"getCar",
+			"content-type":"application\/json"
+		},
+		"car-results":{
+			"callback":"nextPage",
+			"content-type":"text\/html"
+		},
+		"car-build-select-list":{
+			"callback":"getSelectList",
+			"content-type":"application\/json"
+		},
+		"car-load-more":{
+			"callback":"nextPage",
+			"content-type":"text\/html; partial"
+		},
+		"car-create":{
+			"callback":"edit",
+			"content-type":"text\/html; partial"
+		},
+		"car-insert":{
+			"callback":"insert",
+			"content-type":"text\/html; partial"
+		},
+		"car-update":{
+			"callback":"update",
+			"content-type":"text\/html; partial"
+		},
+		"car-submit-update":{
+			"callback":"carSubmitUpdate",
+			"content-type":"text\/html"
+		},
+		"car-delete":{
+			"callback":"delete",
+			"content-type":"text\/html"
+		},
+		"car-delete-submit":{
+			"callback":"carDeleteSubmit",
+			"content-type":"text\/html"
+		}
+	}
+}

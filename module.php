@@ -1,14 +1,11 @@
 <?php
 
-use \Html\HtmlLink;
+use Mysql\Database;
+use Http\HttpRequest;
+use Http\HttpHeader;
+use function Mysql\insert;
+use function Mysql\update;
 
-
-
-define("DOM_SECTION_BREAK","<p>&nbsp;</p>");
-
-define("DOM_COMMA",",");
-
-define("DOM_LINE_BREAK","<br />");
 
 
 
@@ -16,369 +13,212 @@ define("DOM_LINE_BREAK","<br />");
 class CarModule extends Module {
 
 
-	public function __construct(){
-		parent::__construct();
-		$this->routes = carRoutes();
-		$this->files = array("Car.php","CarUrlParser.php","CarParserException.php","CarDB.php");
+	public function __construct() {
+	
+		parent::__construct(__DIR__);
+
 		$this->name = "car";
 	}
 
 
 
-	/**
-	 * @route "/cars"
-	 *
-	 * @description Show a list of CARs together with a search form.
-	 *  CAR data is stored in a database.  After loading the data we can build the
-	 *  HTML page using the new case-reviews template.
-	 *
-	 * @return String The HTML markup, including the case reviews.
-	 */
-	public function carSearchForm($params = array()) {
-		
-		// Will already search in default location,
-		//  So let's add a pointer to our module's templates.
-		Template::addPath(__DIR__ . "/templates");
-		
-		
-		// Perform a query for CARs in the database.
-		// @todo - should return an iterable list of SObjects.
-		$results = MysqlDatabase::query("SELECT * FROM car ORDER BY year DESC");
-		
-		
-		// Templates to generate our HTML.
-		$form = $this->getSearchForm();
-		$template = Template::loadTemplate("webconsole");
-		$cars = Template::renderTemplate("case-reviews",array('cases'=>$results));
+
+	public function showCars($carId = null) {
+
+		$filter = !empty($_POST["filter"]) ? $_POST["filter"] : null;
+
+		$cars = $this->getCars($filter);
+
+		if(!empty($carId)) {
+
+			$newCar = $this->getCar($carId);
+			$newCar->isNew(true);
+
+			for($i = 0; $i < count($cars); $i++){
+
+				if($cars[$i]->getId() == $newCar->getId()){
+	
+					unset($cars[$i]);
+				}
+			}
+
+			array_unshift($cars, $newCar);
+		}
+
+		$subjects = $this->getSubjects();
+
+		$tpl = new Template("car-list");
+		$tpl->addPath(__DIR__ . "/templates");
 
 
-		// ... and custom styles.
-		$css = array(
-			"active" => true,
-			"href" => "/modules/car/css/styles.css"
-		);
-		
-		$template->addStyle($css);
-
-		
-		return $template->render(array(
-			"defaultStageClass" 	=> "not-home", 
-			"content" 						=> $form . $cars,
-			"doInit"							=> false
+		return $tpl->render(array(
+				"cars" 					=> $cars,
+				"subjects" 			=> $subjects,
+				"filter" 				=> $filter,
+				"isAdmin"				=> true
 		));
 	}
-	
-	
-	
-	
-	private function getSearchForm() {
-		$form = "<h2>OCDLA Criminal Apellate Review Search</h2>";
-		$form .= "<h5>Showing all results:</h5>";
+
+
+
+
+	public function getCars($filter = null) {
+
+		$yesFilter = "SELECT * FROM car WHERE subject_1 LIKE '%$filter%' ORDER BY is_flagged DESC, Year DESC, Month DESC, Day DESC";
+
+		$noFilter = "SELECT * FROM car ORDER BY is_flagged DESC, Year DESC, Month DESC, Day DESC";
+
+		$result = empty($filter) ? Database::query($noFilter) : Database::query($yesFilter);
+
+		$records = $result->getIterator();
+
+		$cars = array();
+		foreach($records as $record){
+
+			$cars[] = Car::from_array_or_standard_object($record);
+		}
+
+		return $cars;
+	}
+
+
+
+
+	public function getCar($id){
+
+		$query = "SELECT * FROM car WHERE Id = '$id'";
 		
-		return $form;
-	}
+		$result = Database::query($query);
 
-}
+		$records = $result->getIterator();
 
-function carRoutes() {
-	return array(
-		"cars"		=> array(
-			"callback" => "carSearchForm",
-			"Content-Type" => "text/html"
-		),
-		"load-cars" => array(
-			"callback" => "loadCarsData",
-			"Content-Type" => "application/json"
-		),
-		"view-page" => array(
-			"callback" => "viewPage",
-			"Content-Type" => "text/html"
-		),
-		"insert-bulk-case-reviews" => array(
-			"callback" => "insertBulkCarData",
-			"Content-Type" => "application/json"
-		),
-		"insert-single-case-reviews" => array(
-			"callback" => "insertCarDataForDay",
-			"Content-Type" => "application/json"
-		),
-		"test-car-urls" => array(
-			"callback" => "getCandidateUrlOutput",
-			"Content-Type" => "application/json"
-		),
-		"car-urls" => array(
-			"callback" => "getCarUrlsByDate",
-			"Content-Type" => "application/json"
-		),
-		"car-urls-range" => array(
-			"callback" => "getUrlsRange",
-			"Content-Type" => "application/json"
-		),
-		"query-db" => array(
-			"callback" => "fetchCarsFromDb",
-			"Content-Type" => "application/json"
-		),
-		"test-db" => array(
-			"callback" => "testDb",
-			"Content-Type" => "application/json"
-		),
-		"test-db2" => array(
-			"callback" => "updateSelectInsert",
-			"Content-Type" => "application/json"
-		)
-	);
-}
+		$cars = array();
+		foreach($records as $record){
 
-
-
-
-
-
-
-
-function loadPage($month,$day,$year) {
-
-	//$url = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_November_27,_2019";
-
-	//Crate a new date formated to be passed to the CarUrlParser and pass it to the request object
-	//Create new date from numeric values only
-	$urlDate = DateTime::createFromFormat ( "n j Y" , implode(" ",array($month,$day,$year)));
-	$urlParser = new CarUrlParser($urlDate);
-	$resp = $urlParser->makeRequests();
-
-	//Pass the body of the page to the DocumentParser
-	if($resp != null){
-	$page = new DocumentParser($resp->getBody());
-		//We are only concerned with the content located in the 'mw-content-text' class of the page
-		$fragment = $page->fromTarget("mw-content-text");
-
-		return $fragment;
-	}
-}
-
-function viewPage($month,$day,$year){
-	$page = loadPage($month,$day,$year);
-	if($page == null){
-		throw new CarParserException("The page at that url is null");
-	}
-	return $page->saveHTML();
-}
-
-function loadCarsData($xml){
-
-	$subjects = $xml->getElementsByTagName("b");	
-	
-	$links = $xml->getElementsByTagName("a");
-
-	$errors = array();
-	$nullSubjects = array();
-	
-	$aNumbers = array();
-	$cars = array();
-
-	$MAX_PROCESS_LINKS = count($subjects)-1;
-	
-	for($i = 0; $i < $MAX_PROCESS_LINKS; $i++) {
-
-		//We want to skip the first p tag which is the name of the person summarizing the cases
-		$subject = $subjects->item($i+1);
-
-		//We are skipping the first to links on the page because they are links to the author and the comments
-		$link = $links->item($i+2);
-
-		//if($subject != null && $link != null) //for testing purposes
-		$car = new Car($subject,$link);	
-		try{
-			//if($car != null) //for testing purposes
-			$car->parse();
-		}catch(CarParserException $e){
-			//do something with the $e->stuff
-			$errors[] = $e;
-			$nullSubjects[] = $subject;
-		}
-		if($car->day !== null && $car->summary !== ""){
-			$cars[] = $car;
+			$cars[] = Car::from_array_or_standard_object($record);
 		}
 
-
+		return $cars[0];
 	}
-	// print("ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---ERRORS---");
-	// var_dump($errors);
-	// print("NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---NULL SUBJECTS---");
-	// var_dump($nullSubjects);
-	
-	return $cars;
-}
 
-function insertBulkCarData($days){
-	set_time_limit(0);
-	$startTime = time();
 
-	$urlDate = new DateTime();
-	for($i = 0; $i < $days; $i++){
-		$runTime = (time() - $startTime)%60;
-		$cars = array(); // An array of Car objects for this day.
 
-		$urlDate->modify("-1 day");
-		//throw an exception if 2018
-		$urlDateFormat = $urlDate->format("n j Y");
-		$xml = call_user_func_array("loadPage",explode(" ",$urlDateFormat));
 
-		if($xml == null){
-			$status = "not found";
-		} else {
-			$cars = loadCarsData($xml);
-			// This is the GLOBAL insert call.
-			// print("COUNT = " . count($cars));
-			if(count($cars) !== 0){
-				insert($cars);
+	public function getSubjects() {
+
+		$result = Database::query("SELECT subject_1 FROM car ORDER BY subject_1");
+
+		$records = $result->getIterator();
+
+		$subjects = array();
+
+		foreach($records as $subject) {
+
+			$subject = trim($subject["subject_1"]);
+
+			if(!in_array($subject, $subjects)){
+
+				$subjects[] = $subject;
 			}
-			var_dump($cars);
-			$status = $cars[$j]->url."everything went ok";
 		}
-		echo  nl2br ("<br><strong>THE CARS DATE: ".$urlDateFormat."---STATUS: ".$status." ELAPSED TIME ".($runTime)." seconds.</strong><br>");
+
+		return $subjects;
 	}
-}
-
-function insertCarDataForDay($month,$day,$year){
-	$urlDate = DateTime::createFromFormat ( "n j Y" , implode(" ",array($month,$day,$year)));
-
-	$xml = loadPage($month,$day,$year);
-
-	if($xml == null){
-		$status = "not found";
-	} else {
-		$cars = loadCarsData($xml);
-		// This is the GLOBAL insert call.
-		insert($cars);
-		//$dbInsertResult = MysqlDatabase::insert($cars,$options);
-		var_dump($cars);
 
 
-		$status = $cars[$j]->url."everything went ok";
+
+
+	public function showCarForm($carId = null){
+
+		$car = !empty($carId) ? $this->getCar($carId) : new Car();
+
+		if(!empty($carId) && !$car->isTest()) throw new Exception("CAR_UPDATE_ERROR: You can only update cars that are marked as test");
+
+		$tpl = new Template("car-form");
+		$tpl->addPath(__DIR__ . "/templates");
+
+		return $tpl->render(array("car" => $car));
 	}
-	echo  nl2br ("<br><strong>THE CARS DATE: ".$urlDateFormat."---STATUS: ".$status." ELAPSED TIME ".($runTime)."</strong><br>");
-}
 
-function fetchCarsFromDb($json){
 
-	$builder = new QueryBuilder();
-	$builder->setTable("car");
-	$builder->setConditions(json_decode($json));
-	$sql = $builder->compile();
-	echo $sql; exit;
 
-	$results = MysqlDatabase::query($sql);
-	//if results has an error returned as json
-	return $results->getIterator();
-}
 
-function testDb(){
+	public function saveCar(){
 
-	//This is the requestbody structrue array of objects and each object has field, op, and value keys
+		$req = $this->getRequest();
+		$data = $req->getBody();
 
-	$requestBody = '[{"field":"summary","op":"LIKE","value":"duii"},
-	{"field":"result","op":"LIKE","value":"reversed"},
-	{"field":"subject_2","op":"LIKE","value":"discretionary"},
-	{"field":"year","op":"=","value":2019}]';
+		$car = Car::from_array_or_standard_object($data);
 
-	return fetchCarsFromDb($requestBody);
-}
-
-function updateSelectInsert(){
-
-	$results = MysqlDatabase::query("select id,title from car");
-
-	foreach($results as $result){
-		echo $result["id"].$result["title"];
+		return empty($data->id) ? $this->createCar($car) : $this->updateCar($car);
 	}
-}
-
-//----------Testing Functions-----------------
-//route that takes an int number of days starting today tho attempts to load urls for without execution of calluserfunc line
-function getCandidateUrlOutput($days){
-	set_time_limit(900);
-
-	$output = array();
-
-	//output = getoutput()
-
-	//return output
-	$urlDate = new DateTime();
-	for($i = 0; $i < $days; $i++){
-		$urlDate->modify("-1 day");
-		$urlParser = new CarUrlParser($urlDate);
-		$urlParser->makeRequests();	
-		$output[] = $urlParser->getOutput();
-	}
-	return $output;
-}
-function getCarUrlsByDate($month = null,$day = null,$year = null) {
-	set_time_limit(5);
-
-	$urls = array("someUrl","someotherurl");
-
-	$urlDate = DateTime::createFromFormat ( "n j Y" , implode(" ",array($month,$day,$year)));
-	$urlParser = new CarUrlParser($urlDate);
 
 
-	$urls = $urlParser->getUrls();
 
 
-	return $urls;
-}
-function getUrlsRange($days){
-	//gets the candidate urls for a specified number of days
+	public function createCar(Car $car) {
 
-	$date = new DateTime();
-	$urls = array();
+		$result = insert($car);
 
-	for($i = 0; $i <= $days; $i++){
-		$date->modify("-1 day");
-		$urlParser = new CarUrlParser($date);
-
-
-		//Standard class to hold metadata for the urls  
-		$data =  new StdClass();
-		$data->date = $date->format("F j, Y");
-		$data->iterationNumber = $i;
-		$data->urls = $urlParser->getUrls();
-
-		$urls[] = $data;
-
+		return redirect("/car/list/{$car->getId()}");
 	}
 	
-	return $urls;
+	
+	
+	
+	// For now only allow updates on test reviews.
+	public function updateCar(Car $car) {
+	
+		if(!$car->isTest()) throw new Exception("CAR_UPDATE_ERROR: You can only update cars that are marked as test");
+		
+		$result = update($car);
+
+		return redirect("/car/list/{$car->getId()}");
+	}
+
+
+
+
+	public function deleteCar($id){
+
+		$car = $this->getCar($id);
+
+		if(!$car->isTest()) throw new Exception("CAR_DELETE_ERROR: You can only delete cars that are marked as test");
+
+		$query = "DELETE FROM car WHERE is_test = 1 AND Id = '$id'";
+
+		$db = new Database();
+
+		$result = $db->delete($query);
+
+		return redirect("/car/list");
+	}
+
+
+
+
+	public function flagReview(){
+
+		$req = $this->getRequest();
+		$body = $req->getBody();
+
+		$table = $body->tableName;
+		$id = $body->carId;
+		$isFlagged = $body->is_flagged;
+
+		$query = "UPDATE $table SET is_flagged = $isFlagged WHERE Id = '$id'";
+
+		$database = new Database();
+		$result = $database->update($query);
+
+		return "success";
+	}
+	
+	
+	public function testCarRoute(){
+
+		return "Hello World!";
+	}
 }
 
-function displayCarOutput($car){
-	print("<strong>SUBJECT #1:</strong> ".$car->subject_1."<BR>");
-	print("<strong>SUBJECT #2:</strong> ".$car->subject_2."<BR>");
-	print("<strong>SUMMARY:</strong> ". $car->summary."<br>");
-	print("<strong>CASE RESULT:</strong> ". $car->result."<br>");
-	print("<strong>CASE TITLE:</strong>". $car->title."<br>");
-	print("<strong>PLAINTIFF:</strong> ". $car->plaintiff."<br>");
-	print("<strong>DEFENDANT:</strong> ". $car->defendant."<br>");
-	print("<strong>CITATION:</strong> ". $car->citation."<br>");
-	print("<strong>DECISION DATE:</strong> ". $car->month." ".$car->day.", ".$car->year."<br>");
-	print("<strong>CIRCUT COURT:</strong> ". $car->circut."<br>");
-	print("<strong>JUDGE:</strong> ". $car->majority."<br>");
-	print("<strong>OTHER JUDGES:</strong> ". $car->judges."<br>");
-	print("<strong>URL TO THE PAGE:</strong> ". $car->url."<br>");
-}
 
-function time_elapsed($secs){
-    $bit = array(
-        ' Years' => $secs / 31556926 % 12,
-        ' Weeks' => $secs / 604800 % 52,
-        ' Days' => $secs / 86400 % 7,
-        ' Hours' => $secs / 3600 % 24,
-        ' Minutes' => $secs / 60 % 60,
-        ' Seconds' => $secs % 60
-        );
-       
-    foreach($bit as $k => $v)
-        if($v > 0)$ret[] = $v . $k;
-       
-    return join(' ', $ret);
-}

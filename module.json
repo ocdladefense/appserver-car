@@ -1,0 +1,42 @@
+{
+	"comment": "Module definition file.",
+	"name": "car",
+	"description": "Retrieve OCDLA Case Reviews.",
+	"files": [
+		"Car.php"
+	],
+	"routes": {
+		"car/list/%id":{
+			"callback":"showCars",
+			"content-type":"text\/html"
+		},
+		"car/list":{
+			"callback":"showCars",
+			"content-type":"text\/html"
+		},
+		"car/flag":{
+			"callback":"flagReview",
+			"content-type":"application/json"
+		},
+		"car/test":{
+			"callback":"testCarRoute",
+			"content-type":"text/html"
+		},
+		"car/new":{
+			"callback":"showCarForm",
+			"content-type":"text/html"
+		},
+		"car/edit/%id":{
+			"callback":"showCarForm",
+			"content-type":"text/html"
+		},
+		"car/save":{
+			"callback":"saveCar",
+			"content-type":"text/html"
+		},
+		"car/delete/%id":{
+			"callback":"deleteCar",
+			"content-type":"text/html"
+		}
+	}
+}

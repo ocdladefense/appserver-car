@@ -1,175 +1,183 @@
 <?php
-class Car{
-    const CITATION_INDEX = 0;
 
-    const DATE_INDEX = 1;
+class Car {
 
-    const MAJORITY_INDEX = 2;
+	public $id;
+	public $subject_1;
+	public $subject_2;
+	public $summary;
+	public $result;
+	public $title;
+	public $plaintiff;
+	public $defendant;
+	public $citation;
+	public $month;
+	public $day;
+	public $year;
+	public $circuit;
+	public $majority;
+	public $judges;
+	public $url;
+	public $is_flagged;
+	public $is_draft;
+	public $is_test;
 
-    const CIRCUT_AND_JUDGES_INDEX = 3;
-
-    const URL_TO_PAGE = "https://libraryofdefense.ocdla.org/Blog:Case_Reviews/Oregon_Appellate_Court,_";
-
-    public $id;
-    public $title;
-    public $subject_1;
-    public $subject_2;
-    public $summary;
-    public $result;
-    public $plaintiff;
-    public $defendant;
-    public $citation;
-    public $month;
-    public $day;
-    public $year;
-    public $circut;
-    public $majority;
-    public $judges;
-    public $url;
-
-    private $subjectNode;
-
-    private $linkNode;
-
-    private $firstParagraph;
-
-    private $citationNodeValue;
-
-    private $citationNodeValueParts;
-
-    private $subjects;
+	// This is to hold the data that will not be used as a column when inserting data.
+	private $meta = array();
 
 
-    public function __construct($subjectNode,$linkNode){
-        $this->subjectNode = $subjectNode;
-        $this->linkNode = $linkNode;
-        $this->firstParagraph = $this->subjectNode->parentNode;
-        $this->citationNodeValue = $this->linkNode->nextSibling->nodeValue;
-        $this->citationNodeValueParts = $this->toArray($this->citationNodeValue);
-    }
+	public function __construct($id = null) {}
 
-    function parse(){
-        if($this->subjectNode == null){
-            throw new CarParserException("The subject node cannot be null");
-        }
+	public static function from_array_or_standard_object($record) {
 
-        if($this->linkNode == null){
-            throw new CarParserException("The link node cannot be null");
-        }
+		$record = (array) $record;
 
-        if($this->subjectNode->parentNode->nodeName != "p"){
-            throw new CarParserException("parent is not a p element");
-        }
+		$car = new Self();
+		$car->id = empty($record["id"]) ? null : $record["id"];
+		$car->subject_1 = $record["subject_1"];
+		$car->subject_2 = $record["subject_2"];
+		$car->summary = $record["summary"];
+		$car->result = $record["result"];
+		$car->plaintiff = $record["plaintiff"];
+		$car->defendant = $record["defendant"];
+		$car->title = $record["title"] != null ? $record["title"] : $record["plaintiff"] . " v. " . $record["defendant"]; 
+		$car->citation = $record["citation"];
+		$car->month = $record["month"];
+		$car->day = $record["day"];
+		$car->year = $record["year"];
+		$car->circuit = $record["circuit"];
+		$car->majority = $record["majority"];
+		$car->judges = $record["judges"];
+		$car->url = $record["url"];
+		$car->is_flagged = !empty($record["is_flagged"]) ? $record["is_flagged"] : "0";
 
-        $this->subjects = explode(" - ",$this->subjectNode->nodeValue);
-        $this->subject_1 = $this->subjects[0];
-        $this->subject_2 = $this->subjects[1];
-        $this->summary = $this->setSummary();   
+		$car->is_draft = !empty($record["is_draft"]) ? $record["is_draft"] : "0";
+		$car->is_test = !empty($record["is_test"]) ? $record["is_test"] : "0";
 
-        if($this->summary == null){
-            throw new CarParserException("The summary cannot be null");
-        }
+		return $car;
+	}
 
-        $this->result = $this->setCaseResult($this->summary);
-        if($this->linkNode == null){
-            throw new CarParserException("The link node cannot be null");
-        }
 
-        $this->title = $this->linkNode->nodeValue;
-        if($this->title == null){
-            throw new CarParserException("The title cannot be null");
-        }
+	////////GETTERS//////////
+	public function getId(){
 
-        list($this->plaintiff,$versus,$this->defendant) = explode(" ",$this->title);
+		return $this->id;
+	}
 
-        $this->citation = $this->citationNodeValueParts[self::CITATION_INDEX];
+	public function getSubject1(){
 
-        list($this->month,$this->day,$this->year) = $this->getDecisionDate();
+		return $this->subject_1;
+	}
 
-        $this->circut = explode(",",$this->citationNodeValueParts[self::CIRCUT_AND_JUDGES_INDEX])[0];
+	public function getSubject2(){
 
-        $this->majority = substr($this->citationNodeValueParts[self::MAJORITY_INDEX],0,-2);
+		return $this->subject_2;
+	}
 
-        $this->judges = $this->getOtherJudges();
+	public function getSummary(){
 
-        $this->url = self::URL_TO_PAGE.$this->month."_".$this->day.",_".$this->year;
-    }
-    //362 Or 203 (2017) (Per Curiam)
-    
+		return $this->summary;
+	}
 
-    //---GETTERS---
-    function getSubjects(){
-        return $this->subjects;
-    }
+	public function getResult(){
 
-    function getSummary(){
-        return $this->summary;
-    }
+		return $this->result;
+	}
 
-    function getCaseResult(){
-        return $this->result;
-    }
+	public function getTitle(){
 
-    function getCaseTitle(){
-        return $this->title;
-    }
+		return $this->title;
+	}
 
-    function getLitigants(){
-        return array($this->plaintiff,$this->defendant);
-    }
+	public function getPlaintiff(){
 
-    function getCitation(){
-        return $this->citationNodeValueParts[self::CITATION_INDEX];
-    }
+		return $this->plaintiff;
+	}
 
-    function getDecisionDate(){
-        //return a usable date array
-        $dateArray = substr($this->citationNodeValueParts[self::DATE_INDEX],0,-2);
-        $dateArray = preg_split("/[\s,]+/",$dateArray);
-        return $dateArray;
-    }
+	public function getDefendant(){
 
-    function getCircutCourt(){
-        return explode(",",$this->citationNodeValueParts[self::CIRCUT_AND_JUDGES_INDEX])[0];
-    }
+		return $this->defendant;
+	}
 
-    function getJudge(){
-        return substr($this->citationNodeValueParts[self::MAJORITY_INDEX],0,-2);
-    }
+	public function getCitation(){
 
-    function getOtherJudges(){
-        $judges = explode(" ",substr(explode(",",$this->citationNodeValueParts[self::CIRCUT_AND_JUDGES_INDEX])[1],0,-2));
-        if($judges[0] == ""){
-            array_shift($judges);
-            $judges = implode(", ",$judges);
-        }
-        return $judges;
-    }
+		return $this->citation;
+	}
 
-    //---SETTERS---
-    function setSummary(){
-        $summaryNodes = array();
-        $summary = "";
-        $count = 0;
-    
-        while(++$count < 10){
-            $next = $this->firstParagraph->nextSibling;
-            $this->firstParagraph = $next;
-            if($next->nodeType == XML_TEXT_NODE) continue;
-            if($next->firstChild->nodeName == "a") break;
-            $summaryNodes[] = $next->nodeValue;
-        }
-        return implode("\n",$summaryNodes);
-    }
-    
-    function setCaseResult($summaryString){
-        $SENTENCE_DELIMITER = ".";
-        $sentences = explode($SENTENCE_DELIMITER, $summaryString);
-        $result = $sentences[count($sentences)-2];
+	public function getMonth(){
 
-        return $result;
-    }
-    function toArray($nodeValue){
-        return explode("(",$nodeValue);
-    }
+		return $this->month;
+	}
+
+	public function getDay(){
+
+		return $this->day;
+	}
+
+	public function getYear(){
+
+		return $this->year;
+	}
+
+	public function getCircuit(){
+
+		return $this->circuit;
+	}
+
+	public function getMajority(){
+
+		return $this->majority;
+	}
+	
+	public function getJudges(){
+
+		return $this->judges;
+	}
+
+	public function getUrl(){
+
+		return $this->url;
+	}
+
+	public function getDateString() {
+	
+		return $this->year . "-" . $this->month . "-" . $this->day;
+	}
+	
+	
+	public function getDate(){
+
+		$dateString = $this->year . "-" . $this->month . "-" . $this->day;
+
+		$date = new DateTime($dateString);
+
+		$formated = $date->format("l, F jS, Y");
+
+		return $formated;
+	}
+
+	public function isFlagged(){
+
+		return $this->is_flagged == 1 ? true : false;
+	}
+
+	public function isDraft(){
+
+		return $this->is_draft == 1 ? true : false;
+	}
+
+	public function isTest(){
+
+		return $this->is_test == 1 ? true : false;
+	}
+
+	public function isNew($new = null){
+
+		if(is_bool($new)){
+
+			$this->meta["is_new"] = $new;
+		}
+
+		return $this->meta["is_new"];
+	}
 }
