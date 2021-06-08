@@ -61,18 +61,27 @@
         </div>
 
         <div class="form-item">
-            <label>Citation</label>
-            <input type="text" name="citation" value="<?php print $car->getCitation(); ?>" placeholder="Enter Citation...(ex. 311 Or App 542)" />
-        </div>
-
-        <div class="form-item">
             <label>Primary Subject</label>
-            <input type="text" name="subject_1"value="<?php print $car->getSubject1(); ?>" placeholder="Enter Primary Subject..." />
+            <select id="select-subject" name="subject_1">
+            
+            <?php foreach($subjects as $subject) : ?>
+                <option value="<?php print $subject; ?>">
+                    <?php print $subject; ?>
+                </option>
+            <?php endforeach; ?>
+            
+        </select>
+            <!-- <input type="text" name="subject_1"value="<?php print $car->getSubject1(); ?>" placeholder="Enter Primary Subject..." /> -->
         </div>
 
         <div class="form-item">
             <label>Secondary Subject</label>
             <input type="text" name="subject_2" value="<?php print $car->getSubject2(); ?>" placeholder="Enter Secondary Subject..." />
+        </div>
+
+        <div class="form-item">
+            <label>Citation</label>
+            <input type="text" name="citation" value="<?php print $car->getCitation(); ?>" placeholder="Enter Citation...(ex. 311 Or App 542)" />
         </div>
 
         <div class="form-item">

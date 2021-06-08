@@ -1,4 +1,5 @@
 
+
 let links = document.getElementsByClassName("delete-review");
 
 for(let i = 0; i < links.length; i++){
