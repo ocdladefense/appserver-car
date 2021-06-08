@@ -21,6 +21,8 @@ class CarModule extends Module {
 	}
 
 
+
+
 	public function showCars($carId = null) {
 
 		$filter = !empty($_POST["filter"]) ? $_POST["filter"] : null;
@@ -50,12 +52,14 @@ class CarModule extends Module {
 
 
 		return $tpl->render(array(
-				"cars" 				=>  $cars,
+				"cars" 					=> $cars,
 				"subjects" 			=> $subjects,
-				"filter" 			=> $filter,
-				"isAdmin"			=> true
+				"filter" 				=> $filter,
+				"isAdmin"				=> true
 		));
 	}
+
+
 
 
 	public function getCars($filter = null) {
@@ -78,6 +82,8 @@ class CarModule extends Module {
 	}
 
 
+
+
 	public function getCar($id){
 
 		$query = "SELECT * FROM car WHERE Id = '$id'";
@@ -94,6 +100,8 @@ class CarModule extends Module {
 
 		return $cars[0];
 	}
+
+
 
 
 	public function getSubjects() {
@@ -118,6 +126,8 @@ class CarModule extends Module {
 	}
 
 
+
+
 	public function showCarForm($carId = null){
 
 		$car = !empty($carId) ? $this->getCar($carId) : new Car();
@@ -129,6 +139,8 @@ class CarModule extends Module {
 
 		return $tpl->render(array("car" => $car));
 	}
+
+
 
 
 	public function saveCar(){
@@ -144,6 +156,8 @@ class CarModule extends Module {
 	}
 
 
+
+
 	public function createCar(Car $car) {
 
 		$result = insert($car);
@@ -152,13 +166,19 @@ class CarModule extends Module {
 	}
 	
 	
+	
+	
 	// For now only allow updates on test reviews.
 	public function updateCar(Car $car) {
 	
+		if(!$car->isTest()) throw new Exception("CAR_UPDATE_ERROR: You can only update cars that are marked as test");
+		
 		$result = update($car);
 
 		return redirect("/car/list/{$car->getId()}");
 	}
+
+
 
 
 	public function deleteCar($id){
@@ -175,6 +195,9 @@ class CarModule extends Module {
 
 		return redirect("/car/list");
 	}
+
+
+
 
 	public function flagReview(){
 
