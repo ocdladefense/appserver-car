@@ -189,4 +189,19 @@ class Car {
 
 		return $this->meta["is_new"];
 	}
+
+	public function getPickerCompatibleDate(){
+
+		if(!empty($this->year)){
+
+			$dateString = $this->year ."-". $this->month ."-". $this->day;
+
+			$date = new \DateTime($dateString);
+			$compatibleDate = $date->format("Y-m-d");
+
+			return $compatibleDate;
+		}
+		//'2021-06-08' 
+
+	}
 }
