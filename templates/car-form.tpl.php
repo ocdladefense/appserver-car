@@ -7,7 +7,7 @@
 
 <div id="form-container" class="car-form-container">
 
-    <a href="/car/list" style="float: left;">back to list</a>
+    <a class="back-link" href="/car/list" style="float: left;">back to list</a>
 
     <h1 id="car-form-header" class="car-form-header"><?php print $headerMessage; ?></h1>
 
@@ -47,9 +47,9 @@
 
         <div class="decision-date form-item">
             <label>Decision Date</label>
-            <input type="text" class="form-row two-digit" name="month" value="<?php print $car->getMonth(); ?>" maxlength=2 placeholder="mm" />
-            <input type="text" class="form-row two-digit" name="day" value="<?php print $car->getDay(); ?>" maxlength=2 placeholder="dd" />
-            <input type="text" class="form-row four-digit" name="year" value="<?php print $car->getYear(); ?>" maxlength=4 placeholder="yyyy" />
+            <input type="text" class="form-row two-digit" name="month" style="text-align:center;" value="<?php print $car->getMonth(); ?>" maxlength=2 placeholder="mm" />
+            <input type="text" class="form-row two-digit" name="day" style="text-align:center;" value="<?php print $car->getDay(); ?>" maxlength=2 placeholder="dd" />
+            <input type="text" class="form-row four-digit" name="year" style="text-align:center;" value="<?php print $car->getYear(); ?>" maxlength=4 placeholder="yyyy" />
         </div>
 
         <div class="form-item">
@@ -106,19 +106,4 @@
     </form>
 </div>
 
-<!-- <script>
-    let checkboxes = document.getElementsByClassName("checkbox-option");
-
-    for(let i = 0; i < checkboxes.length; i++){
-
-        checkboxes[i].addEventListener("change", changeValue);
-    } 
-
-    function changeValue(e){
-        let target = e.target;
-        let originalValue = target.value;
-        let newValue = originalValue == "0" ? "1" : "0";
-
-        target.setAttribute("value", newValue);
-    }
-</script> -->
+<script src="<?php print module_path(); ?>/assets/js/car.js"></script>

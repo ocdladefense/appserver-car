@@ -30,11 +30,6 @@ form{
     width: 80%;
     margin: 0 auto;
 }
-.decision-date input[type="text"]{
-    width: 50px;
-    display: inline-block;
-    margin-right: 10px;
-}
 .checkbox-option, .checkbox-label{
     display:unset;
     height:unset;
@@ -44,4 +39,25 @@ form{
 }
 form#car-form {
     background-color: rgba(55,55,55,0.1);
+}
+input{
+    padding-left:7px;
+}
+.decision-date input[type="text"]{
+    width: 50px;
+    display: inline-block;
+    margin-right: 10px;
+    padding:0px;
+}
+@media only screen and (max-width:750px){
+    .back-link{
+        display:contents;
+    }
+    input[type="text"]{
+        width:100%;
+        padding-left:0px;
+    }
+    textarea{
+        width:100%;
+    }
 }

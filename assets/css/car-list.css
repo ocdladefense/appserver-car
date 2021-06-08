@@ -93,4 +93,7 @@ label{
     select{
         max-width:65%;
     }
+    form#filter-form {
+        height:4em;
+    }
 }
