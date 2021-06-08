@@ -148,6 +148,10 @@ class CarModule extends Module {
 		$req = $this->getRequest();
 		$data = $req->getBody();
 
+		$date = new \DateTime($data->date);
+		$compatibleDate = $date->format("Y-m-d");
+		$data->date = $compatibleDate;
+
 		$car = Car::from_array_or_standard_object($data);
 
 		return empty($data->id) ? $this->createCar($car) : $this->updateCar($car);
@@ -182,6 +186,8 @@ class CarModule extends Module {
 	public function deleteCar($id){
 
 		$car = $this->getCar($id);
+
+		var_dump($car, $id);exit;
 
 		if(!$car->isTest()) throw new Exception("CAR_DELETE_ERROR: You can only delete cars that are marked as test");
 

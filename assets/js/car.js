@@ -23,6 +23,7 @@ function handleDelete(e){
 
         let link = document.createElement("a");
         let href = "/car/delete/" + carId;
+        console.log("href", href);
         link.setAttribute("href", href);
         link.click();
     }
