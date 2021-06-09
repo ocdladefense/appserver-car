@@ -20,11 +20,18 @@ function handleDelete(e){
 
     if(confirmed) {
 
+        // When you use an icon, you have to get the dataset from the parent element.
         let carId = e.srcElement.dataset.carId;
+
+        if(carId == null) {
+
+            carId = e.target.parentElement.dataset.carId;
+        }
+
+        if(carId == null) console.error("DELETE FAILED BECAUSE YOUR CAR ID IS NOT BEING SET.");
 
         let link = document.createElement("a");
         let href = "/car/delete/" + carId;
-        console.log("href", href);
         link.setAttribute("href", href);
         link.click();
     }

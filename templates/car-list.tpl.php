@@ -29,7 +29,7 @@
             </select>
 
             <label><strong><?php print "Showing " . count($cars) . " case review(s)."; ?></strong></label>
-			<?php if($isAdmin) : ?><a class="add-review" href="/car/new">Add Case Reviews</a><?php endif; ?>
+			<?php if($isAdmin) : ?><a class="add-review" href="/car/new">Add Review <i class="fas fa-plus" aria-hidden="true"></i></a><?php endif; ?>
 
         </form>
 
@@ -62,8 +62,8 @@
 					
 				<?php if($isAdmin) : ?>
 					<div class="admin-area">
-						<a class="delete-review" data-car-id="<?php print $car->getId(); ?>" href="/car/delete/<?php print $car->getId(); ?>">Delete</a>
-						<a class="edit-review" href="/car/edit/<?php print $car->getId(); ?>">Edit</a>
+						<a class="delete-review" data-car-id="<?php print $car->getId(); ?>" href="/car/delete/<?php print $car->getId(); ?>"><i style="font-size: x-large;" class="fas fa-trash-alt"></i></a>
+						<a class="edit-review" href="/car/edit/<?php print $car->getId(); ?>"><i style="font-size: x-large;" class="fas fa-edit"></i></a>
 						<label class="checkbox-label">Flag</label>
 						<input class="checkbox-option" id="car-<?php print $car->getId(); ?>" name="is_flagged" data-car-id="<?php print $car->getId(); ?>" type="checkbox" <?php print $isFlagged; ?> />
 

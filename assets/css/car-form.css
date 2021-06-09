@@ -63,4 +63,8 @@ a.delete-review {
     textarea{
         width:100%;
     }
+    select#select-subject {
+        max-width: 100%;
+        margin-bottom: 10px;
+    }
 }
