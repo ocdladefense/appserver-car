@@ -65,6 +65,10 @@
             <label>Primary Subject</label>
 
             <select id="select-subject" name="subject_1">
+
+                <?php if(!empty($car->getSubject1())) : ?>
+                    <option value="<?php print $car->getSubject1(); ?>" selected><?php print $car->getSubject1(); ?></option>
+                <?php endif; ?>
             
                 <?php foreach($subjects as $subject) : ?>
                     <option value="<?php print $subject; ?>">
