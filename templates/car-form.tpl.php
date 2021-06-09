@@ -79,7 +79,6 @@
             </select>
 
             <button type="button" id="new-subject" class="new-subject" onclick="handleNewSubject()">New Subject</button>
-            <!-- <input type="text" name="subject_1"value="<?php print $car->getSubject1(); ?>" placeholder="Enter Primary Subject..." /> -->
         </div>
 
         <div class="form-item">
