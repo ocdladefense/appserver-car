@@ -151,8 +151,6 @@ h2 {
 .car-subject {
 	padding: 0%;
 }
-.car-judges, .car-circut{
-}
 
 .car-summary {
 	text-align: left;
@@ -314,10 +312,6 @@ div#date {
 		display: block;
 		text-align: center;
 		position: static;
-	}
-
-	#car-search-container {
-		
 	}
 
 	
