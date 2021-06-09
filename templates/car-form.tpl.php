@@ -61,16 +61,20 @@
         </div>
 
         <div class="form-item">
+
             <label>Primary Subject</label>
+
             <select id="select-subject" name="subject_1">
             
-            <?php foreach($subjects as $subject) : ?>
-                <option value="<?php print $subject; ?>">
-                    <?php print $subject; ?>
-                </option>
-            <?php endforeach; ?>
+                <?php foreach($subjects as $subject) : ?>
+                    <option value="<?php print $subject; ?>">
+                        <?php print $subject; ?>
+                    </option>
+                <?php endforeach; ?>
             
-        </select>
+            </select>
+
+            <button type="button" id="new-subject" class="new-subject" onclick="handleNewSubject()">New Subject</button>
             <!-- <input type="text" name="subject_1"value="<?php print $car->getSubject1(); ?>" placeholder="Enter Primary Subject..." /> -->
         </div>
 

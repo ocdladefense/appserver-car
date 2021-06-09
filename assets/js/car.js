@@ -29,3 +29,17 @@ function handleDelete(e){
         link.click();
     }
 }
+
+function handleNewSubject(e){
+
+    let subject = window.prompt("Enter a new primary subject");
+
+    let selectList = document.getElementById("select-subject");
+
+    let newOption = document.createElement("option");
+    newOption.setAttribute("value", subject);
+    newOption.setAttribute("selected", true);
+    newOption.innerText = subject;
+
+    selectList.appendChild(newOption);
+}
