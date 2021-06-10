@@ -22,12 +22,18 @@ class CarModule extends Module {
 
 
 
-
 	public function showCars($carId = null) {
+
+		$year = $_POST["year"];
 
 		$filter = !empty($_POST["filter"]) ? $_POST["filter"] : null;
 
 		$cars = $this->getCars($filter);
+
+		if(!empty($year)){
+
+			$cars = $this->filterByYear($cars, $year);
+		}
 
 		if(!empty($carId)) {
 
@@ -45,20 +51,25 @@ class CarModule extends Module {
 			array_unshift($cars, $newCar);
 		}
 
-		$subjects = $this->getSubjects();
+		$subjects = $this->getDistinctFieldValues("subject_1");
+
+		$years = $this->getDistinctFieldValues("year");
 
 		$tpl = new Template("car-list");
 		$tpl->addPath(__DIR__ . "/templates");
 
+		//var_dump($cars);exit;
+
 
 		return $tpl->render(array(
-				"cars" 					=> $cars,
-				"subjects" 			=> $subjects,
-				"filter" 				=> $filter,
-				"isAdmin"				=> true
+			"cars" 					=> $cars,
+			"subjects" 				=> $subjects,
+			"years" 				=> $years,
+			"yearFilter"			=> $year,
+			"filter" 				=> $filter,
+			"isAdmin"				=> true
 		));
 	}
-
 
 
 
@@ -83,7 +94,6 @@ class CarModule extends Module {
 
 
 
-
 	public function getCar($id){
 
 		$query = "SELECT * FROM car WHERE Id = '$id'";
@@ -103,26 +113,36 @@ class CarModule extends Module {
 
 
 
+	public function getDistinctFieldValues($field) {
 
-	public function getSubjects() {
-
-		$result = Database::query("SELECT subject_1 FROM car ORDER BY subject_1");
+		$result = Database::query("SELECT DISTINCT $field FROM car ORDER BY $field");
 
 		$records = $result->getIterator();
 
-		$subjects = array();
+		$values = array();
 
-		foreach($records as $subject) {
+		foreach($records as $record) {
 
-			$subject = trim($subject["subject_1"]);
+			$values[] = $record[$field];
+		}
 
-			if(!in_array($subject, $subjects)){
+		return $values;
+	}
 
-				$subjects[] = $subject;
+
+	public function filterByYear($cars, $year){
+
+		$filtered = array();
+
+		foreach($cars as $car){
+			
+			if($car->getYear() == $year){
+
+				$filtered[] = $car;
 			}
 		}
 
-		return $subjects;
+		return $filtered;
 	}
 
 
@@ -132,7 +152,7 @@ class CarModule extends Module {
 
 		$car = !empty($carId) ? $this->getCar($carId) : new Car();
 
-		$subjects = $this->getSubjects();
+		$subjects = $this->getDistinctFieldValues("subject_1");
 
 		$tpl = new Template("car-form");
 		$tpl->addPath(__DIR__ . "/templates");

@@ -28,6 +28,26 @@
                 
             </select>
 
+			<?php var_dump("foobar", $yearFilter); ?>
+
+			<select name="year" name="year" onchange="submitForm()">
+
+				<option value="<?php print $yearFilter != null ? $yearFilter : ""; ?>">
+					<?php 	print $yearFilter != null ? $yearFilter : "all years"; ?>
+                </option>
+
+				<?php if(!empty($yearFilter)) : ?>
+					<option value="" selected >all years</option>
+				<?php endif; ?>
+					
+				
+				<?php foreach($years as $year) : ?>
+					<option value="<?php print $year; ?>">
+						<?php print $year; ?>
+					</option>
+				<?php endforeach; ?>
+			</select>
+
             <label><strong><?php print "Showing " . count($cars) . " case review(s)."; ?></strong></label>
 			<?php if($isAdmin) : ?><a class="add-review" href="/car/new">Add Review <i class="fas fa-plus" aria-hidden="true"></i></a><?php endif; ?>
 
@@ -66,7 +86,6 @@
 						<a class="edit-review" href="/car/edit/<?php print $car->getId(); ?>"><i style="font-size: x-large;" class="fas fa-edit"></i></a>
 						<label class="checkbox-label">Flag</label>
 						<input class="checkbox-option" id="car-<?php print $car->getId(); ?>" name="is_flagged" data-car-id="<?php print $car->getId(); ?>" type="checkbox" <?php print $isFlagged; ?> />
-
 					</div> <!-- end admin area  -->
 				<?php endif; ?>
 					
