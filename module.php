@@ -134,8 +134,6 @@ class CarModule extends Module {
 
 		$subjects = $this->getSubjects();
 
-		if(!empty($carId) && !$car->isTest()) throw new Exception("CAR_UPDATE_ERROR: You can only update cars that are marked as test");
-
 		$tpl = new Template("car-form");
 		$tpl->addPath(__DIR__ . "/templates");
 
