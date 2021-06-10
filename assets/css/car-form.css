@@ -67,4 +67,11 @@ a.delete-review {
         max-width: 100%;
         margin-bottom: 10px;
     }
+    #stage-content{
+        padding:0px;
+    }
+    .car-form{
+        width:100%;
+        border:none;
+    }
 }

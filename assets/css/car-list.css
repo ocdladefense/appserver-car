@@ -105,4 +105,7 @@ label{
         float:unset;
         text-align:unset;
     }
+    #stage-content{
+        padding:0px;
+    }
 }

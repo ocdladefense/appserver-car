@@ -12,16 +12,15 @@ function displayErrorPopUp(element, data){
 
     element.parentElement.parentElement.prepend(modal);
 
-    console.error(data["error"]);
+    console.error("data", data["error"]);
     console.log("ERROR_STACK_TRACE", data["stack"]);
 }
 
 function removeErrorPopUp(element){
 
-    let popup = element.parentElement.parentElement.firstChild;
+    let popup = document.getElementById("error-pop-up-container");
 
-    popup.setAttribute("style", "display: none;");
-
+    if(popup != null) popup.setAttribute("style", "display: none;");
 }
 
 function flagReview(e){
@@ -29,10 +28,7 @@ function flagReview(e){
     let data = new FormData();
     data.append("tableName", "car");
     data.append("carId", e.srcElement.dataset.carId);
-    console.log(e.target);
     data.append("is_flagged", e.target.checked);
-
-    console.log(data);
 
     var url = "/car/flag";
 
@@ -47,7 +43,7 @@ function flagReview(e){
 
             displayErrorPopUp(e.target, data);
         } else {
-
+            console.log("RESPONSE STATUS", response.status);
             removeErrorPopUp(e.target);
         }
     }))
