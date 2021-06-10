@@ -7,7 +7,7 @@
 
 <div id="form-container" class="car-form-container">
 
-    <a class="back-link" href="/car/list" style="float: left;">back to list</a>
+    <a class="back-link" href="/car/list" style="float: left;"><i class="fa fa-arrow-left" style="font-size:48px;color:blue"></i></a><br />
 
     <h1 id="car-form-header" class="car-form-header"><?php print $headerMessage; ?></h1>
 
