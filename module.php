@@ -25,9 +25,37 @@ class CarModule extends Module {
 
 	public function showCars($carId = null) {
 
-		$filter = !empty($_POST["filter"]) ? $_POST["filter"] : null;
+		$subject = !empty($_POST["subject"]) && $_POST["subject"] != "Show All" ? $_POST["subject"] : null;
+		$year = !empty($_POST["year"]) && $_POST["year"] != "All Years" ? $_POST["year"] : null;
 
-		$cars = $this->getCars($filter);
+		$query = $this->getQuery($subject, $year);
+
+		// var_dump($query);exit;
+		//var_dump($cars);exit;
+
+		$cars = $this->getCars($query);
+
+		$subjects = $this->getDistinctFieldValues("subject_1");
+
+		$years = $this->getDistinctFieldValues("year");
+
+
+		$tpl = new Template("search-form");
+		$tpl->addPath(__DIR__ . "/templates");
+
+		$searchForm = $tpl->render(array(
+			"subject"	=> $subject,
+			"year"		=> $year,
+			"count" 	=> count($cars),
+			"subjects" 	=> $subjects,
+			"years"		=> $years,
+			"groupBy"	=> "subject_!",
+			"isAdmin"	=> true
+		));
+
+
+
+
 
 		if(!empty($carId)) {
 
@@ -45,30 +73,118 @@ class CarModule extends Module {
 			array_unshift($cars, $newCar);
 		}
 
-		$subjects = $this->getSubjects();
+
 
 		$tpl = new Template("car-list");
 		$tpl->addPath(__DIR__ . "/templates");
 
 
 		return $tpl->render(array(
-				"cars" 					=> $cars,
-				"subjects" 			=> $subjects,
-				"filter" 				=> $filter,
-				"isAdmin"				=> true
+				"cars" 				=> $cars,
+				"searchForm" 		=> $searchForm,
+				"isAdmin"			=> true
+		));
+	}
+
+
+	public function showCarsByYear($year){
+
+		$query = "SELECT * FROM car WHERE year = $year ORDER BY subject_1 ASC";
+
+
+		// $subject = !empty($_POST["subject"]) && $_POST["subject"] != "Show All" ? $_POST["subject"] : null;
+		// $year = !empty($_POST["year"]) && $_POST["year"] != "All Years" ? $_POST["year"] : null;
+
+		// $query = $this->getQuery($subject, $year);
+
+		// var_dump($query);exit;
+		//var_dump($cars);exit;
+
+		$cars = $this->getCars($query);
+
+		$subjects = $this->getDistinctFieldValues("subject_1");
+
+		$years = $this->getDistinctFieldValues("year");
+
+
+		$tpl = new Template("search-form");
+		$tpl->addPath(__DIR__ . "/templates");
+
+		$searchForm = $tpl->render(array(
+			"subject"	=> $subject,
+			"year"		=> $year,
+			"count" 	=> count($cars),
+			"subjects" 	=> $subjects,
+			"years"		=> $years,
+			"isAdmin"	=> true
+		));
+
+
+
+
+
+		if(!empty($carId)) {
+
+			$newCar = $this->getCar($carId);
+			$newCar->isNew(true);
+
+			for($i = 0; $i < count($cars); $i++){
+
+				if($cars[$i]->getId() == $newCar->getId()){
+	
+					unset($cars[$i]);
+				}
+			}
+
+			array_unshift($cars, $newCar);
+		}
+
+
+
+		$tpl = new Template("car-list");
+		$tpl->addPath(__DIR__ . "/templates");
+
+
+		return $tpl->render(array(
+				"cars" 				=> $cars,
+				"searchForm" 		=> $searchForm,
+				"groupBy"			=> "subject_1",
+				"isAdmin"			=> true
 		));
 	}
 
 
 
+	public function getQuery($subject = null, $year = null) {
 
-	public function getCars($filter = null) {
+		$subjectFilter = "SELECT * FROM car WHERE subject_1 LIKE '%$filter%' ORDER BY is_flagged DESC, Year DESC, Month DESC, Day DESC";
 
-		$yesFilter = "SELECT * FROM car WHERE subject_1 LIKE '%$filter%' ORDER BY is_flagged DESC, Year DESC, Month DESC, Day DESC";
+		$query = "SELECT * FROM car";
+		$orderBy = " ORDER BY is_flagged DESC, Year DESC, Month DESC, Day DESC";
 
-		$noFilter = "SELECT * FROM car ORDER BY is_flagged DESC, Year DESC, Month DESC, Day DESC";
+		if($subject != null || $year != null){
 
-		$result = empty($filter) ? Database::query($noFilter) : Database::query($yesFilter);
+			$query .= " WHERE ";
+		}
+
+		$conditions = array();
+
+		if($subject != null){
+
+			$conditions[] = "subject_1 LIKE '%$subject%'";
+		}
+
+		if($year != null){
+
+			$conditions[] = "year = $year";
+		}
+
+		return $query . implode(" AND ", $conditions) . $orderBy;
+	}
+
+	public function getCars($query){
+
+		$result = Database::query($query);
 
 		$records = $result->getIterator();
 
@@ -104,25 +220,20 @@ class CarModule extends Module {
 
 
 
-	public function getSubjects() {
+	public function getDistinctFieldValues($field) {
 
-		$result = Database::query("SELECT subject_1 FROM car ORDER BY subject_1");
+		$result = Database::query("SELECT DISTINCT $field FROM car ORDER BY $field");
 
 		$records = $result->getIterator();
 
-		$subjects = array();
+		$values = array();
 
-		foreach($records as $subject) {
+		foreach($records as $record) {
 
-			$subject = trim($subject["subject_1"]);
-
-			if(!in_array($subject, $subjects)){
-
-				$subjects[] = $subject;
-			}
+			$values[] = $record[$field];
 		}
 
-		return $subjects;
+		return $values;
 	}
 
 
@@ -132,14 +243,13 @@ class CarModule extends Module {
 
 		$car = !empty($carId) ? $this->getCar($carId) : new Car();
 
-		$subjects = $this->getSubjects();
+		$subjects = $this->getDistinctFieldValues("subject_1");
 
 		$tpl = new Template("car-form");
 		$tpl->addPath(__DIR__ . "/templates");
 
 		return $tpl->render(array("car" => $car, "subjects" => $subjects));
 	}
-
 
 
 
