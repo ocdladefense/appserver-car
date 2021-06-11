@@ -32,8 +32,7 @@ h2, h5{
     padding: 4.1px;
 	width: 7.4rem;
 }
-#car-form{
-}
+
 .car-title {
 	font-weight: bold;
 	text-decoration: underline;	
@@ -42,9 +41,6 @@ h2, h5{
 .car-subject {
 	padding: 0%;
 }
-.car-judges, .car-circut{
-}
-
 .car-summary {
 	text-align: left;
 	padding-top: .5rem;

@@ -1,19 +1,24 @@
 
 
-<?php $headerMessage = "Create a New Case Review Record"; ?>
+<?php
+    $isUpdate = $car->getId() != null;
+    $headerMessage = $isUpdate ? "Update Case Review" : "Create a Case Review";
+
+    $shouldCheckTest = ($isUpdate && $car->isTest()) || !$isUpdate ? true : false;
+?>
 
 <link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/car-form.css" />
 
 
 <div id="form-container" class="car-form-container">
 
-    <a href="/car/list" style="float: left;">back to list</a>
+    <a class="back-link" href="/car/list" style="float: left;"><i class="fa fa-arrow-left" style="font-size:48px;color:blue"></i></a><br /><br />
 
     <h1 id="car-form-header" class="car-form-header"><?php print $headerMessage; ?></h1>
 
     <?php
         $checkFlagged = $car->isFlagged() ? "checked" : "";
-        $checkTest = $car->isTest() ? "checked" : "";
+        $checkTest = $shouldCheckTest ? "checked" : "";
         $checkDraft = $car->isDraft() ? "checked" : "";
     ?>
 
@@ -22,7 +27,7 @@
         <?php if($car->getId() != null) : ?>
 
             <div class="form-item">
-                <a class="delete-review" href="/car/delete/<?php print $car->getId(); ?>">Delete</a>
+                <a class="delete-review" data-car-id="<?php print $car->getId(); ?>" href="/car/delete/<?php print $car->getId(); ?>"><i style="font-size: x-large;" class="fas fa-trash-alt"></i></a>
             </div>
         <?php endif; ?>
 
@@ -38,7 +43,7 @@
             </div>
 
             <div class="form-item">
-                <input class="checkbox-option" name="is_test" value="1" type="checkbox" checked />
+                <input class="checkbox-option" name="is_test" value="1" type="checkbox" <?php print $checkTest; ?> />
                 <label class="checkbox-label">Is Test</label>
             </div>
         </div>
@@ -47,9 +52,7 @@
 
         <div class="decision-date form-item">
             <label>Decision Date</label>
-            <input type="text" class="form-row two-digit" name="month" value="<?php print $car->getMonth(); ?>" maxlength=2 placeholder="mm" />
-            <input type="text" class="form-row two-digit" name="day" value="<?php print $car->getDay(); ?>" maxlength=2 placeholder="dd" />
-            <input type="text" class="form-row four-digit" name="year" value="<?php print $car->getYear(); ?>" maxlength=4 placeholder="yyyy" />
+            <input type="date" name="date" value="<?php print $car->getPickerCompatibleDate(); ?>">
         </div>
 
         <div class="form-item">
@@ -63,18 +66,34 @@
         </div>
 
         <div class="form-item">
-            <label>Citation</label>
-            <input type="text" name="citation" value="<?php print $car->getCitation(); ?>" placeholder="Enter Citation...(ex. 311 Or App 542)" />
-        </div>
 
-        <div class="form-item">
             <label>Primary Subject</label>
-            <input type="text" name="subject_1"value="<?php print $car->getSubject1(); ?>" placeholder="Enter Primary Subject..." />
+
+            <select id="select-subject" name="subject_1">
+
+                <?php if(!empty($car->getSubject1())) : ?>
+                    <option value="<?php print $car->getSubject1(); ?>" selected><?php print $car->getSubject1(); ?></option>
+                <?php endif; ?>
+            
+                <?php foreach($subjects as $subject) : ?>
+                    <option value="<?php print $subject; ?>">
+                        <?php print $subject; ?>
+                    </option>
+                <?php endforeach; ?>
+            
+            </select>
+
+            <button type="button" id="new-subject" class="new-subject" onclick="handleNewSubject()">New Subject</button>
         </div>
 
         <div class="form-item">
             <label>Secondary Subject</label>
             <input type="text" name="subject_2" value="<?php print $car->getSubject2(); ?>" placeholder="Enter Secondary Subject..." />
+        </div>
+
+        <div class="form-item">
+            <label>Citation</label>
+            <input type="text" name="citation" value="<?php print $car->getCitation(); ?>" placeholder="Enter Citation...(ex. 311 Or App 542)" />
         </div>
 
         <div class="form-item">
@@ -106,19 +125,4 @@
     </form>
 </div>
 
-<!-- <script>
-    let checkboxes = document.getElementsByClassName("checkbox-option");
-
-    for(let i = 0; i < checkboxes.length; i++){
-
-        checkboxes[i].addEventListener("change", changeValue);
-    } 
-
-    function changeValue(e){
-        let target = e.target;
-        let originalValue = target.value;
-        let newValue = originalValue == "0" ? "1" : "0";
-
-        target.setAttribute("value", newValue);
-    }
-</script> -->
+<script src="<?php print module_path(); ?>/assets/js/car.js"></script>
