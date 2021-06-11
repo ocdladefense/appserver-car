@@ -8,8 +8,6 @@ use function Mysql\update;
 
 
 
-
-
 class CarModule extends Module {
 
 
@@ -91,15 +89,6 @@ class CarModule extends Module {
 
 		$query = "SELECT * FROM car WHERE year = $year ORDER BY subject_1 ASC";
 
-
-		// $subject = !empty($_POST["subject"]) && $_POST["subject"] != "Show All" ? $_POST["subject"] : null;
-		// $year = !empty($_POST["year"]) && $_POST["year"] != "All Years" ? $_POST["year"] : null;
-
-		// $query = $this->getQuery($subject, $year);
-
-		// var_dump($query);exit;
-		//var_dump($cars);exit;
-
 		$cars = $this->getCars($query);
 
 		$subjects = $this->getDistinctFieldValues("subject_1");
@@ -118,9 +107,6 @@ class CarModule extends Module {
 			"years"		=> $years,
 			"isAdmin"	=> true
 		));
-
-
-
 
 
 		if(!empty($carId)) {
