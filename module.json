@@ -8,11 +8,15 @@
 	"routes": {
 		"car/list/%id":{
 			"callback":"showCars",
-			"content-type":"text\/html"
+			"content-type":"text\/html",
+			"access":"is_authenticated",
+			"authorization":"webserver"
 		},
 		"car/list":{
 			"callback":"showCars",
-			"content-type":"text\/html"
+			"content-type":"text\/html",
+			"access":"is_authenticated",
+			"authorization":"webserver"
 		},
 		"car/summary/%year":{
 			"callback":"showCarsByYear",
@@ -20,7 +24,9 @@
 		},
 		"car/flag":{
 			"callback":"flagReview",
-			"content-type":"application/json"
+			"content-type":"application/json",
+			"access":"is_authenticated",
+			"authorization":"webserver"
 		},
 		"car/test":{
 			"callback":"testCarRoute",
@@ -28,19 +34,27 @@
 		},
 		"car/new":{
 			"callback":"showCarForm",
-			"content-type":"text/html"
+			"content-type":"text/html",
+			"access":"is_authenticated",
+			"authorization":"webserver"
 		},
 		"car/edit/%id":{
 			"callback":"showCarForm",
-			"content-type":"text/html"
+			"content-type":"text/html",
+			"access":"is_authenticated",
+			"authorization":"webserver"
 		},
 		"car/save":{
 			"callback":"saveCar",
-			"content-type":"text/html"
+			"content-type":"text/html",
+			"access":"is_authenticated",
+			"authorization":"webserver"
 		},
 		"car/delete/%id":{
 			"callback":"deleteCar",
-			"content-type":"text/html"
+			"content-type":"text/html",
+			"access":"is_authenticated",
+			"authorization":"webserver"
 		}
 	}
 }
