@@ -12,7 +12,7 @@
     padding: 10px;
 }
 .is-new{
-    background-color: rgba(255,255,0,0.4);;
+    background-color: rgba(255,255,0,0.4);
 }
 .is-test::before{
     content: "This is a test case review.";
