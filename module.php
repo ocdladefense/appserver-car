@@ -80,7 +80,7 @@ class CarModule extends Module {
 		return $tpl->render(array(
 				"cars" 				=> $cars,
 				"searchForm" 		=> $searchForm,
-				"isAdmin"			=> true
+				"isAdmin"			=> false
 		));
 	}
 
