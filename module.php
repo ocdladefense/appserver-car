@@ -48,7 +48,7 @@ class CarModule extends Module {
 			"subjects" 	=> $subjects,
 			"years"		=> $years,
 			"groupBy"	=> "subject_!",
-			"isAdmin"	=> true
+			"isAdmin"	=> false
 		));
 
 
@@ -105,7 +105,7 @@ class CarModule extends Module {
 			"count" 	=> count($cars),
 			"subjects" 	=> $subjects,
 			"years"		=> $years,
-			"isAdmin"	=> true
+			"isAdmin"	=> false
 		));
 
 
