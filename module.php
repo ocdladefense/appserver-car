@@ -5,6 +5,7 @@ use Http\HttpRequest;
 use Http\HttpHeader;
 use function Mysql\insert;
 use function Mysql\update;
+use function Session\get_current_user;
 
 
 
@@ -19,8 +20,6 @@ class CarModule extends Module {
 	}
 
 
-
-
 	public function showCars($carId = null) {
 
 		$subject = !empty($_POST["subject"]) && $_POST["subject"] != "Show All" ? $_POST["subject"] : null;
@@ -28,14 +27,13 @@ class CarModule extends Module {
 
 		$query = $this->getQuery($subject, $year);
 
-		// var_dump($query);exit;
-		//var_dump($cars);exit;
-
 		$cars = $this->getCars($query);
 
 		$subjects = $this->getDistinctFieldValues("subject_1");
 
 		$years = $this->getDistinctFieldValues("year");
+
+		$user = get_current_user();
 
 
 		$tpl = new Template("search-form");
@@ -48,11 +46,8 @@ class CarModule extends Module {
 			"subjects" 	=> $subjects,
 			"years"		=> $years,
 			"groupBy"	=> "subject_!",
-			"isAdmin"	=> false
+			"user"		=> $user
 		));
-
-
-
 
 
 		if(!empty($carId)) {
@@ -80,7 +75,7 @@ class CarModule extends Module {
 		return $tpl->render(array(
 				"cars" 				=> $cars,
 				"searchForm" 		=> $searchForm,
-				"isAdmin"			=> false
+				"user"				=> $user
 		));
 	}
 
@@ -105,7 +100,7 @@ class CarModule extends Module {
 			"count" 	=> count($cars),
 			"subjects" 	=> $subjects,
 			"years"		=> $years,
-			"isAdmin"	=> false
+			"user"		=> $user
 		));
 
 
@@ -135,7 +130,7 @@ class CarModule extends Module {
 				"cars" 				=> $cars,
 				"searchForm" 		=> $searchForm,
 				"groupBy"			=> "subject_1",
-				"isAdmin"			=> true
+				"user"				=> $user
 		));
 	}
 
