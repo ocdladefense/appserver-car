@@ -8,21 +8,15 @@
 	"routes": {
 		"car/list/%id":{
 			"callback":"showCars",
-			"content-type":"text\/html",
-			"access":"is_authenticated",
-			"authorization":"webserver"
+			"content-type":"text\/html"
 		},
 		"car/list":{
 			"callback":"showCars",
-			"content-type":"text\/html",
-			"access":"is_authenticated",
-			"authorization":"webserver"
+			"content-type":"text\/html"
 		},
 		"car/summary/%year":{
 			"callback":"showCarsByYear",
-			"content-type":"text\/html",
-			"access":"is_authenticated",
-			"authorization":"webserver"
+			"content-type":"text\/html"
 		},
 		"car/flag":{
 			"callback":"flagReview",
