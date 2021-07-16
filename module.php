@@ -90,6 +90,8 @@ class CarModule extends Module {
 
 		$years = $this->getDistinctFieldValues("year");
 
+		$user = get_current_user();
+
 
 		$tpl = new Template("search-form");
 		$tpl->addPath(__DIR__ . "/templates");
