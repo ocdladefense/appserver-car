@@ -37,7 +37,7 @@ class CarModule extends Module {
 		$user = get_current_user();
 
 
-		$tpl = new Template("search-form");
+		$tpl = new Template("search-list");
 		$tpl->addPath(__DIR__ . "/templates");
 
 		$searchForm = $tpl->render(array(
@@ -81,9 +81,15 @@ class CarModule extends Module {
 	}
 
 
-	public function showCarsByYear($year){
+	public function showCarsByYear($givenYear = null){
 
-		$query = "SELECT * FROM car WHERE year = $year ORDER BY subject_1 ASC";
+		$year = $givenYear == null ? $_POST["year"] : $givenYear;
+
+		$query = "SELECT * FROM car";
+
+		if($year != "All Years" && !empty($year)) $query .= " WHERE year = $year";
+
+		$query .= " ORDER BY subject_1 ASC";
 
 		$cars = $this->getCars($query);
 
@@ -94,7 +100,7 @@ class CarModule extends Module {
 		$user = get_current_user();
 
 
-		$tpl = new Template("search-form");
+		$tpl = new Template("search-summary");
 		$tpl->addPath(__DIR__ . "/templates");
 
 		$searchForm = $tpl->render(array(
