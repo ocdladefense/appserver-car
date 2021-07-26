@@ -1,15 +1,19 @@
 
 
 let links = document.getElementsByClassName("delete-review");
+let yearSelect = document.getElementById("year").addEventListener("change", submitForm);
 
 for(let i = 0; i < links.length; i++){
 
     links[i].addEventListener("click", handleDelete);
 }
 
-function submitForm(){
+function submitForm(e){
+    let selectedYear = document.getElementById("year").value;
 
-    document.getElementById("filter-form").submit();
+    let link = document.createElement("a");
+    link.setAttribute("href", "/car/summary/" + selectedYear);
+    link.click();
 }
 
 function handleDelete(e){

@@ -26,7 +26,9 @@
 				
 		$isFlagged = $car->isFlagged() ? "checked" : "";
 
-		$classesArray = array($isNewClass, $isTestClass, $isDraftClass);
+		$classesArray = array();
+
+		if($car->isNew()) $classesArray[] = "is-new";
 
 		$classes = implode(" ", $classesArray);
 
@@ -103,7 +105,7 @@
 				</label>
 			</div>
 			
-			<?php if($car->getUrl() != null) : ?>
+			<?php if($car->getUrl() != null && $user->isAdmin()) : ?>
 				<a href="<?php print $car->getUrl(); ?>" target="_blank">View on the Library of Defense website</a>
 			<?php endif; ?>
 		</div>

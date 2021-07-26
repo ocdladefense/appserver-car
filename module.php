@@ -81,13 +81,11 @@ class CarModule extends Module {
 	}
 
 
-	public function showCarsByYear($givenYear = null){
-
-		$year = $givenYear == null ? $_POST["year"] : $givenYear;
+	public function showCarsByYear($year){
 
 		$query = "SELECT * FROM car";
 
-		if($year != "All Years" && !empty($year)) $query .= " WHERE year = $year";
+		if($year != "All%20Years" && !empty($year)) $query .= " WHERE year = $year";
 
 		$query .= " ORDER BY subject_1 ASC";
 

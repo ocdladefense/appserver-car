@@ -18,10 +18,6 @@
 			"callback":"showCarsByYear",
 			"content-type":"text\/html"
 		},
-		"car/summary":{
-			"callback":"showCarsByYear",
-			"content-type":"text\/html"
-		},
 		"car/flag":{
 			"callback":"flagReview",
 			"content-type":"application/json",
