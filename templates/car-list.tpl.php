@@ -3,7 +3,7 @@
 
 <div id="car-list-container" class="list-containter">
 
-    <h1 class="list-header">OCDLA Criminal Appelate Review Summaries</h1>
+    <h1 class="list-header">OCDLA Criminal Appellate Review Summaries</h1>
 
     <div class="car-container">
 
