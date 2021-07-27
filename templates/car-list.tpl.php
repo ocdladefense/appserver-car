@@ -21,8 +21,11 @@
 
     <?php } ?>
     
-
+	<?php $index = 0; ?>
 	<?php foreach($cars as $car) {
+
+		$isFirstClass = $index == 0 ? "is-first" : "";
+		$index++;
 				
 		$isFlagged = $car->isFlagged() ? "checked" : "";
 
@@ -41,7 +44,7 @@
 		?>
 
 		<?php if($newSubject && $groupBy == "subject_1") : ?>
-			<h2><?php print $subject; ?></h2>
+			<h2 class="subject-header <?php print $isFirstClass; ?>"><?php print $subject; ?></h2>
 		<?php endif; ?>
 
 		<div class="car-container <?php print $classes; ?>">
