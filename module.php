@@ -226,9 +226,20 @@ class CarModule extends Module {
 
 
 
-
+	/**
+	 * Check that this is Rankin or another admin user.
+	 *
+	 */
 	public function showCarForm($carId = null){
 
+		$user = get_current_user();
+
+		
+		if(!$user->isAdmin && "005j000000DSW0eAAH" != $user->getId()) {
+			throw new \Exception("You don't have access.");
+		}
+		
+		
 		$car = !empty($carId) ? $this->getCar($carId) : new Car();
 
 		$subjects = $this->getDistinctFieldValues("subject_1");
