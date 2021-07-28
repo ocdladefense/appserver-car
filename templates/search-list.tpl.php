@@ -20,7 +20,7 @@ $year = $year == null ? "All Years" : $year;
 <form id="filter-form" class="filter-form" action="/car/list" method="post">
     <label><strong>Filter:</strong></label>
 
-    <select id="subject" name="subject" style="text-align:center;" onchange="submitForm()">
+    <select id="subject" name="subject" style="text-align:center;" onchange="submitListSearchForm()">
         
         <?php foreach($subjects as $s) { 
             
@@ -36,7 +36,7 @@ $year = $year == null ? "All Years" : $year;
         
     </select>
 
-    <select id="year" name="year" onchange="submitForm()">
+    <select id="year" name="year" onchange="submitListSearchForm()">
         
     <?php foreach($years as $y) { 
             
