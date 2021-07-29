@@ -54,7 +54,7 @@ input{
 a.delete-review {
     float: right;
 }
-@media only screen and (max-width:750px){
+@media only screen and (max-width:768px){
     .back-link{
         display:contents;
     }
