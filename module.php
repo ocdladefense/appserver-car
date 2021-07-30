@@ -235,7 +235,7 @@ class CarModule extends Module {
 		$user = get_current_user();
 
 		
-		if(!$user->isAdmin() && "005j000000DSW0eAAH" != $user->getId()) {
+		if(!$user->isAdmin()) {
 			throw new \Exception("You don't have access.");
 		}
 		

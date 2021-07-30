@@ -1,7 +1,8 @@
 {
-	"comment": "Module definition file.",
 	"name": "car",
 	"description": "Retrieve OCDLA Case Reviews.",
+	"comment": "Module definition file.",
+	"connectedApp": "default",
 	"files": [
 		"Car.php"
 	],
