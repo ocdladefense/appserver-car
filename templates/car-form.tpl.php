@@ -97,17 +97,17 @@
         </div>
 
         <div class="form-item">
-            <label>Circuit</label>
-            <input type="text" name="circuit" value="<?php print $car->getCircuit(); ?>" placeholder="Enter Circuit..." />
-        </div>
-
-        <div class="form-item">
-            <label>Majority</label>
-            <input type="text" name="majority" value="<?php print $car->getMajority(); ?>" placeholder="Enter majority names..." />
+            <label>County</label>
+            <input type="text" name="circuit" value="<?php print $car->getCircuit(); ?>" placeholder="Enter County..." />
         </div>
 
         <div class="form-item">
             <label>Judges</label>
+            <input type="text" name="majority" value="<?php print $car->getMajority(); ?>" placeholder="Enter majority names..." />
+        </div>
+
+        <div class="form-item">
+            <label>Trial Judge</label>
             <input type="text" name="judges" value="<?php print $car->getJudges(); ?>" placeholder="Enter additional judges..." />
         </div>
 

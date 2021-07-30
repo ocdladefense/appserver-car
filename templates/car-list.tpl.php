@@ -93,17 +93,17 @@
 				</label>
 				
 				<label>
-					<strong>Circuit:</strong>
+					<strong>County:</strong>
 					<?php print $car->getCircuit(); ?>
 				</label>
 				
 				<label>
-					<strong>Majority:</strong>
+					<strong>Judges:</strong>
 					<?php print $car->getMajority(); ?>
 				</label>
 				
 				<label>
-					<strong>Judges:</strong>
+					<strong>Trial Judge:</strong>
 					<?php print $car->getJudges(); ?>
 				</label>
 			</div>

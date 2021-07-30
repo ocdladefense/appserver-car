@@ -130,7 +130,7 @@ class Car {
 
 	public function getCircuit(){
 
-		return $this->circuit;
+		return explode(" ", $this->circuit)[0];
 	}
 
 	public function getMajority(){
