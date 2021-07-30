@@ -76,13 +76,12 @@
 			</div>
 
 			<label>
-				<strong>Summary:</strong>
 				<?php print $car->getSummary(); ?>
 			</label>
 
 			<label>
-				<strong>Result:</strong>
-				<?php print $car->getResult(); ?>
+				<strong>Other Info:</strong>
+				<?php print $car->getOtherInfo(); ?>
 			</label>
 
 			<div class="additional-info">
