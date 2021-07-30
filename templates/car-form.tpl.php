@@ -113,12 +113,12 @@
 
         <div class="form-item">
             <label>Summary</label>
-            <textarea name="summary" placeholder="Enter the case summary..."><?php print $car->getSummary(); ?></textarea>
+            <textarea name="summary" placeholder="Enter the entire case summary, including additional information..."><?php print $car->getSummary(); ?></textarea>
         </div>
 
         <div class="form-item">
             <label>Result</label>
-            <textarea name="result" placeholder="Enter the result..."><?php print $car->getResult(); ?></textarea>
+            <textarea name="result" placeholder="Enter the result if you wish..."><?php print $car->getResult(); ?></textarea>
         </div>
 
         <button type="submit" id="submit">Submit</button>
