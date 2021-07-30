@@ -79,6 +79,8 @@
 				<?php print $car->getSummary(); ?>
 			</label>
 
+			<br />
+			
 			<label>
 				<strong>Other Info:</strong>
 				<?php print $car->getOtherInfo(); ?>
