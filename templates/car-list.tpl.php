@@ -80,11 +80,6 @@
 			</label>
 
 			<br />
-			
-			<label>
-				<strong>Other Info:</strong>
-				<?php print $car->getOtherInfo(); ?>
-			</label>
 
 			<div class="additional-info">
 

@@ -116,10 +116,12 @@
             <textarea name="summary" placeholder="Enter the entire case summary, including additional information..."><?php print $car->getSummary(); ?></textarea>
         </div>
 
-        <div class="form-item">
-            <label>Result</label>
-            <textarea name="result" placeholder="Enter the result if you wish..."><?php print $car->getResult(); ?></textarea>
-        </div>
+        <?php if(!empty($car->getResult())) : ?>
+            <div class="form-item">
+                <label>Result</label>
+                <textarea name="result"><?php print $car->getResult(); ?></textarea>
+            </div>
+        <?php endif; ?>
 
         <button type="submit" id="submit">Submit</button>
     </form>

@@ -85,20 +85,7 @@ class Car {
 
 	public function getSummary(){
 
-		$summaryParts = explode(".", $this->summary);
-
-		$summary = $summaryParts[0] . ".  " . $summaryParts[1] . ".";
-
 		return $this->summary;
-	}
-
-	public function getOtherInfo(){
-
-		$summaryParts = explode(".", $this->summary);
-		$firstSentence = array_shift($summaryParts);
-		$secondSentence = array_shift($summaryParts);
-
-		return implode(".", $summaryParts) . $this->result . ".";
 	}
 
 	public function getResult(){
