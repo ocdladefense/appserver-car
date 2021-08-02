@@ -116,7 +116,7 @@
             <textarea name="summary" placeholder="Enter the entire case summary, including additional information..."><?php print $car->getSummary(); ?></textarea>
         </div>
 
-        <?php if(!empty($car->getResult())) : ?>
+        <?php if(True || !empty($car->getResult())) : ?>
             <div class="form-item">
                 <label>Result</label>
                 <textarea name="result"><?php print $car->getResult(); ?></textarea>
