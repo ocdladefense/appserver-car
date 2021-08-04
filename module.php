@@ -20,8 +20,8 @@ class CarModule extends Module {
 		$this->name = "car";
 	}
 
-
 	public function showCars($carId = null) {
+
 
 		$subject = !empty($_POST["subject"]) && $_POST["subject"] != "Show All" ? $_POST["subject"] : null;
 		$year = !empty($_POST["year"]) && $_POST["year"] != "All Years" ? $_POST["year"] : null;
