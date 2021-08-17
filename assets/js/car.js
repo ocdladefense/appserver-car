@@ -1,7 +1,9 @@
 
 
 let links = document.getElementsByClassName("delete-review");
-let yearSummary = document.getElementById("year-summary").addEventListener("change", submitFormSummaryYear);
+let yearSummary = document.getElementById("year-summary");
+
+if(yearSummary != null) yearSummary.addEventListener("change", submitFormSummaryYear);
 
 
 for(let i = 0; i < links.length; i++){
