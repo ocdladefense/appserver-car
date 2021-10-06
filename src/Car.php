@@ -3,6 +3,7 @@
 class Car {
 
 	public $id;
+	public $a_number;
 	public $subject_1;
 	public $subject_2;
 	public $summary;
@@ -34,6 +35,7 @@ class Car {
 
 		$car = new Self();
 		$car->id = empty($record["id"]) ? null : $record["id"];
+		$car->a_number = $record["a_number"];
 		$car->subject_1 = $record["subject_1"];
 		$car->subject_2 = $record["subject_2"];
 		$car->summary = $record["summary"];
@@ -71,6 +73,11 @@ class Car {
 	public function getId(){
 
 		return $this->id;
+	}
+
+	public function getA_number() {
+
+		return $this->a_number;
 	}
 
 	public function getSubject1(){

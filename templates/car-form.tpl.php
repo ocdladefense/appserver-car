@@ -56,6 +56,11 @@
         </div>
 
         <div class="form-item">
+            <label>A#</label>
+            <input type="text" name="a_number" value="<?php $car->getA_number(); ?>" placeholder="Enter A#" />
+        </div>
+
+        <div class="form-item">
             <label>Plaintiff</label>
             <input type="text" name="plaintiff" value="<?php print $car->getPlaintiff(); ?>" placeholder="Enter plaintiff..." />
         </div>
@@ -116,7 +121,7 @@
             <textarea name="summary" placeholder="Enter the entire case summary, including additional information..."><?php print $car->getSummary(); ?></textarea>
         </div>
 
-        <?php if(True || !empty($car->getResult())) : ?>
+        <?php if(!empty($car->getResult())) : ?>
             <div class="form-item">
                 <label>Result</label>
                 <textarea name="result"><?php print $car->getResult(); ?></textarea>

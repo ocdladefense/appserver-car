@@ -84,6 +84,11 @@
 			<div class="additional-info">
 
 				<label>
+					<strong>A#: </strong>
+					<?php print !empty($car->getA_number()) ? $car->getA_number() : "Not available"; ?>
+				</label>
+
+				<label>
 					<strong>Citation: </strong>
 					<?php print $car->getCitation(); ?>
 				</label>
