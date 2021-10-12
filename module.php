@@ -28,6 +28,8 @@ class CarModule extends Module {
 
 		$query = $this->getQuery($subject, $year);
 
+		$query .= " LIMIT 5";
+
 		$cars = $this->getCars($query);
 
 		$subjects = $this->getDistinctFieldValues("subject_1");
