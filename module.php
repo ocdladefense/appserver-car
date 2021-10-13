@@ -7,6 +7,7 @@ use function Mysql\insert;
 use function Mysql\update;
 use function Session\get_current_user;
 
+
 // test comment
 
 
@@ -27,6 +28,8 @@ class CarModule extends Module {
 		$year = !empty($_POST["year"]) && $_POST["year"] != "All Years" ? $_POST["year"] : null;
 
 		$query = $this->getQuery($subject, $year);
+
+		$query .= " LIMIT 5";
 
 		$cars = $this->getCars($query);
 
@@ -267,7 +270,7 @@ class CarModule extends Module {
 
 	public function createCar(Car $car) {
 
-		$result = insert($car);
+		$result = Mysql\insert($car);
 
 		return redirect("/car/list/{$car->getId()}");
 	}
@@ -327,6 +330,26 @@ class CarModule extends Module {
 	public function testCarRoute(){
 
 		return "Hello World!";
+	}
+
+	public function updateCarANumber() {
+
+		$query = "SELECT * FROM CAR WHERE external_link NOT LIKE '%contentdm.oclc.org%'";
+		
+		$result = Database::query($query);
+
+		$records = $result->getIterator();
+
+		$cars = array();
+
+		foreach($records as $record){
+
+			$cars[] = Car::from_array_or_standard_object($record);
+		}
+
+		var_dump($cars);exit;
+
+		
 	}
 }
 

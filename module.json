@@ -52,6 +52,10 @@
 			"content-type":"text/html",
 			"access":"is_authenticated",
 			"authorization":"webserver"
+		},
+		"car/update/anumber":{
+			"callback":"updateCarANumber",
+			"content-type":"application/json"
 		}
 	}
 }

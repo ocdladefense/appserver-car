@@ -4,6 +4,7 @@ class Car {
 
 	public $id;
 	public $a_number;
+	public $external_link;
 	public $subject_1;
 	public $subject_2;
 	public $summary;
@@ -44,6 +45,7 @@ class Car {
 		$car->defendant = $record["defendant"];
 		$car->title = $record["title"] != null ? $record["title"] : $record["plaintiff"] . " v. " . $record["defendant"]; 
 		$car->citation = $record["citation"];
+		$car->external_link = $record["external_link"];
 
 		if(!empty($record["date"])){
 
