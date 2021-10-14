@@ -55,7 +55,7 @@
 		},
 		"car/update/anumber":{
 			"callback":"updateCarANumber",
-			"content-type":"application/json"
+			"content-type":"text/html"
 		}
 	}
 }

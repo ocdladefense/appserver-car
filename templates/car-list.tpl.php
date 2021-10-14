@@ -84,7 +84,7 @@
 			<div class="additional-info">
 
 				<label>
-					<strong>A#: </strong>
+					<strong>Appellate #: </strong>
 					<?php print !empty($car->getA_number()) ? $car->getA_number() : "Not available"; ?>
 				</label>
 
@@ -104,7 +104,7 @@
 				</label>
 				
 				<label>
-					<strong>Trial Judge:</strong>
+					<strong>Appellate Judge:</strong>
 					<?php print $car->getJudges(); ?>
 				</label>
 			</div>

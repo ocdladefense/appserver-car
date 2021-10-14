@@ -56,7 +56,7 @@
         </div>
 
         <div class="form-item">
-            <label>A#</label>
+            <label>Appellate #</label>
             <input type="text" name="a_number" value="<?php $car->getA_number(); ?>" placeholder="Enter A#" />
         </div>
 
@@ -112,7 +112,7 @@
         </div>
 
         <div class="form-item">
-            <label>Trial Judge</label>
+            <label>Appellate Judge</label>
             <input type="text" name="judges" value="<?php print $car->getJudges(); ?>" placeholder="Enter additional judges..." />
         </div>
 

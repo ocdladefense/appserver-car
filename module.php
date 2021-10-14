@@ -5,6 +5,7 @@ use Http\HttpRequest;
 use Http\HttpHeader;
 use function Mysql\insert;
 use function Mysql\update;
+use function Mysql\select;
 use function Session\get_current_user;
 
 
@@ -245,6 +246,8 @@ class CarModule extends Module {
 		
 		$car = !empty($carId) ? $this->getCar($carId) : new Car();
 
+		//var_dump($car->getA_number());exit;
+
 		$subjects = $this->getDistinctFieldValues("subject_1");
 
 		$tpl = new Template("car-form");
@@ -334,22 +337,20 @@ class CarModule extends Module {
 
 	public function updateCarANumber() {
 
-		$query = "SELECT * FROM CAR WHERE external_link NOT LIKE '%contentdm.oclc.org%'";
-		
-		$result = Database::query($query);
+		$query = "SELECT id, a_number, external_link FROM Car WHERE year = 2021";
 
-		$records = $result->getIterator();
+		$cars = select($query);
 
-		$cars = array();
+		foreach($cars as $car){
 
-		foreach($records as $record){
-
-			$cars[] = Car::from_array_or_standard_object($record);
+			$exLink = $car->external_link;
+			$linkParts = explode("/", $exLink);
+			$car->a_number = trim($linkParts[count($linkParts) -1], ".pdf");
 		}
 
-		var_dump($cars);exit;
+		$results = update($cars);
 
-		
+		var_dump($results);exit;
 	}
 }
 

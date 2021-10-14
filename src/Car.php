@@ -43,7 +43,10 @@ class Car {
 		$car->result = $record["result"];
 		$car->plaintiff = $record["plaintiff"];
 		$car->defendant = $record["defendant"];
+
+		if(!empty($record["plaintiff"]))
 		$car->title = $record["title"] != null ? $record["title"] : $record["plaintiff"] . " v. " . $record["defendant"]; 
+		
 		$car->citation = $record["citation"];
 		$car->external_link = $record["external_link"];
 
