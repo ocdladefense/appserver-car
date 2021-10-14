@@ -57,7 +57,7 @@
 
         <div class="form-item">
             <label>Appellate #</label>
-            <input type="text" name="a_number" value="<?php $car->getA_number(); ?>" placeholder="Enter A#" />
+            <input type="text" name="a_number" value="<?php print $car->getA_number(); ?>" placeholder="Enter A#" />
         </div>
 
         <div class="form-item">

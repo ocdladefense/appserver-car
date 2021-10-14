@@ -246,8 +246,6 @@ class CarModule extends Module {
 		
 		$car = !empty($carId) ? $this->getCar($carId) : new Car();
 
-		//var_dump($car->getA_number());exit;
-
 		$subjects = $this->getDistinctFieldValues("subject_1");
 
 		$tpl = new Template("car-form");
