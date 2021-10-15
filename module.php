@@ -28,6 +28,13 @@ class CarModule extends Module {
 		$subject = !empty($_POST["subject"]) && $_POST["subject"] != "Show All" ? $_POST["subject"] : null;
 		$year = !empty($_POST["year"]) && $_POST["year"] != "All Years" ? $_POST["year"] : null;
 
+		// $fields = array("Id", "FirstName", "LastName", "MailingCity", "Ocdla_Current_Member_Flag__c", "MailingState", "Phone", "Email", "Ocdla_Occupation_Field_Type__c", "Ocdla_Organization__c", "(SELECT Interest__c FROM AreasOfInterest__r)");
+
+        // // $soql = new SoqlQueryBuilder("Contact");
+        // // $soql->setFields($fields);
+        // // $soql->setConditions($conditionGroup, $_POST);
+        // // $soql->setOrderBy("LastName");
+
 		$query = $this->getQuery($subject, $year);
 
 		$cars = $this->getCars($query);
