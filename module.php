@@ -3,13 +3,13 @@
 use Mysql\Database;
 use Http\HttpRequest;
 use Http\HttpHeader;
+use Mysql\DbHelper;
+use Mysql\QueryBuilder;
+
 use function Mysql\insert;
 use function Mysql\update;
 use function Mysql\select;
 use function Session\get_current_user;
-
-
-// test comment
 
 
 class CarModule extends Module {
@@ -22,47 +22,43 @@ class CarModule extends Module {
 		$this->name = "car";
 	}
 
-	public function showCars($carId = null) {
+	public function showCars($newCarId = null) {
+
+		$conditions = array(
+			"op" => "AND",
+			"conditions" => array(
+				array(
+					"fieldname"	=> "subject_1",
+					"op"		=> "LIKE",
+					"syntax"	=> "'%%%s%%'"
+				),
+				array(
+					"fieldname"	=> "year",
+					"op"		=> "=",
+					"syntax"	=> "%s"
+				)
+			)
+		);
+
+		$sql = new QueryBuilder("Car");
+
+		$sql->setFields(array("*"));
+
+		if(!empty($_POST)) $sql->setConditions($conditions, $_POST);
+
+		$sql->setOrderBy("is_flagged DESC, Year DESC, Month DESC, Day DESC");
+
+		$query = $sql->compile();
+
+		// This the select functions null if there are no records.
+		$cars = select($query);
 
 
-		$subject = !empty($_POST["subject"]) && $_POST["subject"] != "Show All" ? $_POST["subject"] : null;
-		$year = !empty($_POST["year"]) && $_POST["year"] != "All Years" ? $_POST["year"] : null;
+		// If there is a new car show it at the top of the list.
+		if(!empty($newCarId)) {
 
-		// $fields = array("Id", "FirstName", "LastName", "MailingCity", "Ocdla_Current_Member_Flag__c", "MailingState", "Phone", "Email", "Ocdla_Occupation_Field_Type__c", "Ocdla_Organization__c", "(SELECT Interest__c FROM AreasOfInterest__r)");
+			$newCar = select("SELECT * FROM Car WHERE id = '$newCarId'")[0];
 
-        // // $soql = new SoqlQueryBuilder("Contact");
-        // // $soql->setFields($fields);
-        // // $soql->setConditions($conditionGroup, $_POST);
-        // // $soql->setOrderBy("LastName");
-
-		$query = $this->getQuery($subject, $year);
-
-		$cars = $this->getCars($query);
-
-		$subjects = $this->getDistinctFieldValues("subject_1");
-
-		$years = $this->getDistinctFieldValues("year");
-
-		$user = get_current_user();
-
-
-		$tpl = new Template("search-list");
-		$tpl->addPath(__DIR__ . "/templates");
-
-		$searchForm = $tpl->render(array(
-			"subject"	=> $subject,
-			"year"		=> $year,
-			"count" 	=> count($cars),
-			"subjects" 	=> $subjects,
-			"years"		=> $years,
-			"groupBy"	=> "subject_!",
-			"user"		=> $user
-		));
-
-
-		if(!empty($carId)) {
-
-			$newCar = $this->getCar($carId);
 			$newCar->isNew(true);
 
 			for($i = 0; $i < count($cars); $i++){
@@ -77,16 +73,39 @@ class CarModule extends Module {
 		}
 
 
-
 		$tpl = new Template("car-list");
 		$tpl->addPath(__DIR__ . "/templates");
 
+		return $tpl->render(
+			array(
+				"cars"			=> $cars,
+				"searchForm" 	=> $this->getCarSearch($_POST, $cars),
+				"user"			=> get_current_user()
+			)
+		);
+	}
+
+
+	public function getCarSearch($params) {
+
+		$subjects = DbHelper::getDistinctFieldValues("Car", "subject_1");
+
+		$years = DbHelper::getDistinctFieldValues("Car", "year");
+
+		$user = get_current_user();
+
+		$tpl = new Template("search-list");
+		$tpl->addPath(__DIR__ . "/templates");
 
 		return $tpl->render(array(
-				"cars" 				=> $cars,
-				"searchForm" 		=> $searchForm,
-				"user"				=> $user
+			"subject"	=> $params["subject_1"],
+			"year"		=> $params["year"],
+			"subjects" 	=> $subjects,
+			"years"		=> $years,
+			"groupBy"	=> "subject_1",
+			"user"		=> get_current_user()
 		));
+
 	}
 
 
@@ -98,11 +117,11 @@ class CarModule extends Module {
 
 		$query .= " ORDER BY subject_1 ASC";
 
-		$cars = $this->getCars($query);
+		$cars = select($query);
 
-		$subjects = $this->getDistinctFieldValues("subject_1");
+		$subjects = DbHelper::getDistinctFieldValues("Car", "subject_1");
 
-		$years = $this->getDistinctFieldValues("year");
+		$years = DbHelper::getDistinctFieldValues("Car", "year");
 
 		$user = get_current_user();
 
@@ -116,26 +135,8 @@ class CarModule extends Module {
 			"count" 	=> count($cars),
 			"subjects" 	=> $subjects,
 			"years"		=> $years,
-			"user"		=> $user
+			"user"		=> get_current_user()
 		));
-
-
-		if(!empty($carId)) {
-
-			$newCar = $this->getCar($carId);
-			$newCar->isNew(true);
-
-			for($i = 0; $i < count($cars); $i++){
-
-				if($cars[$i]->getId() == $newCar->getId()){
-	
-					unset($cars[$i]);
-				}
-			}
-
-			array_unshift($cars, $newCar);
-		}
-
 
 
 		$tpl = new Template("car-list");
@@ -148,89 +149,6 @@ class CarModule extends Module {
 				"groupBy"			=> "subject_1",
 				"user"				=> $user
 		));
-	}
-
-
-
-	public function getQuery($subject = null, $year = null) {
-
-		$subjectFilter = "SELECT * FROM car WHERE subject_1 LIKE '%$filter%' ORDER BY is_flagged DESC, Year DESC, Month DESC, Day DESC";
-
-		$query = "SELECT * FROM car";
-		$orderBy = " ORDER BY is_flagged DESC, Year DESC, Month DESC, Day DESC";
-
-		if($subject != null || $year != null){
-
-			$query .= " WHERE ";
-		}
-
-		$conditions = array();
-
-		if($subject != null){
-
-			$conditions[] = "subject_1 LIKE '%$subject%'";
-		}
-
-		if($year != null){
-
-			$conditions[] = "year = $year";
-		}
-
-		return $query . implode(" AND ", $conditions) . $orderBy;
-	}
-
-	public function getCars($query){
-
-		$result = Database::query($query);
-
-		$records = $result->getIterator();
-
-		$cars = array();
-		foreach($records as $record){
-
-			$cars[] = Car::from_array_or_standard_object($record);
-		}
-
-		return $cars;
-	}
-
-
-
-
-	public function getCar($id){
-
-		$query = "SELECT * FROM car WHERE Id = '$id'";
-		
-		$result = Database::query($query);
-
-		$records = $result->getIterator();
-
-		$cars = array();
-		foreach($records as $record){
-
-			$cars[] = Car::from_array_or_standard_object($record);
-		}
-
-		return $cars[0];
-	}
-
-
-
-
-	public function getDistinctFieldValues($field) {
-
-		$result = Database::query("SELECT DISTINCT $field FROM car ORDER BY $field");
-
-		$records = $result->getIterator();
-
-		$values = array();
-
-		foreach($records as $record) {
-
-			$values[] = $record[$field];
-		}
-
-		return $values;
 	}
 
 
@@ -249,9 +167,9 @@ class CarModule extends Module {
 		}
 		
 		
-		$car = !empty($carId) ? $this->getCar($carId) : new Car();
+		$car = !empty($carId) ? select("SELECT * FROM Car WHERE id = '$carId'")[0] : new Car();
 
-		$subjects = $this->getDistinctFieldValues("subject_1");
+		$subjects = DbHelper::getDistinctFieldValues("Car", "subject_1");
 
 		$tpl = new Template("car-form");
 		$tpl->addPath(__DIR__ . "/templates");
@@ -276,7 +194,7 @@ class CarModule extends Module {
 
 	public function createCar(Car $car) {
 
-		$result = Mysql\insert($car);
+		$result = insert($car);
 
 		return redirect("/car/list/{$car->getId()}");
 	}
@@ -287,7 +205,7 @@ class CarModule extends Module {
 	// For now only allow updates on test reviews.
 	public function updateCar(Car $car) {
 	
-		if(!$car->isTest()) throw new Exception("CAR_UPDATE_ERROR: You can only update cars that are marked as test");
+		//if(!$car->isTest()) throw new Exception("CAR_UPDATE_ERROR: You can only update cars that are marked as test");
 		
 		$result = update($car);
 
@@ -299,7 +217,7 @@ class CarModule extends Module {
 
 	public function deleteCar($id){
 
-		$car = $this->getCar($id);
+		$car = select("SELECT * FROM Car WHERE id = '$id'")[0];
 
 		if(!$car->isTest()) throw new Exception("CAR_DELETE_ERROR: You can only delete cars that are marked as test");
 

@@ -11,13 +11,25 @@
 
     </div>
 
+	<?php if(!empty($cars)) : ?>
+		<div class="car-container">
+			<label>
+				<strong>
+					<?php print "Showing " . count($cars) . " case review(s)."; ?>
+				</strong>
+			</label>
+		</div>
+	<?php endif; ?>
+
+
+
     <?php if(empty($cars)) { ?>
     
 
-        <div class="car-container" style="text-align: center;">
-            <h1>No case reviews were found.</h1>
-        </div>
-        
+	<div class="car-container" style="text-align: center;">
+		<h1>No case reviews were found.</h1>
+	</div>
+	
 
     <?php } ?>
     

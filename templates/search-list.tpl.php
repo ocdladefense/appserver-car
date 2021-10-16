@@ -9,27 +9,31 @@
 // $subjects = All of the subjects.
 // $years = All of the available years.
 
+// $yearDefault = array("", "All Years");
+// $allOptions = $yearDefault + 
 
-array_unshift($subjects, "Show All");
-array_unshift($years, "All Years");
-$subject = $subject == null ? "Show All" : $subject;
-$year = $year == null ? "All Years" : $year;
+$yearDefault = array("" => "All Years");
+$allYears = $yearDefault + $years;
+
+$subjectDefault = array("" => "All Subjects");
+$allSubjects = $subjectDefault + $subjects;
+
+$selectedSubject = empty($subject) ? "Show All" : $subject;
+$selectedYear = empty($year) ? "All Years" : $year;
 
 ?>
 
 <form id="filter-form" class="filter-form" action="/car/list" method="post">
     <label><strong>Filter:</strong></label>
 
-    <select id="subject" name="subject" style="text-align:center;" onchange="submitListSearchForm()">
+    <select id="subject_1" name="subject_1" style="text-align:center;" onchange="submitListSearchForm()">
         
-        <?php foreach($subjects as $s) { 
+        <?php foreach($allSubjects as $value => $label) { 
             
-            $selected = $subject == $s ? "selected" : ""; 
+            $selected = $selectedSubject == $value ? "selected" : ""; 
         ?>
 
-        <option value="<?php print $s; ?>" <?php print $selected; ?>>
-            <?php print $s; ?>
-        </option>
+        <option value="<?php print $value; ?>" <?php print $selected; ?>><?php print $label; ?></option>
 
 
         <?php } ?>
@@ -38,25 +42,17 @@ $year = $year == null ? "All Years" : $year;
 
     <select id="year" name="year" onchange="submitListSearchForm()">
         
-    <?php foreach($years as $y) { 
+    <?php foreach($allYears as $value => $label) { 
             
-            $selected = $year == $y ? "selected" : ""; 
+            $selected = $selectedYear == $value ? "selected" : ""; 
         ?>
 
-        <option value="<?php print $y; ?>" <?php print $selected; ?>>
-            <?php print $y; ?>
-        </option>
+        <option value="<?php print $value; ?>" <?php print $selected; ?>><?php print $label; ?></option>
 
 
         <?php } ?>
 
     </select>
-
-    <label>
-        <strong>
-            <?php print "Showing " . $count . " case review(s)."; ?>
-        </strong>
-    </label>
 
     <?php if(True || $user->isAdmin()) : ?>
         <a class="add-review" href="/car/new">Add Review <i class="fas fa-plus" aria-hidden="true"></i></a>
