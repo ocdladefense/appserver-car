@@ -94,7 +94,9 @@ label{
 
     padding-top:0px;
 }
-
+select {
+    height: 30px;
+}
 @media only screen and (max-width:768px){
     .car-container{
         width:100%;

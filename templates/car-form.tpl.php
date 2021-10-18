@@ -1,6 +1,10 @@
 
 
 <?php
+
+    use function Html\createSelectListElement;
+    use function Html\createOptionDataList;
+
     $isUpdate = $car->getId() != null;
     $headerMessage = $isUpdate ? "Update Case Review" : "Create a Case Review";
 
@@ -20,6 +24,16 @@
         $checkFlagged = $car->isFlagged() ? "checked" : "";
         $checkTest = $shouldCheckTest ? "checked" : "";
         $checkDraft = $car->isDraft() ? "checked" : "";
+
+        $subjectDefault = array("" => "None Selected");
+        $allSubjects = $subjectDefault + $subjects;
+
+        $countyDefault = array("" => "None Selected");
+        $allCounties = $countyDefault + $counties;
+
+        $selectedSubject = empty($car->getSubject1()) ? "None Selected" : $car->getSubject1();
+        $selectedCounty = empty($car->getCircuit()) ? "None Selected" : $car->getCircuit();
+
     ?>
 
     <form id="car-form" class="car-form" action="/car/save" method="post">
@@ -73,21 +87,7 @@
         <div class="form-item">
 
             <label>Primary Subject</label>
-
-            <select id="select-subject" name="subject_1">
-
-                <?php if(!empty($car->getSubject1())) : ?>
-                    <option value="<?php print $car->getSubject1(); ?>" selected><?php print $car->getSubject1(); ?></option>
-                <?php endif; ?>
-            
-                <?php foreach($subjects as $subject) : ?>
-                    <option value="<?php print $subject; ?>">
-                        <?php print $subject; ?>
-                    </option>
-                <?php endforeach; ?>
-            
-            </select>
-
+            <?php print createSelectListElement("subject_1", $selectedSubject, $allSubjects); ?>
             <button type="button" id="new-subject" class="new-subject" onclick="handleNewSubject()">New Subject</button>
         </div>
 
@@ -103,17 +103,21 @@
 
         <div class="form-item">
             <label>County</label>
-            <input type="text" name="circuit" value="<?php print $car->getCircuit(); ?>" placeholder="Enter County..." />
+            <?php print createSelectListElement("circuit", $selectedCounty, $allCounties); ?>
         </div>
 
         <div class="form-item">
             <label>Judges</label>
-            <input type="text" name="majority" value="<?php print $car->getMajority(); ?>" placeholder="Enter majority names..." />
+            <!-- <input type="text" name="majority" value="<?php print $car->getMajority(); ?>" placeholder="Enter majority names..." /> -->
+            <?php print createOptionDataList("judge-datalist", $judges); ?>
+            <input type="text" name="majority" value="<?php print $car->getMajority(); ?>" autocomplete="on" list="judge-datalist" placeholder="Search by judge name" />
         </div>
+        
 
         <div class="form-item">
             <label>Appellate Judge</label>
-            <input type="text" name="judges" value="<?php print $car->getJudges(); ?>" placeholder="Enter additional judges..." />
+            <?php print createOptionDataList("a-judge-datalist", $appellateJudges); ?>
+            <input type="text" name="judges" value="<?php print $car->getJudges(); ?>" list="a-judge-datalist" placeholder="Search by appellate judge name" />
         </div>
 
         <div class="form-item">

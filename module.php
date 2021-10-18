@@ -36,6 +36,16 @@ class CarModule extends Module {
 					"fieldname"	=> "year",
 					"op"		=> "=",
 					"syntax"	=> "%s"
+				),
+				array(
+					"fieldname"	=> "circuit",
+					"op"		=> "LIKE",
+					"syntax"	=> "'%%%s%%'"
+				),
+				array(
+					"fieldname"	=> "judges",
+					"op"		=> "LIKE",
+					"syntax"	=> "'%%%s%%'"
 				)
 			)
 		);
@@ -100,8 +110,11 @@ class CarModule extends Module {
 		return $tpl->render(array(
 			"subject"	=> $params["subject_1"],
 			"year"		=> $params["year"],
+			"county"	=> $params["circuit"],
 			"subjects" 	=> $subjects,
 			"years"		=> $years,
+			"counties"	=> $this->getOregonCounties(),
+			"judgeName" => $params["judges"],
 			"groupBy"	=> "subject_1",
 			"user"		=> get_current_user()
 		));
@@ -152,11 +165,6 @@ class CarModule extends Module {
 	}
 
 
-
-	/**
-	 * Check that this is Rankin or another admin user.
-	 *
-	 */
 	public function showCarForm($carId = null){
 
 		$user = get_current_user();
@@ -170,11 +178,21 @@ class CarModule extends Module {
 		$car = !empty($carId) ? select("SELECT * FROM Car WHERE id = '$carId'")[0] : new Car();
 
 		$subjects = DbHelper::getDistinctFieldValues("Car", "subject_1");
+		$counties = $this->getOregonCounties();
 
 		$tpl = new Template("car-form");
 		$tpl->addPath(__DIR__ . "/templates");
 
-		return $tpl->render(array("car" => $car, "subjects" => $subjects));
+		$judges = DbHelper::getDistinctFieldValues("Car", "majority");
+		$appellateJudges = DbHelper::getDistinctFieldValues("Car", "judges");
+
+		return $tpl->render(array(
+			"car" => $car,
+			"subjects" => $subjects,
+			"counties" => $counties,
+			"judges" => $judges,
+			"appellateJudges" => $appellateJudges
+		));
 	}
 
 
@@ -205,8 +223,6 @@ class CarModule extends Module {
 	// For now only allow updates on test reviews.
 	public function updateCar(Car $car) {
 	
-		//if(!$car->isTest()) throw new Exception("CAR_UPDATE_ERROR: You can only update cars that are marked as test");
-		
 		$result = update($car);
 
 		return redirect("/car/list/{$car->getId()}");
@@ -273,6 +289,51 @@ class CarModule extends Module {
 
 		var_dump($results);exit;
 	}
+
+	public function getOregonCounties(){
+
+		$counties = array(
+			"Baker" 		=> "Baker",
+			"Benton" 		=> "Benton",
+			"Clackamas"		=> "Clackamas",
+			"Clatsop" 		=> "Clatsop",
+			"Columbia"		=> "Columbia",
+			"Coos"			=> "Coos",
+			"Crook"			=> "Crook",
+			"Curry"			=> "Curry",
+			"Deschutes"		=> "Deschutes",
+			"Douglas"		=> "Douglas",
+			"Gillam"		=> "Gillam",
+			"Grant"			=> "Grant",
+			"Harney"		=> "Harney",
+			"Hood River"	=> "Hood River",
+			"Jackson"		=> "Jackson",
+			"Jefferson"		=> "Jefferson",
+			"Josephine"		=> "Josephine",
+			"Klamath"		=> "Klamath",
+			"Lake"			=> "Lake",
+			"Lane"			=> "Lane",
+			"Lincoln"		=> "Lincoln",
+			"Linn"			=> "Linn",
+			"Malheur"		=> "Malheur",
+			"Marion"		=> "Marion",
+			"Morrow"		=> "Morrow",
+			"Multnomah"		=> "Multnomah",
+			"Polk"			=> "Polk",
+			"Sherman"		=> "Sherman",
+			"Tillamook"		=> "Tillamook",
+			"Umatilla"		=> "Umatilla",
+			"Union"			=> "Union",
+			"Wallowa"		=> "Wallowa",
+			"Wasco"			=> "Wasco",
+			"Washington"	=> "Washington",
+			"Wheeler"		=> "Wheeler",
+			"Yamhill"		=> "Yamhill"
+		);
+
+		return $counties;
+	}
+
 }
 
 
