@@ -19,7 +19,7 @@ function submitFormSummaryYear(){
     link.click();
 }
 
-function submitListSearchForm(){
+function submitForm(){
 
     $form = document.getElementById("filter-form");
     $form.submit();

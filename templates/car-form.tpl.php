@@ -2,8 +2,7 @@
 
 <?php
 
-    use function Html\createSelectListElement;
-    use function Html\createOptionDataList;
+    use function Html\createElement;
 
     $isUpdate = $car->getId() != null;
     $headerMessage = $isUpdate ? "Update Case Review" : "Create a Case Review";
@@ -34,9 +33,14 @@
         $selectedSubject = empty($car->getSubject1()) ? "None Selected" : $car->getSubject1();
         $selectedCounty = empty($car->getCircuit()) ? "None Selected" : $car->getCircuit();
 
+        // Create the datalist element for the judge name autocomplete.
+        print createElement("datalist", array("id" => "judge-datalist", "name" => "judge-datalist", "options" => $judges));
+
     ?>
 
     <form id="car-form" class="car-form" action="/car/save" method="post">
+
+
 
         <?php if($car->getId() != null) : ?>
 
@@ -85,9 +89,8 @@
         </div>
 
         <div class="form-item">
-
             <label>Primary Subject</label>
-            <?php print createSelectListElement("subject_1", $selectedSubject, $allSubjects); ?>
+            <?php print createElement("select", array("id" => "subject_1", "name" => "subject_1", "options" => $allSubjects, "selected" => $selectedSubject)); ?>
             <button type="button" id="new-subject" class="new-subject" onclick="handleNewSubject()">New Subject</button>
         </div>
 
@@ -103,21 +106,18 @@
 
         <div class="form-item">
             <label>County</label>
-            <?php print createSelectListElement("circuit", $selectedCounty, $allCounties); ?>
+            <?php print createElement("select", array("name" => "circuit", "options" => $allCounties, "selected" => $selectedCounty)); ?>
         </div>
 
         <div class="form-item">
             <label>Judges</label>
-            <!-- <input type="text" name="majority" value="<?php print $car->getMajority(); ?>" placeholder="Enter majority names..." /> -->
-            <?php print createOptionDataList("judge-datalist", $judges); ?>
-            <input type="text" name="majority" value="<?php print $car->getMajority(); ?>" autocomplete="on" list="judge-datalist" placeholder="Search by judge name" />
+            <input type="text" name="majority" value="<?php print $car->getMajority(); ?>" list="judge-datalist" placeholder="Search by judge name" />
         </div>
         
 
         <div class="form-item">
             <label>Appellate Judge</label>
-            <?php print createOptionDataList("a-judge-datalist", $appellateJudges); ?>
-            <input type="text" name="judges" value="<?php print $car->getJudges(); ?>" list="a-judge-datalist" placeholder="Search by appellate judge name" />
+            <input type="text" name="judges" value="<?php print $car->getJudges(); ?>" list="judge-datalist" placeholder="Search by appellate judge name" />
         </div>
 
         <div class="form-item">

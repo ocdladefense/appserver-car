@@ -102,6 +102,8 @@ class CarModule extends Module {
 
 		$years = DbHelper::getDistinctFieldValues("car", "year");
 
+		$judges = DbHelper::getDistinctFieldValues("car", "judges");
+
 		$user = get_current_user();
 
 		$tpl = new Template("search-list");
@@ -115,6 +117,7 @@ class CarModule extends Module {
 			"years"		=> $years,
 			"counties"	=> $this->getOregonCounties(),
 			"judgeName" => $params["judges"],
+			"judges"	=> $judges,
 			"groupBy"	=> "subject_1",
 			"user"		=> get_current_user()
 		));
@@ -170,9 +173,7 @@ class CarModule extends Module {
 		$user = get_current_user();
 
 		
-		if(!$user->isAdmin()) {
-			throw new \Exception("You don't have access.");
-		}
+		if(!$user->isAdmin()) throw new \Exception("You don't have access.");
 		
 		
 		$car = !empty($carId) ? select("SELECT * FROM car WHERE id = '$carId'")[0] : new Car();
@@ -183,15 +184,13 @@ class CarModule extends Module {
 		$tpl = new Template("car-form");
 		$tpl->addPath(__DIR__ . "/templates");
 
-		$judges = DbHelper::getDistinctFieldValues("car", "majority");
-		$appellateJudges = DbHelper::getDistinctFieldValues("car", "judges");
+		$judges = DbHelper::getDistinctFieldValues("car", "judges");
 
 		return $tpl->render(array(
 			"car" => $car,
 			"subjects" => $subjects,
 			"counties" => $counties,
-			"judges" => $judges,
-			"appellateJudges" => $appellateJudges
+			"judges" => $judges
 		));
 	}
 

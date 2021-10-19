@@ -1,8 +1,7 @@
 
 <?php
 
-use function Html\createSelectListElement;
-use function Html\createOptionDataList;
+use function Html\createElement;
 
 $subjectDefault = array("" => "All Subjects");
 $allSubjects = $subjectDefault + $subjects;
@@ -22,13 +21,18 @@ $selectedCounty = empty($county) ? "All Counties" : $county;
 <form id="filter-form" class="filter-form" action="/car/list" method="post">
     <label><strong>Filter:</strong></label>
 
-    <?php print createSelectListElement("subject_1", $selectedSubject, $allSubjects); ?>
+    <?php print createElement("select", array("name" => "subject_1", "options" => $allSubjects, "selected" => $selectedSubject)); ?>
 
-    <?php print createSelectListElement("year", $selectedYear, $allYears); ?>
+    <?php print createElement("select", array("name" => "year", "options" => $allYears, "selected" => $selectedYear)); ?>
 
-    <?php print createSelectListElement("circuit", $selectedCounty, $allCounties); ?>
+    <?php print createElement("select", array("name" => "circuit", "options" => $allCounties, "selected" => $selectedCounty)); ?>
+
+    <?php print createElement("datalist", array("id" => "judge-datalist", "name" => "judge-datalist", "options" => $judges)); ?>
+
+    <input type="text" name="judges" value="<?php print $judgeName; ?>" list="judge-datalist" placeholder="Search by judge name" onchange="submitForm()" />
 
     <?php if(True || $user->isAdmin()) : ?>
+        <a href="/car/list">Clear</a>
         <a class="add-review" href="/car/new">Add Review <i class="fas fa-plus" aria-hidden="true"></i></a>
     <?php endif; ?>
 
