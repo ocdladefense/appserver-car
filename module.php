@@ -50,7 +50,7 @@ class CarModule extends Module {
 			)
 		);
 
-		$sql = new QueryBuilder("Car");
+		$sql = new QueryBuilder("car");
 
 		$sql->setFields(array("*"));
 
@@ -67,7 +67,7 @@ class CarModule extends Module {
 		// If there is a new car show it at the top of the list.
 		if(!empty($newCarId)) {
 
-			$newCar = select("SELECT * FROM Car WHERE id = '$newCarId'")[0];
+			$newCar = select("SELECT * FROM car WHERE id = '$newCarId'")[0];
 
 			$newCar->isNew(true);
 
@@ -98,9 +98,9 @@ class CarModule extends Module {
 
 	public function getCarSearch($params) {
 
-		$subjects = DbHelper::getDistinctFieldValues("Car", "subject_1");
+		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
 
-		$years = DbHelper::getDistinctFieldValues("Car", "year");
+		$years = DbHelper::getDistinctFieldValues("car", "year");
 
 		$user = get_current_user();
 
@@ -132,9 +132,9 @@ class CarModule extends Module {
 
 		$cars = select($query);
 
-		$subjects = DbHelper::getDistinctFieldValues("Car", "subject_1");
+		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
 
-		$years = DbHelper::getDistinctFieldValues("Car", "year");
+		$years = DbHelper::getDistinctFieldValues("car", "year");
 
 		$user = get_current_user();
 
@@ -175,16 +175,16 @@ class CarModule extends Module {
 		}
 		
 		
-		$car = !empty($carId) ? select("SELECT * FROM Car WHERE id = '$carId'")[0] : new Car();
+		$car = !empty($carId) ? select("SELECT * FROM car WHERE id = '$carId'")[0] : new Car();
 
-		$subjects = DbHelper::getDistinctFieldValues("Car", "subject_1");
+		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
 		$counties = $this->getOregonCounties();
 
 		$tpl = new Template("car-form");
 		$tpl->addPath(__DIR__ . "/templates");
 
-		$judges = DbHelper::getDistinctFieldValues("Car", "majority");
-		$appellateJudges = DbHelper::getDistinctFieldValues("Car", "judges");
+		$judges = DbHelper::getDistinctFieldValues("car", "majority");
+		$appellateJudges = DbHelper::getDistinctFieldValues("car", "judges");
 
 		return $tpl->render(array(
 			"car" => $car,
@@ -233,7 +233,7 @@ class CarModule extends Module {
 
 	public function deleteCar($id){
 
-		$car = select("SELECT * FROM Car WHERE id = '$id'")[0];
+		$car = select("SELECT * FROM car WHERE id = '$id'")[0];
 
 		if(!$car->isTest()) throw new Exception("CAR_DELETE_ERROR: You can only delete cars that are marked as test");
 
