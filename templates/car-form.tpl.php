@@ -3,8 +3,8 @@
 <?php
 
     use function Html\createElement;
-    use function Html\createDataList;
-    use function Html\createSelect;
+    use function Html\createDataListElement;
+    use function Html\createSelectElement;
 
     $isUpdate = $car->getId() != null;
     $headerMessage = $isUpdate ? "Update Case Review" : "Create a Case Review";
@@ -32,12 +32,11 @@
         $countyDefault = array("" => "None Selected");
         $allCounties = $countyDefault + $counties;
 
-        $selectedSubject = empty($car->getSubject1()) ? "None Selected" : $car->getSubject1();
-        $selectedCounty = empty($car->getCircuit()) ? "None Selected" : $car->getCircuit();
+        $selectedSubject = empty($car->getSubject1()) ? "" : $car->getSubject1();
+        $selectedCounty = empty($car->getCircuit()) ? "" : $car->getCircuit();
 
         // Create the datalist element for the judge name autocomplete.
-
-        print createDataList("judge-datalist", $judges);
+        print createDataListElement("judge-datalist", $judges);
 
     ?>
 
@@ -93,7 +92,7 @@
 
         <div class="form-item">
             <label>Primary Subject</label>
-            <?php print createElement("select", array("id" => "subject_1", "name" => "subject_1", "options" => $allSubjects, "selected" => $selectedSubject)); ?>
+            <?php print createSelectElement("subject_1", $allSubjects, $selectedSubject); ?>
             <button type="button" id="new-subject" class="new-subject" onclick="handleNewSubject()">New Subject</button>
         </div>
 
@@ -109,7 +108,7 @@
 
         <div class="form-item">
             <label>County</label>
-            <?php print createElement("select", array("name" => "circuit", "options" => $allCounties, "selected" => $selectedCounty)); ?>
+            <?php print createSelectElement("circuit", $allCounties, $selectedCounty); ?>
         </div>
 
         <div class="form-item">

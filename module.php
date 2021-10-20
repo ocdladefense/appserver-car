@@ -24,6 +24,8 @@ class CarModule extends Module {
 
 	public function showCars($newCarId = null) {
 
+		//var_dump($_POST);exit;
+
 		$conditions = array(
 			"op" => "AND",
 			"conditions" => array(
