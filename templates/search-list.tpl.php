@@ -16,6 +16,8 @@ $selectedSubject = empty($subject) ? "Show All" : $subject;
 $selectedYear = empty($year) ? "All Years" : $year;
 $selectedCounty = empty($county) ? "All Counties" : $county;
 
+print createElement("datalist", array("id" => "judge-datalist", "name" => "judge-datalist", "options" => $judges));
+
 ?>
 
 <form id="filter-form" class="filter-form" action="/car/list" method="post">
@@ -27,9 +29,7 @@ $selectedCounty = empty($county) ? "All Counties" : $county;
 
     <?php print createElement("select", array("name" => "circuit", "options" => $allCounties, "selected" => $selectedCounty)); ?>
 
-    <?php print createElement("datalist", array("id" => "judge-datalist", "name" => "judge-datalist", "options" => $judges)); ?>
-
-    <input type="text" name="judges" value="<?php print $judgeName; ?>" list="judge-datalist" placeholder="Search by judge name" onchange="submitForm()" />
+    <input autocomplete="off" type="text" name="judges" value="<?php print $judgeName; ?>" data-datalist="judge-datalist" placeholder="Search by judge name" onchange="submitForm()" />
 
     <?php if(True || $user->isAdmin()) : ?>
         <a href="/car/list">Clear</a>

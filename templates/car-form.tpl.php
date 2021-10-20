@@ -3,6 +3,8 @@
 <?php
 
     use function Html\createElement;
+    use function Html\createDataList;
+    use function Html\createSelect;
 
     $isUpdate = $car->getId() != null;
     $headerMessage = $isUpdate ? "Update Case Review" : "Create a Case Review";
@@ -34,7 +36,8 @@
         $selectedCounty = empty($car->getCircuit()) ? "None Selected" : $car->getCircuit();
 
         // Create the datalist element for the judge name autocomplete.
-        print createElement("datalist", array("id" => "judge-datalist", "name" => "judge-datalist", "options" => $judges));
+
+        print createDataList("judge-datalist", $judges);
 
     ?>
 
@@ -111,13 +114,13 @@
 
         <div class="form-item">
             <label>Judges</label>
-            <input type="text" name="majority" value="<?php print $car->getMajority(); ?>" list="judge-datalist" placeholder="Search by judge name" />
+            <input autocomplete="off" type="text" name="majority" value="<?php print $car->getMajority(); ?>" data-datalist="judge-datalist" placeholder="Search by judge name" />
         </div>
         
 
         <div class="form-item">
             <label>Appellate Judge</label>
-            <input type="text" name="judges" value="<?php print $car->getJudges(); ?>" list="judge-datalist" placeholder="Search by appellate judge name" />
+            <input autocomplete="off" type="text" name="judges" value="<?php print $car->getJudges(); ?>" data-datalist="judge-datalist" placeholder="Search by appellate judge name" />
         </div>
 
         <div class="form-item">

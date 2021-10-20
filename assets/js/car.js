@@ -3,6 +3,8 @@
 let links = document.getElementsByClassName("delete-review");
 let yearSummary = document.getElementById("year-summary");
 
+
+
 if(yearSummary != null) yearSummary.addEventListener("change", submitFormSummaryYear);
 
 
@@ -63,4 +65,31 @@ function handleNewSubject(e){
     newOption.innerText = subject;
 
     selectList.appendChild(newOption);
+}
+
+
+// add the event listeners to anu searches that use the "judge-datalist"...datalist.
+let judgeSearches = document.querySelectorAll("[data-datalist='judge-datalist']");
+
+for(let i = 0; i < judgeSearches.length; i++){
+
+    judgeSearches[i].addEventListener("keyup", minimumCharacterSearch);
+}
+
+
+function minimumCharacterSearch(e){
+
+    let inputElem = e.target;
+    let dataListId = inputElem.getAttribute("data-datalist")
+    let inputValue = e.target.value;
+
+    if(inputValue.length >= 1){
+
+        inputElem.setAttribute("list", dataListId);
+
+    } else {
+
+        inputElem.removeAttribute("list");
+    }
+
 }
