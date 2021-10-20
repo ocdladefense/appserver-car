@@ -69,7 +69,7 @@ class CarModule extends Module {
 		// If there is a new car show it at the top of the list.
 		if(!empty($newCarId)) {
 
-			$newCar = select("SELECT * FROM car WHERE id = '$newCarId'")[0];
+			$newCar = select("SELECT * FROM car WHERE id = '$newCarId'");
 
 			$newCar->isNew(true);
 
@@ -178,7 +178,7 @@ class CarModule extends Module {
 		if(!$user->isAdmin()) throw new \Exception("You don't have access.");
 		
 		
-		$car = !empty($carId) ? select("SELECT * FROM car WHERE id = '$carId'")[0] : new Car();
+		$car = !empty($carId) ? select("SELECT * FROM car WHERE id = '$carId'") : new Car();
 
 		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
 		$counties = $this->getOregonCounties();
@@ -234,7 +234,7 @@ class CarModule extends Module {
 
 	public function deleteCar($id){
 
-		$car = select("SELECT * FROM car WHERE id = '$id'")[0];
+		$car = select("SELECT * FROM car WHERE id = '$id'");
 
 		if(!$car->isTest()) throw new Exception("CAR_DELETE_ERROR: You can only delete cars that are marked as test");
 
