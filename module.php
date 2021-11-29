@@ -56,7 +56,7 @@ class CarModule extends Module {
 
 		if(!empty($_POST)) $sql->setConditions($conditions, $_POST);
 
-		$sql->setOrderBy("Year DESC, Month DESC, Day DESC");
+		$sql->setOrderBy("is_flagged, Year DESC, Month DESC, Day DESC");
 
 		$query = $sql->compile();
 
