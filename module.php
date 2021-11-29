@@ -58,9 +58,11 @@ class CarModule extends Module {
 
 		if(!empty($_POST)) $sql->setConditions($conditions, $_POST);
 
-		$sql->setOrderBy("is_flagged DESC, Year DESC, Month DESC, Day DESC");
+		$sql->setOrderBy("Year DESC, Month DESC, Day DESC");
 
 		$query = $sql->compile();
+
+		//var_dump($query);exit;
 
 		// This the select functions null if there are no records.
 		$cars = select($query);
