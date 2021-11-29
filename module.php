@@ -24,8 +24,6 @@ class CarModule extends Module {
 
 	public function showCars($newCarId = null) {
 
-		//var_dump($_POST);exit;
-
 		$conditions = array(
 			"op" => "AND",
 			"conditions" => array(
@@ -93,14 +91,14 @@ class CarModule extends Module {
 		return $tpl->render(
 			array(
 				"cars"			=> $cars,
-				"searchForm" 	=> $this->getCarSearch($_POST, $cars),
+				"searchForm" 	=> $this->getCarSearch($_POST, $query),
 				"user"			=> get_current_user()
 			)
 		);
 	}
 
 
-	public function getCarSearch($params) {
+	public function getCarSearch($params, $query) {
 
 		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
 
@@ -123,7 +121,8 @@ class CarModule extends Module {
 			"judgeName" => $params["judges"],
 			"judges"	=> $judges,
 			"groupBy"	=> "subject_1",
-			"user"		=> get_current_user()
+			"user"		=> get_current_user(),
+			"query"		=> $query
 		));
 
 	}

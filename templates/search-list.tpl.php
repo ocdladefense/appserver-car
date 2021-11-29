@@ -35,6 +35,12 @@ print createDataListElement("judge-datalist", $judges);
 
 </form>
 
+<?php if($user->isAdmin()) : ?>
+    <div>
+        <h3><?php print $query; ?></h3>
+    </div>
+<?php endif; ?>
+
 <script>
 
     var submissionNodes = document.getElementsByTagName("select");
