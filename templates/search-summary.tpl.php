@@ -17,30 +17,14 @@ $year = $year == null ? "All Years" : $year;
 
 ?>
 
-<form id="filter-form" class="filter-form" action="/car/list" method="post">
-    <label><strong>Filter:</strong></label>
+<form id="filter-form" class="filter-form" action="/car/summary" method="post">
+    <label><strong>Filter by year:</strong></label>
 
-    <select id="subject" name="subject" style="text-align:center;" onchange="submitForm()">
-        
-        <?php foreach($subjects as $s) { 
-            
-            $selected = $subject == $s ? "selected" : ""; 
-        ?>
-
-        <option value="<?php print $s; ?>" <?php print $selected; ?>>
-            <?php print $s; ?>
-        </option>
-
-
-        <?php } ?>
-        
-    </select>
-
-    <select id="year" name="year" onchange="submitForm()">
+    <select id="year-summary" name="year">
         
     <?php foreach($years as $y) { 
             
-            $selected = $year == $y ? "selected" : ""; 
+            $selected = $year == $y ? "selected" : "";
         ?>
 
         <option value="<?php print $y; ?>" <?php print $selected; ?>>
@@ -58,7 +42,7 @@ $year = $year == null ? "All Years" : $year;
         </strong>
     </label>
 
-    <?php if($isAdmin) : ?>
+    <?php if(True || $user->isAdmin()) : ?>
         <a class="add-review" href="/car/new">Add Review <i class="fas fa-plus" aria-hidden="true"></i></a>
     <?php endif; ?>
 

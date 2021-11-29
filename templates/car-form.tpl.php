@@ -1,6 +1,11 @@
 
 
 <?php
+
+    use function Html\createElement;
+    use function Html\createDataListElement;
+    use function Html\createSelectElement;
+
     $isUpdate = $car->getId() != null;
     $headerMessage = $isUpdate ? "Update Case Review" : "Create a Case Review";
 
@@ -20,9 +25,24 @@
         $checkFlagged = $car->isFlagged() ? "checked" : "";
         $checkTest = $shouldCheckTest ? "checked" : "";
         $checkDraft = $car->isDraft() ? "checked" : "";
+
+        $subjectDefault = array("" => "None Selected");
+        $allSubjects = $subjectDefault + $subjects;
+
+        $countyDefault = array("" => "None Selected");
+        $allCounties = $countyDefault + $counties;
+
+        $selectedSubject = empty($car->getSubject1()) ? "" : $car->getSubject1();
+        $selectedCounty = empty($car->getCircuit()) ? "" : $car->getCircuit();
+
+        // Create the datalist element for the judge name autocomplete.
+        print createDataListElement("judge-datalist", $judges);
+
     ?>
 
     <form id="car-form" class="car-form" action="/car/save" method="post">
+
+
 
         <?php if($car->getId() != null) : ?>
 
@@ -56,6 +76,11 @@
         </div>
 
         <div class="form-item">
+            <label>Appellate #</label>
+            <input type="text" name="a_number" value="<?php print $car->getA_number(); ?>" placeholder="Enter A#" />
+        </div>
+
+        <div class="form-item">
             <label>Plaintiff</label>
             <input type="text" name="plaintiff" value="<?php print $car->getPlaintiff(); ?>" placeholder="Enter plaintiff..." />
         </div>
@@ -66,23 +91,8 @@
         </div>
 
         <div class="form-item">
-
             <label>Primary Subject</label>
-
-            <select id="select-subject" name="subject_1">
-
-                <?php if(!empty($car->getSubject1())) : ?>
-                    <option value="<?php print $car->getSubject1(); ?>" selected><?php print $car->getSubject1(); ?></option>
-                <?php endif; ?>
-            
-                <?php foreach($subjects as $subject) : ?>
-                    <option value="<?php print $subject; ?>">
-                        <?php print $subject; ?>
-                    </option>
-                <?php endforeach; ?>
-            
-            </select>
-
+            <?php print createSelectElement("subject_1", $allSubjects, $selectedSubject); ?>
             <button type="button" id="new-subject" class="new-subject" onclick="handleNewSubject()">New Subject</button>
         </div>
 
@@ -97,29 +107,32 @@
         </div>
 
         <div class="form-item">
-            <label>Circuit</label>
-            <input type="text" name="circuit" value="<?php print $car->getCircuit(); ?>" placeholder="Enter Circuit..." />
-        </div>
-
-        <div class="form-item">
-            <label>Majority</label>
-            <input type="text" name="majority" value="<?php print $car->getMajority(); ?>" placeholder="Enter majority names..." />
+            <label>County</label>
+            <?php print createSelectElement("circuit", $allCounties, $selectedCounty); ?>
         </div>
 
         <div class="form-item">
             <label>Judges</label>
-            <input type="text" name="judges" value="<?php print $car->getJudges(); ?>" placeholder="Enter additional judges..." />
+            <input autocomplete="off" type="text" name="majority" value="<?php print $car->getMajority(); ?>" data-datalist="judge-datalist" placeholder="Search by judge name" />
+        </div>
+        
+
+        <div class="form-item">
+            <label>Appellate Judge</label>
+            <input autocomplete="off" type="text" name="judges" value="<?php print $car->getJudges(); ?>" data-datalist="judge-datalist" placeholder="Search by appellate judge name" />
         </div>
 
         <div class="form-item">
             <label>Summary</label>
-            <textarea name="summary" placeholder="Enter the case summary..."><?php print $car->getSummary(); ?></textarea>
+            <textarea name="summary" placeholder="Enter the entire case summary, including additional information..."><?php print $car->getSummary(); ?></textarea>
         </div>
 
-        <div class="form-item">
-            <label>Result</label>
-            <textarea name="result" placeholder="Enter the result..."><?php print $car->getResult(); ?></textarea>
-        </div>
+        <?php if(!empty($car->getResult())) : ?>
+            <div class="form-item">
+                <label>Result</label>
+                <textarea name="result"><?php print $car->getResult(); ?></textarea>
+            </div>
+        <?php endif; ?>
 
         <button type="submit" id="submit">Submit</button>
     </form>

@@ -3,9 +3,13 @@
 use Mysql\Database;
 use Http\HttpRequest;
 use Http\HttpHeader;
+use Mysql\DbHelper;
+use Mysql\QueryBuilder;
+
 use function Mysql\insert;
 use function Mysql\update;
-
+use function Mysql\select;
+use function Session\get_current_user;
 
 
 class CarModule extends Module {
@@ -18,46 +22,57 @@ class CarModule extends Module {
 		$this->name = "car";
 	}
 
+	public function showCars($newCarId = null) {
+
+		//var_dump($_POST);exit;
+
+		$conditions = array(
+			"op" => "AND",
+			"conditions" => array(
+				array(
+					"fieldname"	=> "subject_1",
+					"op"		=> "LIKE",
+					"syntax"	=> "'%%%s%%'"
+				),
+				array(
+					"fieldname"	=> "year",
+					"op"		=> "=",
+					"syntax"	=> "%s"
+				),
+				array(
+					"fieldname"	=> "circuit",
+					"op"		=> "LIKE",
+					"syntax"	=> "'%%%s%%'"
+				),
+				array(
+					"fieldname"	=> "judges",
+					"op"		=> "LIKE",
+					"syntax"	=> "'%%%s%%'"
+				)
+			)
+		);
+
+		$sql = new QueryBuilder("car");
+
+		$sql->setFields(array("*"));
+
+		if(!empty($_POST)) $sql->setConditions($conditions, $_POST);
+
+		$sql->setOrderBy("Year DESC, Month DESC, Day DESC");
+
+		$query = $sql->compile();
+
+		//var_dump($query);exit;
+
+		// This the select functions null if there are no records.
+		$cars = select($query);
 
 
+		// If there is a new car show it at the top of the list.
+		if(!empty($newCarId)) {
 
-	public function showCars($carId = null) {
+			$newCar = select("SELECT * FROM car WHERE id = '$newCarId'");
 
-		$subject = !empty($_POST["subject"]) && $_POST["subject"] != "Show All" ? $_POST["subject"] : null;
-		$year = !empty($_POST["year"]) && $_POST["year"] != "All Years" ? $_POST["year"] : null;
-
-		$query = $this->getQuery($subject, $year);
-
-		// var_dump($query);exit;
-		//var_dump($cars);exit;
-
-		$cars = $this->getCars($query);
-
-		$subjects = $this->getDistinctFieldValues("subject_1");
-
-		$years = $this->getDistinctFieldValues("year");
-
-
-		$tpl = new Template("search-form");
-		$tpl->addPath(__DIR__ . "/templates");
-
-		$searchForm = $tpl->render(array(
-			"subject"	=> $subject,
-			"year"		=> $year,
-			"count" 	=> count($cars),
-			"subjects" 	=> $subjects,
-			"years"		=> $years,
-			"groupBy"	=> "subject_!",
-			"isAdmin"	=> true
-		));
-
-
-
-
-
-		if(!empty($carId)) {
-
-			$newCar = $this->getCar($carId);
 			$newCar->isNew(true);
 
 			for($i = 0; $i < count($cars); $i++){
@@ -70,33 +85,68 @@ class CarModule extends Module {
 
 			array_unshift($cars, $newCar);
 		}
-
 
 
 		$tpl = new Template("car-list");
 		$tpl->addPath(__DIR__ . "/templates");
 
+		return $tpl->render(
+			array(
+				"cars"			=> $cars,
+				"searchForm" 	=> $this->getCarSearch($_POST, $cars),
+				"user"			=> get_current_user()
+			)
+		);
+	}
+
+
+	public function getCarSearch($params) {
+
+		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
+
+		$years = DbHelper::getDistinctFieldValues("car", "year");
+
+		$judges = DbHelper::getDistinctFieldValues("car", "judges");
+
+		$user = get_current_user();
+
+		$tpl = new Template("search-list");
+		$tpl->addPath(__DIR__ . "/templates");
 
 		return $tpl->render(array(
-				"cars" 				=> $cars,
-				"searchForm" 		=> $searchForm,
-				"isAdmin"			=> true
+			"subject"	=> $params["subject_1"],
+			"year"		=> $params["year"],
+			"county"	=> $params["circuit"],
+			"subjects" 	=> $subjects,
+			"years"		=> $years,
+			"counties"	=> $this->getOregonCounties(),
+			"judgeName" => $params["judges"],
+			"judges"	=> $judges,
+			"groupBy"	=> "subject_1",
+			"user"		=> get_current_user()
 		));
+
 	}
 
 
 	public function showCarsByYear($year){
 
-		$query = "SELECT * FROM car WHERE year = $year ORDER BY subject_1 ASC";
+		$query = "SELECT * FROM car";
 
-		$cars = $this->getCars($query);
+		if($year != "All%20Years" && !empty($year)) $query .= " WHERE year = $year";
 
-		$subjects = $this->getDistinctFieldValues("subject_1");
+		$query .= " ORDER BY subject_1 ASC";
 
-		$years = $this->getDistinctFieldValues("year");
+		$cars = select($query);
+
+		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
+
+		$years = DbHelper::getDistinctFieldValues("car", "year");
+
+		$user = get_current_user();
 
 
-		$tpl = new Template("search-form");
+		$tpl = new Template("search-summary");
 		$tpl->addPath(__DIR__ . "/templates");
 
 		$searchForm = $tpl->render(array(
@@ -105,26 +155,8 @@ class CarModule extends Module {
 			"count" 	=> count($cars),
 			"subjects" 	=> $subjects,
 			"years"		=> $years,
-			"isAdmin"	=> true
+			"user"		=> get_current_user()
 		));
-
-
-		if(!empty($carId)) {
-
-			$newCar = $this->getCar($carId);
-			$newCar->isNew(true);
-
-			for($i = 0; $i < count($cars); $i++){
-
-				if($cars[$i]->getId() == $newCar->getId()){
-	
-					unset($cars[$i]);
-				}
-			}
-
-			array_unshift($cars, $newCar);
-		}
-
 
 
 		$tpl = new Template("car-list");
@@ -135,106 +167,35 @@ class CarModule extends Module {
 				"cars" 				=> $cars,
 				"searchForm" 		=> $searchForm,
 				"groupBy"			=> "subject_1",
-				"isAdmin"			=> true
+				"user"				=> $user
 		));
 	}
 
 
-
-	public function getQuery($subject = null, $year = null) {
-
-		$subjectFilter = "SELECT * FROM car WHERE subject_1 LIKE '%$filter%' ORDER BY is_flagged DESC, Year DESC, Month DESC, Day DESC";
-
-		$query = "SELECT * FROM car";
-		$orderBy = " ORDER BY is_flagged DESC, Year DESC, Month DESC, Day DESC";
-
-		if($subject != null || $year != null){
-
-			$query .= " WHERE ";
-		}
-
-		$conditions = array();
-
-		if($subject != null){
-
-			$conditions[] = "subject_1 LIKE '%$subject%'";
-		}
-
-		if($year != null){
-
-			$conditions[] = "year = $year";
-		}
-
-		return $query . implode(" AND ", $conditions) . $orderBy;
-	}
-
-	public function getCars($query){
-
-		$result = Database::query($query);
-
-		$records = $result->getIterator();
-
-		$cars = array();
-		foreach($records as $record){
-
-			$cars[] = Car::from_array_or_standard_object($record);
-		}
-
-		return $cars;
-	}
-
-
-
-
-	public function getCar($id){
-
-		$query = "SELECT * FROM car WHERE Id = '$id'";
-		
-		$result = Database::query($query);
-
-		$records = $result->getIterator();
-
-		$cars = array();
-		foreach($records as $record){
-
-			$cars[] = Car::from_array_or_standard_object($record);
-		}
-
-		return $cars[0];
-	}
-
-
-
-
-	public function getDistinctFieldValues($field) {
-
-		$result = Database::query("SELECT DISTINCT $field FROM car ORDER BY $field");
-
-		$records = $result->getIterator();
-
-		$values = array();
-
-		foreach($records as $record) {
-
-			$values[] = $record[$field];
-		}
-
-		return $values;
-	}
-
-
-
-
 	public function showCarForm($carId = null){
 
-		$car = !empty($carId) ? $this->getCar($carId) : new Car();
+		$user = get_current_user();
 
-		$subjects = $this->getDistinctFieldValues("subject_1");
+		
+		if(!$user->isAdmin()) throw new \Exception("You don't have access.");
+		
+		
+		$car = !empty($carId) ? select("SELECT * FROM car WHERE id = '$carId'") : new Car();
+
+		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
+		$counties = $this->getOregonCounties();
 
 		$tpl = new Template("car-form");
 		$tpl->addPath(__DIR__ . "/templates");
 
-		return $tpl->render(array("car" => $car, "subjects" => $subjects));
+		$judges = DbHelper::getDistinctFieldValues("car", "judges");
+
+		return $tpl->render(array(
+			"car" => $car,
+			"subjects" => $subjects,
+			"counties" => $counties,
+			"judges" => $judges
+		));
 	}
 
 
@@ -265,8 +226,6 @@ class CarModule extends Module {
 	// For now only allow updates on test reviews.
 	public function updateCar(Car $car) {
 	
-		if(!$car->isTest()) throw new Exception("CAR_UPDATE_ERROR: You can only update cars that are marked as test");
-		
 		$result = update($car);
 
 		return redirect("/car/list/{$car->getId()}");
@@ -277,7 +236,7 @@ class CarModule extends Module {
 
 	public function deleteCar($id){
 
-		$car = $this->getCar($id);
+		$car = select("SELECT * FROM car WHERE id = '$id'");
 
 		if(!$car->isTest()) throw new Exception("CAR_DELETE_ERROR: You can only delete cars that are marked as test");
 
@@ -315,6 +274,69 @@ class CarModule extends Module {
 
 		return "Hello World!";
 	}
+
+	public function updateCarANumber() {
+
+		$query = "SELECT id, a_number, external_link FROM Car WHERE year = 2021";
+
+		$cars = select($query);
+
+		foreach($cars as $car){
+
+			$exLink = $car->external_link;
+			$linkParts = explode("/", $exLink);
+			$car->a_number = trim($linkParts[count($linkParts) -1], ".pdf");
+		}
+
+		$results = update($cars);
+
+		var_dump($results);exit;
+	}
+
+	public function getOregonCounties(){
+
+		$counties = array(
+			"Baker" 		=> "Baker",
+			"Benton" 		=> "Benton",
+			"Clackamas"		=> "Clackamas",
+			"Clatsop" 		=> "Clatsop",
+			"Columbia"		=> "Columbia",
+			"Coos"			=> "Coos",
+			"Crook"			=> "Crook",
+			"Curry"			=> "Curry",
+			"Deschutes"		=> "Deschutes",
+			"Douglas"		=> "Douglas",
+			"Gillam"		=> "Gillam",
+			"Grant"			=> "Grant",
+			"Harney"		=> "Harney",
+			"Hood River"	=> "Hood River",
+			"Jackson"		=> "Jackson",
+			"Jefferson"		=> "Jefferson",
+			"Josephine"		=> "Josephine",
+			"Klamath"		=> "Klamath",
+			"Lake"			=> "Lake",
+			"Lane"			=> "Lane",
+			"Lincoln"		=> "Lincoln",
+			"Linn"			=> "Linn",
+			"Malheur"		=> "Malheur",
+			"Marion"		=> "Marion",
+			"Morrow"		=> "Morrow",
+			"Multnomah"		=> "Multnomah",
+			"Polk"			=> "Polk",
+			"Sherman"		=> "Sherman",
+			"Tillamook"		=> "Tillamook",
+			"Umatilla"		=> "Umatilla",
+			"Union"			=> "Union",
+			"Wallowa"		=> "Wallowa",
+			"Wasco"			=> "Wasco",
+			"Washington"	=> "Washington",
+			"Wheeler"		=> "Wheeler",
+			"Yamhill"		=> "Yamhill"
+		);
+
+		return $counties;
+	}
+
 }
 
 

@@ -1,22 +1,19 @@
 {
-	"comment": "Module definition file.",
 	"name": "car",
 	"description": "Retrieve OCDLA Case Reviews.",
+	"comment": "Module definition file.",
+	"connectedApp": "default",
 	"files": [
 		"Car.php"
 	],
 	"routes": {
 		"car/list/%id":{
 			"callback":"showCars",
-			"content-type":"text\/html",
-			"access":"is_authenticated",
-			"authorization":"webserver"
+			"content-type":"text\/html"
 		},
 		"car/list":{
 			"callback":"showCars",
-			"content-type":"text\/html",
-			"access":"is_authenticated",
-			"authorization":"webserver"
+			"content-type":"text\/html"
 		},
 		"car/summary/%year":{
 			"callback":"showCarsByYear",
@@ -55,6 +52,10 @@
 			"content-type":"text/html",
 			"access":"is_authenticated",
 			"authorization":"webserver"
+		},
+		"car/update/anumber":{
+			"callback":"updateCarANumber",
+			"content-type":"text/html"
 		}
 	}
 }

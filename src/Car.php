@@ -3,6 +3,8 @@
 class Car {
 
 	public $id;
+	public $a_number;
+	public $external_link;
 	public $subject_1;
 	public $subject_2;
 	public $summary;
@@ -34,14 +36,19 @@ class Car {
 
 		$car = new Self();
 		$car->id = empty($record["id"]) ? null : $record["id"];
+		$car->a_number = $record["a_number"];
 		$car->subject_1 = $record["subject_1"];
 		$car->subject_2 = $record["subject_2"];
 		$car->summary = $record["summary"];
 		$car->result = $record["result"];
 		$car->plaintiff = $record["plaintiff"];
 		$car->defendant = $record["defendant"];
+
+		if(!empty($record["plaintiff"]))
 		$car->title = $record["title"] != null ? $record["title"] : $record["plaintiff"] . " v. " . $record["defendant"]; 
+		
 		$car->citation = $record["citation"];
+		$car->external_link = $record["external_link"];
 
 		if(!empty($record["date"])){
 
@@ -71,6 +78,11 @@ class Car {
 	public function getId(){
 
 		return $this->id;
+	}
+
+	public function getA_number() {
+
+		return $this->a_number;
 	}
 
 	public function getSubject1(){
@@ -130,7 +142,7 @@ class Car {
 
 	public function getCircuit(){
 
-		return $this->circuit;
+		return explode(" County", $this->circuit)[0];
 	}
 
 	public function getMajority(){

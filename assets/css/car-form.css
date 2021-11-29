@@ -1,5 +1,7 @@
 
- 
+ .sidenav{
+     display:none;
+ }
 .form-container{
     text-align: center;
 }
@@ -9,12 +11,16 @@
 }
 input, label{
     display: block;
-    height: 20px;
+    height: 30px;
 }
 input[type="text"]{
     margin-bottom: 3%;
-    width: 70%;
+    width: 50%;
     height: 34px;
+}
+select {
+    width: 30%;
+    height: 35px;
 }
 label{
     margin-bottom: 5px;
@@ -52,7 +58,8 @@ input{
 a.delete-review {
     float: right;
 }
-@media only screen and (max-width:750px){
+
+@media only screen and (max-width:768px){
     .back-link{
         display:contents;
     }

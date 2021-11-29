@@ -3,7 +3,7 @@
 
 <div id="car-list-container" class="list-containter">
 
-    <h1 class="list-header">Library of Defense Case Review Records</h1>
+    <h1 class="list-header">OCDLA Criminal Appellate Review Summaries</h1>
 
     <div class="car-container">
 
@@ -11,22 +11,39 @@
 
     </div>
 
+	<?php if(!empty($cars)) : ?>
+		<div class="car-container">
+			<label>
+				<strong>
+					<?php print "Showing " . count($cars) . " case review(s)."; ?>
+				</strong>
+			</label>
+		</div>
+	<?php endif; ?>
+
+
+
     <?php if(empty($cars)) { ?>
     
 
-        <div class="car-container" style="text-align: center;">
-            <h1>No case reviews were found.</h1>
-        </div>
-        
+	<div class="car-container" style="text-align: center;">
+		<h1>No case reviews were found.</h1>
+	</div>
+	
 
     <?php } ?>
     
-
+	<?php $index = 0; ?>
 	<?php foreach($cars as $car) {
+
+		$isFirstClass = $index == 0 ? "is-first" : "";
+		$index++;
 				
 		$isFlagged = $car->isFlagged() ? "checked" : "";
 
-		$classesArray = array($isNewClass, $isTestClass, $isDraftClass);
+		$classesArray = array();
+
+		if($car->isNew()) $classesArray[] = "is-new";
 
 		$classes = implode(" ", $classesArray);
 
@@ -39,13 +56,13 @@
 		?>
 
 		<?php if($newSubject && $groupBy == "subject_1") : ?>
-			<h2><?php print $subject; ?></h2>
+			<h2 class="subject-header <?php print $isFirstClass; ?>"><?php print $subject; ?></h2>
 		<?php endif; ?>
 
 		<div class="car-container <?php print $classes; ?>">
 		
 				
-			<?php if($isAdmin) : ?>
+			<?php if($user->isAdmin()) : ?>
 				<div class="admin-area">
 					<a class="delete-review" data-car-id="<?php print $car->getId(); ?>" href="/car/delete/<?php print $car->getId(); ?>"><i style="font-size: x-large;" class="fas fa-trash-alt"></i></a>
 					<a class="edit-review" href="/car/edit/<?php print $car->getId(); ?>"><i style="font-size: x-large;" class="fas fa-edit"></i></a>
@@ -71,16 +88,17 @@
 			</div>
 
 			<label>
-				<strong>Summary:</strong>
 				<?php print $car->getSummary(); ?>
 			</label>
 
-			<label>
-				<strong>Result:</strong>
-				<?php print $car->getResult(); ?>
-			</label>
+			<br />
 
 			<div class="additional-info">
+
+				<label>
+					<strong>Appellate #: </strong>
+					<?php print !empty($car->getA_number()) ? $car->getA_number() : "Not available"; ?>
+				</label>
 
 				<label>
 					<strong>Citation: </strong>
@@ -88,22 +106,22 @@
 				</label>
 				
 				<label>
-					<strong>Circuit:</strong>
+					<strong>County:</strong>
 					<?php print $car->getCircuit(); ?>
 				</label>
 				
 				<label>
-					<strong>Majority:</strong>
+					<strong>Judges:</strong>
 					<?php print $car->getMajority(); ?>
 				</label>
 				
 				<label>
-					<strong>Judges:</strong>
+					<strong>Appellate Judge:</strong>
 					<?php print $car->getJudges(); ?>
 				</label>
 			</div>
 			
-			<?php if($car->getUrl() != null) : ?>
+			<?php if($car->getUrl() != null && $user->isAdmin()) : ?>
 				<a href="<?php print $car->getUrl(); ?>" target="_blank">View on the Library of Defense website</a>
 			<?php endif; ?>
 		</div>
