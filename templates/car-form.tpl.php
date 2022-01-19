@@ -29,6 +29,8 @@
         $subjectDefault = array("" => "None Selected");
         $allSubjects = $subjectDefault + $subjects;
 
+        $selectedCourt = empty($car->getCourt()) ? "" : $car->getCourt();
+
         $countyDefault = array("" => "None Selected");
         $allCounties = $countyDefault + $counties;
 
@@ -73,6 +75,11 @@
         <div class="decision-date form-item">
             <label>Decision Date</label>
             <input type="date" name="date" value="<?php print $car->getPickerCompatibleDate(); ?>">
+        </div>
+
+        <div class="form-item">
+            <label>Court</label>
+            <?php print createSelectElement("court", $allCourts, $selectedCourt); ?>
         </div>
 
         <div class="form-item">

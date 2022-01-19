@@ -21,9 +21,9 @@ print createDataListElement("judge-datalist", $judges);
     <label><strong>Filter:</strong></label>
 
     <?php print createSelectElement("subject_1", $allSubjects, $subject); ?>
-
     <?php print createSelectElement("year", $allYears, $year); ?>
-
+    <?php print createSelectElement("month", $allMonths, $month); ?>
+    <?php print createSelectElement("court", $allCourts, $court); ?>
     <?php print createSelectElement("circuit", $allCounties, $county); ?>
 
     <input autocomplete="off" type="text" name="judges" value="<?php print $judgeName; ?>" data-datalist="judge-datalist" placeholder="Search by judge name" onchange="submitForm()" />
@@ -34,12 +34,6 @@ print createDataListElement("judge-datalist", $judges);
     <?php endif; ?>
 
 </form>
-
-<?php if($user->isAdmin()) : ?>
-    <div>
-        <h3><?php print $query; ?></h3>
-    </div>
-<?php endif; ?>
 
 <script>
 

@@ -16,7 +16,19 @@
 			"content-type":"text\/html"
 		},
 		"car/summary/%year":{
-			"callback":"showCarsByYear",
+			"callback":"showListInSummaryContext",
+			"content-type":"text\/html"
+		},
+		"car/summary/%year/%month":{
+			"callback":"showListInSummaryContext",
+			"content-type":"text\/html"
+		},
+		"car/summary/%year/%month/%day":{
+			"callback":"showListInSummaryContext",
+			"content-type":"text\/html"
+		},
+		"car/summary/%year/%month/%day/%court":{
+			"callback":"showListInSummaryContext",
 			"content-type":"text\/html"
 		},
 		"car/flag":{

@@ -23,6 +23,8 @@ class Car {
 	public $is_flagged;
 	public $is_draft;
 	public $is_test;
+	public $court;
+	private $createTime;
 
 	// This is to hold the data that will not be used as a column when inserting data.
 	private $meta = array();
@@ -69,6 +71,8 @@ class Car {
 		$car->is_flagged = !empty($record["is_flagged"]) ? $record["is_flagged"] : "0";
 		$car->is_draft = !empty($record["is_draft"]) ? $record["is_draft"] : "0";
 		$car->is_test = !empty($record["is_test"]) ? $record["is_test"] : "0";
+		$car->createTime = $record["CreateTime"];
+		$car->court = $record["court"];
 
 		return $car;
 	}
@@ -175,6 +179,20 @@ class Car {
 		$formated = $date->format("l, F jS, Y");
 
 		return $formated;
+	}
+
+	public function getCreateTime(){
+
+		$date = new DateTime($this->createTime);
+
+		$formated = $date->format("F jS, Y");
+
+		return $formated;
+	}
+
+	public function getCourt(){
+
+		return $this->court;
 	}
 
 	public function isFlagged(){

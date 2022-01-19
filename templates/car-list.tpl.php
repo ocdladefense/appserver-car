@@ -6,20 +6,12 @@
     <h1 class="list-header">OCDLA Criminal Appellate Review Summaries</h1>
 
     <div class="car-container">
-
        <?php print $searchForm; ?>
-
     </div>
 
-	<?php if(!empty($cars)) : ?>
-		<div class="car-container">
-			<label>
-				<strong>
-					<?php print "Showing " . count($cars) . " case review(s)."; ?>
-				</strong>
-			</label>
-		</div>
-	<?php endif; ?>
+	<div class="car-container">
+				<?php print $userMessages; ?>
+	</div>
 
 
 
@@ -52,6 +44,8 @@
 
 		$newSubject = $previousSubject != $subject;
 		
+		$title = $car->getTitle();
+		$court = $car->getCourt();
 		
 		?>
 
@@ -72,7 +66,11 @@
 			<?php endif; ?>
 				
 			<div class="car-item title">
-				<?php print $car->getTitle(); ?>
+				<?php print $title; ?>
+			</div>
+
+			<div class="car-item court">
+				<?php print "<h3>$court</h3>"; ?>
 			</div>
 			
 			<div class="car-item decision-date">
