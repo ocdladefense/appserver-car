@@ -14,6 +14,8 @@ use function Session\get_current_user;
 
 class CarModule extends Module {
 
+	private $doSummarize;
+
 
 	public function __construct() {
 	
@@ -24,18 +26,26 @@ class CarModule extends Module {
 
 	public function showCars($newCarId = null) {
 
-		//var_dump($_POST);exit;
-
 		$conditions = array(
 			"op" => "AND",
 			"conditions" => array(
 				array(
 					"fieldname"	=> "subject_1",
 					"op"		=> "LIKE",
-					"syntax"	=> "'%%%s%%'"
+					"syntax"	=> "'%s%%'"
 				),
 				array(
 					"fieldname"	=> "year",
+					"op"		=> "=",
+					"syntax"	=> "%s"
+				),
+				array(
+					"fieldname"	=> "month",
+					"op"		=> "=",
+					"syntax"	=> "%s"
+				),
+				array(
+					"fieldname"	=> "day",
 					"op"		=> "=",
 					"syntax"	=> "%s"
 				),
@@ -48,24 +58,33 @@ class CarModule extends Module {
 					"fieldname"	=> "judges",
 					"op"		=> "LIKE",
 					"syntax"	=> "'%%%s%%'"
+				),
+				array(
+					"fieldname"	=> "court",
+					"op"		=> "=",
+					"syntax"	=> "'%s'"
 				)
 			)
 		);
+
+		$params = !empty($_GET) ? $_GET : $_POST;
+
+		$this->doSummarize = !empty($params["summarize"]);
 
 		$sql = new QueryBuilder("car");
 
 		$sql->setFields(array("*"));
 
-		if(!empty($_POST)) $sql->setConditions($conditions, $_POST);
+		if(!empty($params)) $sql->setConditions($conditions, $params);
 
-		$sql->setOrderBy("Year DESC, Month DESC, Day DESC");
+		$orderBy = $this->doSummarize ? "subject_1, year DESC, month DESC, day DESC" : "year DESC, month DESC, day DESC";
+		$sql->setOrderBy($orderBy);
 
 		$query = $sql->compile();
 
-		//var_dump($query);exit;
-
-		// This the select functions null if there are no records.
 		$cars = select($query);
+
+		if(!is_array($cars)) $cars = array($cars);
 
 
 		// If there is a new car show it at the top of the list.
@@ -93,14 +112,16 @@ class CarModule extends Module {
 		return $tpl->render(
 			array(
 				"cars"			=> $cars,
-				"searchForm" 	=> $this->getCarSearch($_POST, $cars),
-				"user"			=> get_current_user()
+				"searchForm" 	=> $this->getCarSearch($params, $query),
+				"userMessages"  => $this->getUserFriendlyMessages($params, $cars, $query),
+				"user"			=> get_current_user(),
+				"groupBy"		=> $this->doSummarize ? "subject_1" : null
 			)
 		);
 	}
 
 
-	public function getCarSearch($params) {
+	public function getCarSearch($params, $query) {
 
 		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
 
@@ -108,68 +129,72 @@ class CarModule extends Module {
 
 		$judges = DbHelper::getDistinctFieldValues("car", "judges");
 
-		$user = get_current_user();
-
 		$tpl = new Template("search-list");
 		$tpl->addPath(__DIR__ . "/templates");
 
 		return $tpl->render(array(
-			"subject"	=> $params["subject_1"],
-			"year"		=> $params["year"],
-			"county"	=> $params["circuit"],
 			"subjects" 	=> $subjects,
+			"subject"	=> $params["subject_1"],
 			"years"		=> $years,
+			"year"		=> $params["year"],
+			"allMonths"	=> $this->getMonths(),
+			"month"     => $this->getStringMonth($params["month"]),
+			"allCourts" => $this->getAppellateCourts(),
+			"court"     => $params["court"],
 			"counties"	=> $this->getOregonCounties(),
-			"judgeName" => $params["judges"],
+			"county"	=> $params["circuit"],
 			"judges"	=> $judges,
-			"groupBy"	=> "subject_1",
-			"user"		=> get_current_user()
+			"judgeName" => $params["judges"],
+			"user"		=> get_current_user(),
+			"doSummarize"	=> $this->doSummarize
 		));
 
 	}
 
+	public function getUserFriendlyMessages($params, $cars, $query){
 
-	public function showCarsByYear($year){
-
-		$query = "SELECT * FROM car";
-
-		if($year != "All%20Years" && !empty($year)) $query .= " WHERE year = $year";
-
-		$query .= " ORDER BY subject_1 ASC";
-
-		$cars = select($query);
-
-		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
-
-		$years = DbHelper::getDistinctFieldValues("car", "year");
-
-		$user = get_current_user();
-
-
-		$tpl = new Template("search-summary");
+		$tpl = new Template("user-friendly");
 		$tpl->addPath(__DIR__ . "/templates");
-
-		$searchForm = $tpl->render(array(
-			"subject"	=> $subject,
-			"year"		=> $year,
-			"count" 	=> count($cars),
-			"subjects" 	=> $subjects,
-			"years"		=> $years,
-			"user"		=> get_current_user()
-		));
-
-
-		$tpl = new Template("car-list");
-		$tpl->addPath(__DIR__ . "/templates");
-
 
 		return $tpl->render(array(
-				"cars" 				=> $cars,
-				"searchForm" 		=> $searchForm,
-				"groupBy"			=> "subject_1",
-				"user"				=> $user
+			"message"      => $this->getUserMessage($params, count($cars)),
+			"user"		   => get_current_user(),
+			"query"        => $query
 		));
 	}
+
+
+	public function getUserMessage($params, $count){
+
+		$year = $params["year"];
+		$month = $this->getStringMonth($params["month"]);
+		$day = $params["day"];
+		$court = $params["court"];
+		$subject = $params["subject_1"];
+		$county = $params["circuit"];
+
+		$courtMsg = empty($court) ? "" : "in $court";
+
+		$month = $month == "All Months" ? null : $month;
+
+		if(!empty($month)) $dateMsg = empty($year) ? "for the month of $month (All Years)" : "for $month";
+		if(!empty($day)) $dateMsg .= ", $day";
+		if(!empty($year)) $dateMsg .= empty($month) ? "for $year" : ", $year";
+
+		$msg = "";
+
+		if(!empty($subject)) $msg .= "<h3>$subject</h3>";
+
+		$msg .= "showing " . $count . " case review(s)";
+		if(!empty($courtMsg)) $msg .= " $courtMsg";
+		if(!empty($dateMsg)) $msg .= " $dateMsg";
+
+		if(!empty($county)) $msg .= "<h4>$count decision(s) made in $county County</h4>";
+
+
+		return $msg;
+	}
+
 
 
 	public function showCarForm($carId = null){
@@ -194,7 +219,8 @@ class CarModule extends Module {
 			"car" => $car,
 			"subjects" => $subjects,
 			"counties" => $counties,
-			"judges" => $judges
+			"judges" => $judges,
+			"allCourts"	   => $this->getAppellateCourts()
 		));
 	}
 
@@ -203,11 +229,16 @@ class CarModule extends Module {
 	public function saveCar(){
 
 		$req = $this->getRequest();
-		$data = $req->getBody();
+		$record = (array) $req->getBody();
 
-		$car = Car::from_array_or_standard_object($data);
+		foreach($record as $key => $value){
 
-		return empty($data->id) ? $this->createCar($car) : $this->updateCar($car);
+			if(empty($value)) unset($record[$key]);
+		}
+
+		$car = Car::from_array_or_standard_object($record);
+
+		return empty($record["id"]) ? $this->createCar($car) : $this->updateCar($car);
 	}
 
 
@@ -240,7 +271,7 @@ class CarModule extends Module {
 
 		if(!$car->isTest()) throw new Exception("CAR_DELETE_ERROR: You can only delete cars that are marked as test");
 
-		$query = "DELETE FROM car WHERE is_test = 1 AND Id = '$id'";
+		$query = "DELETE FROM car WHERE Id = '$id'";
 
 		$db = new Database();
 
@@ -269,33 +300,10 @@ class CarModule extends Module {
 		return "success";
 	}
 	
-	
-	public function testCarRoute(){
-
-		return "Hello World!";
-	}
-
-	public function updateCarANumber() {
-
-		$query = "SELECT id, a_number, external_link FROM Car WHERE year = 2021";
-
-		$cars = select($query);
-
-		foreach($cars as $car){
-
-			$exLink = $car->external_link;
-			$linkParts = explode("/", $exLink);
-			$car->a_number = trim($linkParts[count($linkParts) -1], ".pdf");
-		}
-
-		$results = update($cars);
-
-		var_dump($results);exit;
-	}
 
 	public function getOregonCounties(){
 
-		$counties = array(
+		return array(
 			"Baker" 		=> "Baker",
 			"Benton" 		=> "Benton",
 			"Clackamas"		=> "Clackamas",
@@ -333,10 +341,45 @@ class CarModule extends Module {
 			"Wheeler"		=> "Wheeler",
 			"Yamhill"		=> "Yamhill"
 		);
-
-		return $counties;
 	}
 
+
+	public function getMonths(){
+
+		return array(
+			"" 	   => "All Months",
+			"01"   => "January",
+			"02"   => "February",
+			"03"   => "March",
+			"04"   => "April",
+			"05"   => "May",
+			"06"   => "June",
+			"07"   => "July",
+			"08"   => "August",
+			"09"   => "September",
+			"10"   => "October",
+			"11"   => "November",
+			"12"   => "December"
+		);
+	}
+
+
+	public function getStringMonth($numMonth){
+		
+		$numMonth = strlen($numMonth) == 1 ? "0$numMonth" : $numMonth;
+
+		return $this->getMonths()[$numMonth];
+	}
+
+
+	public function getAppellateCourts(){
+
+		return array(
+			"" 						 => "All Courts",
+			"Oregon Appellate Court" => "Oregon Appellate Court",
+			"Oregon Supreme Court"   => "Oregon Supreme Court"
+		);
+	}
 }
 
 

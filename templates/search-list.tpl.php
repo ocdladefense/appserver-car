@@ -13,26 +13,34 @@ $allYears = $yearDefault + $years;
 $countyDefault = array("" => "All Counties");
 $allCounties = $countyDefault + $counties;
 
+$summarizeChecked = $doSummarize ? "checked" : "";
+
 print createDataListElement("judge-datalist", $judges);
 
 ?>
 
 <form id="filter-form" class="filter-form" action="/car/list" method="post">
-    <label><strong>Filter:</strong></label>
 
-    <?php print createSelectElement("subject_1", $allSubjects, $subject); ?>
+    <div class="search-filters">
 
-    <?php print createSelectElement("year", $allYears, $year); ?>
+        <?php print createSelectElement("subject_1", $allSubjects, $subject); ?>
+        <?php print createSelectElement("year", $allYears, $year); ?>
+        <?php print createSelectElement("month", $allMonths, $month); ?>
+        <?php print createSelectElement("court", $allCourts, $court); ?>
+        <?php print createSelectElement("circuit", $allCounties, $county); ?>
 
-    <?php print createSelectElement("circuit", $allCounties, $county); ?>
+        <input autocomplete="off" type="text" name="judges" value="<?php print $judgeName; ?>" data-datalist="judge-datalist" placeholder="Search by judge name" onchange="submitForm()" />
 
-    <input autocomplete="off" type="text" name="judges" value="<?php print $judgeName; ?>" data-datalist="judge-datalist" placeholder="Search by judge name" onchange="submitForm()" />
-
-    <?php if(True || $user->isAdmin()) : ?>
         <a href="/car/list">Clear</a>
-        <a class="add-review" href="/car/new">Add Review <i class="fas fa-plus" aria-hidden="true"></i></a>
-    <?php endif; ?>
 
+        <input id="summarize-checkbox" type="checkbox" <?php print $summarizeChecked; ?> name="summarize" value="1" />
+        <label for="summarize">summarize</label>
+
+        <?php if($user->isAdmin()) : ?>
+            <a class="add-review" href="/car/new">Add Review<i class="fas fa-plus" aria-hidden="true"></i></a>
+        <?php endif; ?>
+
+    </div>
 </form>
 
 <script>
@@ -47,5 +55,10 @@ print createDataListElement("judge-datalist", $judges);
         });
     }
 
+    document.getElementById("summarize-checkbox").addEventListener("change", function(){
+            $form = document.getElementById("filter-form");
+            $form.submit();
+        });
+    
     
 </script>

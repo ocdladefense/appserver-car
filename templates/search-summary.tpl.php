@@ -13,11 +13,25 @@
 array_unshift($subjects, "Show All");
 array_unshift($years, "All Years");
 $subject = $subject == null ? "Show All" : $subject;
-$year = $year == null ? "All Years" : $year;
+
+$year = ($year == null) ? "All Years" : $year;
+
+$courtMsg = empty($court) ? "" : "in $court";
+
+if(empty($court) || (!empty($court) && empty($date))){
+    $dateMsg = "for $year";
+    if(!empty($month)) $dateMsg .= "/$month";
+    if(!empty($day)) $dateMsg .= "/$day";
+}else{
+    $dateMsg = "on $date";
+}
+
+$showingMessage = "Showing " . $count . " case review(s) $courtMsg $dateMsg.";
 
 ?>
 
 <form id="filter-form" class="filter-form" action="/car/summary" method="post">
+
     <label><strong>Filter by year:</strong></label>
 
     <select id="year-summary" name="year">
@@ -37,9 +51,9 @@ $year = $year == null ? "All Years" : $year;
     </select>
 
     <label>
-        <strong>
-            <?php print "Showing " . $count . " case review(s)."; ?>
-        </strong>
+        <h3>
+            <?php print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$showingMessage"; ?>
+    </h3>
     </label>
 
     <?php if(True || $user->isAdmin()) : ?>

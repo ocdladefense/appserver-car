@@ -15,10 +15,6 @@
 			"callback":"showCars",
 			"content-type":"text\/html"
 		},
-		"car/summary/%year":{
-			"callback":"showCarsByYear",
-			"content-type":"text\/html"
-		},
 		"car/flag":{
 			"callback":"flagReview",
 			"content-type":"application/json",
