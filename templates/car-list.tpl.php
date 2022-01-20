@@ -10,7 +10,7 @@
     </div>
 
 	<div class="car-container">
-				<?php print $userMessages; ?>
+		<?php print $userMessages; ?>
 	</div>
 
 
@@ -40,7 +40,7 @@
 		$classes = implode(" ", $classesArray);
 
 		$previousSubject = $subject;
-		$subject = $car->getSubject1();
+		$subject = trim($car->getSubject1());
 
 		$newSubject = $previousSubject != $subject;
 		

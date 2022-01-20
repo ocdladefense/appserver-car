@@ -14,6 +14,8 @@ use function Session\get_current_user;
 
 class CarModule extends Module {
 
+	private $doSummarize;
+
 
 	public function __construct() {
 	
@@ -24,14 +26,13 @@ class CarModule extends Module {
 
 	public function showCars($newCarId = null) {
 
-
 		$conditions = array(
 			"op" => "AND",
 			"conditions" => array(
 				array(
 					"fieldname"	=> "subject_1",
 					"op"		=> "LIKE",
-					"syntax"	=> "'%%%s%%'"
+					"syntax"	=> "'%s%%'"
 				),
 				array(
 					"fieldname"	=> "year",
@@ -68,24 +69,23 @@ class CarModule extends Module {
 
 		$params = !empty($_GET) ? $_GET : $_POST;
 
+		$this->doSummarize = !empty($params["summarize"]);
+
 		$sql = new QueryBuilder("car");
 
 		$sql->setFields(array("*"));
 
 		if(!empty($params)) $sql->setConditions($conditions, $params);
 
-		$sql->setOrderBy("Year DESC, Month DESC, Day DESC");
+		$orderBy = $this->doSummarize ? "subject_1, year DESC, month DESC, day DESC" : "year DESC, month DESC, day DESC";
+		$sql->setOrderBy($orderBy);
 
 		$query = $sql->compile();
 
 		$cars = select($query);
 
-		if(!is_array($cars)){
+		if(!is_array($cars)) $cars = array($cars);
 
-			$newArray = array();
-			$newArray[] = $cars;
-			$cars = $newArray;
-		}
 
 		// If there is a new car show it at the top of the list.
 		if(!empty($newCarId)) {
@@ -113,10 +113,9 @@ class CarModule extends Module {
 			array(
 				"cars"			=> $cars,
 				"searchForm" 	=> $this->getCarSearch($params, $query),
-				"userMessages"  => $this->getUserMessagesBox($params, $cars, $query),
+				"userMessages"  => $this->getUserFriendlyMessages($params, $cars, $query),
 				"user"			=> get_current_user(),
-				// for now...
-				"groupBy"		=> empty($_GET) ? null : "subject_1"
+				"groupBy"		=> $this->doSummarize ? "subject_1" : null
 			)
 		);
 	}
@@ -147,11 +146,12 @@ class CarModule extends Module {
 			"judges"	=> $judges,
 			"judgeName" => $params["judges"],
 			"user"		=> get_current_user(),
+			"doSummarize"	=> $this->doSummarize
 		));
 
 	}
 
-	public function getUserMessagesBox($params, $cars, $query){
+	public function getUserFriendlyMessages($params, $cars, $query){
 
 		$tpl = new Template("user-friendly");
 		$tpl->addPath(__DIR__ . "/templates");
@@ -271,7 +271,7 @@ class CarModule extends Module {
 
 		if(!$car->isTest()) throw new Exception("CAR_DELETE_ERROR: You can only delete cars that are marked as test");
 
-		$query = "DELETE FROM car WHERE is_test = 1 AND Id = '$id'";
+		$query = "DELETE FROM car WHERE Id = '$id'";
 
 		$db = new Database();
 
@@ -379,102 +379,7 @@ class CarModule extends Module {
 			"Oregon Appellate Court" => "Oregon Appellate Court",
 			"Oregon Supreme Court"   => "Oregon Supreme Court"
 		);
-		
 	}
-
-
-		// public function showListInSummaryContext($year = null, $month = null, $day = null, $court = null){
-
-	// 	var_dump($_GET);exit;
-
-	// 	$conditions = "year = $year";
-
-	// 	$court = urldecode($court);
-
-	// 	if(!empty($month)) $conditions .= " AND month = $month";
-	// 	if(!empty($day)) $conditions .= " AND day = $day";
-	// 	if(!empty($court)) $conditions .= " AND court = '$court'";
-
-	// 	$query = "SELECT * FROM car";
-
-	// 	if($year != "All%20Years") $query .= " WHERE $conditions";
-
-	// 	$query .= " ORDER BY subject_1 ASC";
-
-	// 	//var_dump($query);exit;
-
-	// 	$cars = select($query);
-
-	// 	$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
-
-	// 	$years = DbHelper::getDistinctFieldValues("car", "year");
-
-	// 	$user = get_current_user();
-
-
-	// 	$tpl = new Template("search-summary");
-	// 	$tpl->addPath(__DIR__ . "/templates");
-
-	// 	if(!empty($cars)) $date = $cars[0]->getDate();
-
-	// 	$searchForm = $tpl->render(array(
-	// 		"subject"	   => $subject,
-	// 		"year"	       => $year,
-	// 		"month"		   => $month,
-	// 		"day"		   => $day,
-	// 		"date"		   => $date,
-	// 		"court"		   => $court,
-	// 		"count" 	   => count($cars),
-	// 		"subjects" 	   => $subjects,
-	// 		"years"		   => $years,
-	// 		"user"		   => get_current_user()
-	// 	));
-
-
-	// 	$tpl = new Template("car-list");
-	// 	$tpl->addPath(__DIR__ . "/templates");
-
-
-	// 	return $tpl->render(array(
-	// 			"cars" 				=> $cars,
-	// 			"searchForm" 		=> $searchForm,
-	// 			"groupBy"			=> "subject_1",
-	// 			"user"				=> $user
-	// 	));
-	// }
-
-	// public function isUrlEncoded($url){
-
-	// 	$decoded = urldecode($url);
-
-	// 	return $decoded != $url;
-	// }
-
-
-
-		// public function testCarRoute(){
-
-	// 	return "Hello World!";
-	// }
-
-	// public function updateCarANumber() {
-
-	// 	$query = "SELECT id, a_number, external_link FROM Car WHERE year = 2021";
-
-	// 	$cars = select($query);
-
-	// 	foreach($cars as $car){
-
-	// 		$exLink = $car->external_link;
-	// 		$linkParts = explode("/", $exLink);
-	// 		$car->a_number = trim($linkParts[count($linkParts) -1], ".pdf");
-	// 	}
-
-	// 	$results = update($cars);
-
-	// 	var_dump($results);exit;
-	// }
-
 }
 
 

@@ -15,22 +15,6 @@
 			"callback":"showCars",
 			"content-type":"text\/html"
 		},
-		"car/summary/%year":{
-			"callback":"showListInSummaryContext",
-			"content-type":"text\/html"
-		},
-		"car/summary/%year/%month":{
-			"callback":"showListInSummaryContext",
-			"content-type":"text\/html"
-		},
-		"car/summary/%year/%month/%day":{
-			"callback":"showListInSummaryContext",
-			"content-type":"text\/html"
-		},
-		"car/summary/%year/%month/%day/%court":{
-			"callback":"showListInSummaryContext",
-			"content-type":"text\/html"
-		},
 		"car/flag":{
 			"callback":"flagReview",
 			"content-type":"application/json",

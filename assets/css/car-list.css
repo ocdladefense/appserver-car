@@ -97,6 +97,13 @@ label{
 select {
     height: 30px;
 }
+input[type=checkbox], label[for="summarize"]{
+    float: right;
+}
+input[type=text]{
+    height: 29px;
+    border-radius: unset;
+}
 @media only screen and (max-width:768px){
     .car-container{
         width:100%;
