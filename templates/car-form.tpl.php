@@ -30,6 +30,7 @@
         $allSubjects = $subjectDefault + $subjects;
 
         $selectedCourt = empty($car->getCourt()) ? "" : $car->getCourt();
+        $allCourts[""] = "none selected";
 
         $countyDefault = array("" => "None Selected");
         $allCounties = $countyDefault + $counties;
