@@ -60,12 +60,23 @@ function handleNewSubject(e){
     let selectList = document.getElementsByName("subject_1")[0];
 
     let newOption = document.createElement("option");
-    newOption.setAttribute("value", subject);
+    newOption.setAttribute("value", subject.toLowerCase());
     newOption.setAttribute("selected", true);
-    newOption.innerText = subject;
+    newOption.innerText = toTitleCase(subject);
 
     selectList.appendChild(newOption);
 }
+
+
+
+function toTitleCase(str) {
+    return str.replace(
+      /\w\S*/g,
+      function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      }
+    );
+  }
 
 
 // add the event listeners to anu searches that use the "judge-datalist"...datalist.
