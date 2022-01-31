@@ -120,15 +120,15 @@
         </div>
 
         <div class="form-item">
-            <label>Judges</label>
-            <input autocomplete="off" type="text" name="majority" value="<?php print $car->getMajority(); ?>" data-datalist="judge-datalist" placeholder="Search by judge name" />
-        </div>
-        
-
-        <div class="form-item">
             <label>Appellate Judge</label>
             <input autocomplete="off" type="text" name="judges" value="<?php print $car->getJudges(); ?>" data-datalist="judge-datalist" placeholder="Search by appellate judge name" />
         </div>
+
+        <div class="form-item">
+            <label>Authoring Judge</label>
+            <input autocomplete="off" type="text" name="majority" value="<?php print $car->getMajority(); ?>" data-datalist="judge-datalist" placeholder="Search by judge name" />
+        </div>
+        
 
         <div class="form-item">
             <label>Summary</label>

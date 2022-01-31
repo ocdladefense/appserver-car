@@ -109,14 +109,15 @@
 				</label>
 				
 				<label>
-					<strong>Judges:</strong>
-					<?php print $car->getMajority(); ?>
-				</label>
-				
-				<label>
 					<strong>Appellate Judge:</strong>
 					<?php print $car->getJudges(); ?>
 				</label>
+				
+				<label>
+					<strong>Authoring Judge:</strong>
+					<?php print $car->getMajority(); ?>
+				</label>
+				
 			</div>
 			
 			<?php if($car->getUrl() != null && $user->isAdmin()) : ?>
