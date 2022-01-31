@@ -125,6 +125,8 @@ class CarModule extends Module {
 
 		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
 
+		
+
 		$years = DbHelper::getDistinctFieldValues("car", "year");
 
 		$judges = DbHelper::getDistinctFieldValues("car", "judges");
@@ -208,6 +210,9 @@ class CarModule extends Module {
 		$car = !empty($carId) ? select("SELECT * FROM car WHERE id = '$carId'") : new Car();
 
 		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
+		$subjects = array_map(function($subject) { return ucwords($subject); }, $subjects);
+
+		// var_dump($subjects);exit;   
 		$counties = $this->getOregonCounties();
 
 		$tpl = new Template("car-form");

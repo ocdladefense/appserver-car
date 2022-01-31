@@ -22,7 +22,7 @@ class Car {
 	public $url;
 	public $is_flagged;
 	public $is_draft;
-	public $is_test;
+	
 	public $court;
 	private $createTime;
 
@@ -70,7 +70,7 @@ class Car {
 
 		$car->is_flagged = !empty($record["is_flagged"]) ? $record["is_flagged"] : "0";
 		$car->is_draft = !empty($record["is_draft"]) ? $record["is_draft"] : "0";
-		$car->is_test = !empty($record["is_test"]) ? $record["is_test"] : "0";
+		
 		$car->createTime = $record["CreateTime"];
 		$car->court = $record["court"];
 
@@ -205,10 +205,7 @@ class Car {
 		return $this->is_draft == 1 ? true : false;
 	}
 
-	public function isTest(){
 
-		return $this->is_test == 1 ? true : false;
-	}
 
 	public function isNew($new = null){
 

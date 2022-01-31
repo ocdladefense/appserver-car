@@ -8,8 +8,6 @@
 
     $isUpdate = $car->getId() != null;
     $headerMessage = $isUpdate ? "Update Case Review" : "Create a Case Review";
-
-    $shouldCheckTest = ($isUpdate && $car->isTest()) || !$isUpdate ? true : false;
 ?>
 
 <link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/car-form.css" />
@@ -23,7 +21,7 @@
 
     <?php
         $checkFlagged = $car->isFlagged() ? "checked" : "";
-        $checkTest = $shouldCheckTest ? "checked" : "";
+        
         $checkDraft = $car->isDraft() ? "checked" : "";
 
         $subjectDefault = array("" => "None Selected");
@@ -65,10 +63,7 @@
                 <label class="checkbox-label">Is Draft</label>
             </div>
 
-            <div class="form-item">
-                <input class="checkbox-option" name="is_test" value="1" type="checkbox" <?php print $checkTest; ?> />
-                <label class="checkbox-label">Is Test</label>
-            </div>
+
         </div>
 
         <input type="hidden" name="id" value="<?php print $car->getId(); ?>" />
