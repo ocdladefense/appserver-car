@@ -131,3 +131,9 @@ input[type=text]{
         padding:0px;
     }
 }
+.add-review{
+    float:unset;
+}
+.search-filters{
+    text-align: center;
+}

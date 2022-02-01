@@ -55,7 +55,12 @@ class CarModule extends Module {
 					"syntax"	=> "'%%%s%%'"
 				),
 				array(
-					"fieldname"	=> "judges",
+					"fieldname"	=> "appellate_judge",
+					"op"		=> "LIKE",
+					"syntax"	=> "'%%%s%%'"
+				),
+				array(
+					"fieldname"	=> "trial_judge",
 					"op"		=> "LIKE",
 					"syntax"	=> "'%%%s%%'"
 				),
@@ -129,26 +134,30 @@ class CarModule extends Module {
 
 		$years = DbHelper::getDistinctFieldValues("car", "year");
 
-		$judges = DbHelper::getDistinctFieldValues("car", "judges");
+		$appellateJudges = DbHelper::getDistinctFieldValues("car", "appellate_judge");
+		$trialJudges = DbHelper::getDistinctFieldValues("car", "trial_judge");
+
+		$allJudges = array_merge($appellateJudges, $trialJudges);
 
 		$tpl = new Template("search-list");
 		$tpl->addPath(__DIR__ . "/templates");
 
 		return $tpl->render(array(
-			"subjects" 	=> $subjects,
-			"subject"	=> $params["subject_1"],
-			"years"		=> $years,
-			"year"		=> $params["year"],
-			"allMonths"	=> $this->getMonths(),
-			"month"     => $this->getStringMonth($params["month"]),
-			"allCourts" => $this->getAppellateCourts(),
-			"court"     => $params["court"],
-			"counties"	=> $this->getOregonCounties(),
-			"county"	=> $params["circuit"],
-			"judges"	=> $judges,
-			"judgeName" => $params["judges"],
-			"user"		=> get_current_user(),
-			"doSummarize"	=> $this->doSummarize
+			"subjects" 					 => $subjects,
+			"subject"					 => $params["subject_1"],
+			"years"						 => $years,
+			"year"						 => $params["year"],
+			"allMonths"					 => $this->getMonths(),
+			"month"     				 => $this->getStringMonth($params["month"]),
+			"allCourts" 				 => $this->getAppellateCourts(),
+			"court"     				 => $params["court"],
+			"counties"					 => $this->getOregonCounties(),
+			"county"					 => $params["circuit"],
+			"judges"					 => $allJudges,
+			"selectedAppellateJudge"     => $params["appellate_judge"],
+			"selectedTrialJudge"         => $params["trial_judge"],
+			"user"				 		 => get_current_user(),
+			"doSummarize"		 		 => $this->doSummarize
 		));
 
 	}
@@ -212,19 +221,22 @@ class CarModule extends Module {
 		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
 		$subjects = array_map(function($subject) { return ucwords($subject); }, $subjects);
 
+		$appellateJudges = DbHelper::getDistinctFieldValues("car", "appellate_judge");
+		$trialJudges = DbHelper::getDistinctFieldValues("car", "trial_judge");
+
+		$allJudges = array_merge($appellateJudges, $trialJudges);
+
 		// var_dump($subjects);exit;   
 		$counties = $this->getOregonCounties();
 
 		$tpl = new Template("car-form");
 		$tpl->addPath(__DIR__ . "/templates");
 
-		$judges = DbHelper::getDistinctFieldValues("car", "judges");
-
 		return $tpl->render(array(
 			"car" => $car,
 			"subjects" => $subjects,
 			"counties" => $counties,
-			"judges" => $judges,
+			"judges"   => $allJudges,
 			"allCourts"	   => $this->getAppellateCourts()
 		));
 	}
@@ -273,8 +285,6 @@ class CarModule extends Module {
 	public function deleteCar($id){
 
 		$car = select("SELECT * FROM car WHERE id = '$id'");
-
-		if(!$car->isTest()) throw new Exception("CAR_DELETE_ERROR: You can only delete cars that are marked as test");
 
 		$query = "DELETE FROM car WHERE Id = '$id'";
 

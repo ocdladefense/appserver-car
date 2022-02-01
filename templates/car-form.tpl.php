@@ -34,6 +34,7 @@
         $allCounties = $countyDefault + $counties;
 
         $selectedSubject = empty($car->getSubject1()) ? "" : $car->getSubject1();
+
         $selectedCounty = empty($car->getCircuit()) ? "" : $car->getCircuit();
 
         // Create the datalist element for the judge name autocomplete.
@@ -78,19 +79,25 @@
             <?php print createSelectElement("court", $allCourts, $selectedCourt); ?>
         </div>
 
-        <div class="form-item">
-            <label>Appellate #</label>
-            <input type="text" name="a_number" value="<?php print $car->getA_number(); ?>" placeholder="Enter A#" />
-        </div>
 
         <div class="form-item">
             <label>Plaintiff</label>
-            <input type="text" name="plaintiff" value="<?php print $car->getPlaintiff(); ?>" placeholder="Enter plaintiff..." />
+            <input type="text" name="plaintiff" value="<?php print empty($car->getPlaintiff()) ? "State" : $car->getPlaintiff(); ?>" placeholder="Enter plaintiff..." />
         </div>
 
         <div class="form-item">
             <label>Defendant</label>
             <input type="text" name="defendant" value="<?php print $car->getDefendant(); ?>" placeholder="Enter defendant..." />
+        </div>
+
+        <div class="form-item">
+            <label>Appellate Judge</label>
+            <input autocomplete="off" type="text" name="appellate_judge" value="<?php print $car->getAppellateJudge(); ?>" data-datalist="judge-datalist" placeholder="Search by judge name" />
+        </div>
+
+        <div class="form-item">
+            <label>Trial Judge</label>
+            <input autocomplete="off" type="text" name="trial_judge" value="<?php print $car->getTrialJudge(); ?>" data-datalist="judge-datalist" placeholder="Search by judge name" />
         </div>
 
         <div class="form-item">
@@ -105,6 +112,12 @@
         </div>
 
         <div class="form-item">
+            <label>Appellate #</label>
+            <input type="text" name="a_number" value="<?php print $car->getA_number(); ?>" placeholder="Enter A#" />
+        </div>
+
+
+        <div class="form-item">
             <label>Citation</label>
             <input type="text" name="citation" value="<?php print $car->getCitation(); ?>" placeholder="Enter Citation...(ex. 311 Or App 542)" />
         </div>
@@ -115,27 +128,15 @@
         </div>
 
         <div class="form-item">
-            <label>Appellate Judge</label>
-            <input autocomplete="off" type="text" name="judges" value="<?php print $car->getJudges(); ?>" data-datalist="judge-datalist" placeholder="Search by appellate judge name" />
+            <label>Link to review on State of Oregon Law Library</label>
+            <input type="text" name="external_link" value="<?php print $car->getExternalLink(); ?>" placeholder="Link to State of Oregon Law Library..." />
         </div>
-
-        <div class="form-item">
-            <label>Authoring Judge</label>
-            <input autocomplete="off" type="text" name="majority" value="<?php print $car->getMajority(); ?>" data-datalist="judge-datalist" placeholder="Search by judge name" />
-        </div>
-        
 
         <div class="form-item">
             <label>Summary</label>
             <textarea name="summary" placeholder="Enter the entire case summary, including additional information..."><?php print $car->getSummary(); ?></textarea>
         </div>
 
-        <?php if(!empty($car->getResult())) : ?>
-            <div class="form-item">
-                <label>Result</label>
-                <textarea name="result"><?php print $car->getResult(); ?></textarea>
-            </div>
-        <?php endif; ?>
 
         <button type="submit" id="submit">Submit</button>
     </form>

@@ -32,7 +32,7 @@ function handleDelete(e){
 
     e.preventDefault();
     e.stopPropagation();
-    let confirmed = window.confirm("Are you sure that you want to delete this case review?");
+    let confirmed = window.confirm("Are you sure you want to delete this review?") && window.confirm("Are you really sure?");
 
     if(confirmed) {
 

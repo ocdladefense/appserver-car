@@ -3,28 +3,26 @@
 class Car {
 
 	public $id;
-	public $a_number;
-	public $external_link;
+	public $title;
+	public $court;
+	public $plaintiff;
+	public $defendant;
+	public $trial_judge;
+	public $appellate_judge;
 	public $subject_1;
 	public $subject_2;
 	public $summary;
-	public $result;
-	public $title;
-	public $plaintiff;
-	public $defendant;
+	public $a_number;
 	public $citation;
+	public $circuit;
 	public $month;
 	public $day;
 	public $year;
-	public $circuit;
-	public $majority;
-	public $judges;
+	public $external_link;
 	public $url;
-	public $is_flagged;
 	public $is_draft;
-	
-	public $court;
-	private $createTime;
+	public $is_flagged;
+
 
 	// This is to hold the data that will not be used as a column when inserting data.
 	private $meta = array();
@@ -38,19 +36,27 @@ class Car {
 
 		$car = new Self();
 		$car->id = empty($record["id"]) ? null : $record["id"];
-		$car->a_number = $record["a_number"];
-		$car->subject_1 = $record["subject_1"];
-		$car->subject_2 = $record["subject_2"];
-		$car->summary = $record["summary"];
-		$car->result = $record["result"];
 		$car->plaintiff = $record["plaintiff"];
 		$car->defendant = $record["defendant"];
 
-		if(!empty($record["plaintiff"]))
-		$car->title = $record["title"] != null ? $record["title"] : $record["plaintiff"] . " v. " . $record["defendant"]; 
-		
+		if(!empty($record["plaintiff"])) {
+			
+			$car->title = $record["title"] != null ? $record["title"] : $record["plaintiff"] . " v. " . $record["defendant"];
+		}
+
+		$car->court = $record["court"];
+		$car->trial_judge = $record["trial_judge"];
+		$car->appellate_judge = $record["appellate_judge"];
+		$car->subject_1 = $record["subject_1"];
+		$car->subject_2 = $record["subject_2"];
+		$car->summary = $record["summary"];
+		$car->a_number = $record["a_number"];
 		$car->citation = $record["citation"];
+		$car->circuit = $record["circuit"];
 		$car->external_link = $record["external_link"];
+		$car->is_flagged = !empty($record["is_flagged"]) ? $record["is_flagged"] : "0";
+		$car->is_draft = !empty($record["is_draft"]) ? $record["is_draft"] : "0";
+		$car->url = $record["url"];
 
 		if(!empty($record["date"])){
 
@@ -62,17 +68,6 @@ class Car {
 			$car->day = $record["day"];
 			$car->year = $record["year"];
 		}
-
-		$car->circuit = $record["circuit"];
-		$car->majority = $record["majority"];
-		$car->judges = $record["judges"];
-		$car->url = $record["url"];
-
-		$car->is_flagged = !empty($record["is_flagged"]) ? $record["is_flagged"] : "0";
-		$car->is_draft = !empty($record["is_draft"]) ? $record["is_draft"] : "0";
-		
-		$car->createTime = $record["CreateTime"];
-		$car->court = $record["court"];
 
 		return $car;
 	}
@@ -104,11 +99,6 @@ class Car {
 		return $this->summary;
 	}
 
-	public function getResult(){
-
-		return $this->result;
-	}
-
 	public function getTitle(){
 
 		return $this->title;
@@ -127,6 +117,11 @@ class Car {
 	public function getCitation(){
 
 		return $this->citation;
+	}
+
+	public function getExternalLink(){
+
+		return $this->external_link;
 	}
 
 	public function getMonth(){
@@ -149,14 +144,14 @@ class Car {
 		return explode(" County", $this->circuit)[0];
 	}
 
-	public function getMajority(){
+	public function getAppellateJudge(){
 
-		return $this->majority;
+		return $this->appellate_judge;
 	}
 	
-	public function getJudges(){
+	public function getTrialJudge(){
 
-		return $this->judges;
+		return $this->trial_judge;
 	}
 
 	public function getUrl(){
@@ -177,15 +172,6 @@ class Car {
 		$date = new DateTime($dateString);
 
 		$formated = $date->format("l, F jS, Y");
-
-		return $formated;
-	}
-
-	public function getCreateTime(){
-
-		$date = new DateTime($this->createTime);
-
-		$formated = $date->format("F jS, Y");
 
 		return $formated;
 	}
