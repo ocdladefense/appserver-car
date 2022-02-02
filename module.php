@@ -116,11 +116,11 @@ class CarModule extends Module {
 
 		return $tpl->render(
 			array(
-				"cars"			=> $cars,
-				"searchForm" 	=> $this->getCarSearch($params, $query),
-				"userMessages"  => $this->getUserFriendlyMessages($params, $cars, $query),
-				"user"			=> get_current_user(),
-				"groupBy"		=> $this->doSummarize ? "subject_1" : null
+				"cars"			     => $cars,
+				"searchContainer" 	 => $this->getCarSearch($params, $query),
+				"messagesContainer"  => $this->getUserFriendlyMessages($params, $cars, $query),
+				"user"			     => get_current_user(),
+				"groupBy"		     => $this->doSummarize ? "subject_1" : null
 			)
 		);
 	}
@@ -139,7 +139,7 @@ class CarModule extends Module {
 
 		$allJudges = array_merge($appellateJudges, $trialJudges);
 
-		$tpl = new Template("search-list");
+		$tpl = new Template("car-search");
 		$tpl->addPath(__DIR__ . "/templates");
 
 		return $tpl->render(array(
@@ -164,7 +164,7 @@ class CarModule extends Module {
 
 	public function getUserFriendlyMessages($params, $cars, $query){
 
-		$tpl = new Template("user-friendly");
+		$tpl = new Template("car-message");
 		$tpl->addPath(__DIR__ . "/templates");
 
 		return $tpl->render(array(

@@ -6,11 +6,11 @@
     <h1 class="list-header">OCDLA Criminal Appellate Review Summaries</h1>
 
     <div class="car-container">
-       <?php print $searchForm; ?>
+       <?php print $searchContainer; ?>
     </div>
 
 	<div class="car-container">
-		<?php print $userMessages; ?>
+		<?php print $messagesContainer; ?>
 	</div>
 
 

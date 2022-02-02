@@ -3,6 +3,12 @@
 let links = document.getElementsByClassName("delete-review");
 let yearSummary = document.getElementById("year-summary");
 
+let selectElements = document.getElementsByTagName("select");
+for(let i = 0; i < selectElements.length; i++){
+
+    selectElements[i].setAttribute("required", 1);
+}
+
 
 
 if(yearSummary != null) yearSummary.addEventListener("change", submitFormSummaryYear);
@@ -23,7 +29,7 @@ function submitFormSummaryYear(){
 
 function submitForm(){
 
-    $form = document.getElementById("filter-form");
+    $form = document.getElementById("car-search-form");
     $form.submit();
 }
 
