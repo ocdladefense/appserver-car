@@ -1,0 +1,17 @@
+
+
+.car-search-form .checkbox-option{
+    vertical-align: middle;
+}
+
+@media only screen and (min-width:1200px){
+
+    .search-filters input, select{
+        height:30px;
+    }
+
+    .bottom-row .filter-item{
+        margin-right: 25px;
+    }
+    
+}

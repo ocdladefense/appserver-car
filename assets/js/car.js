@@ -3,6 +3,12 @@
 let links = document.getElementsByClassName("delete-review");
 let yearSummary = document.getElementById("year-summary");
 
+let selectElements = document.getElementsByTagName("select");
+for(let i = 0; i < selectElements.length; i++){
+
+    selectElements[i].setAttribute("required", 1);
+}
+
 
 
 if(yearSummary != null) yearSummary.addEventListener("change", submitFormSummaryYear);
@@ -23,7 +29,7 @@ function submitFormSummaryYear(){
 
 function submitForm(){
 
-    $form = document.getElementById("filter-form");
+    $form = document.getElementById("car-search-form");
     $form.submit();
 }
 
@@ -32,7 +38,7 @@ function handleDelete(e){
 
     e.preventDefault();
     e.stopPropagation();
-    let confirmed = window.confirm("Are you sure that you want to delete this case review?");
+    let confirmed = window.confirm("Are you sure you want to delete this review?") && window.confirm("Are you really sure?");
 
     if(confirmed) {
 
@@ -57,15 +63,26 @@ function handleNewSubject(e){
 
     let subject = window.prompt("Enter a new primary subject");
 
-    let selectList = document.getElementById("select-subject");
+    let selectList = document.getElementsByName("subject_1")[0];
 
     let newOption = document.createElement("option");
-    newOption.setAttribute("value", subject);
+    newOption.setAttribute("value", subject.toLowerCase());
     newOption.setAttribute("selected", true);
-    newOption.innerText = subject;
+    newOption.innerText = toTitleCase(subject);
 
     selectList.appendChild(newOption);
 }
+
+
+
+function toTitleCase(str) {
+    return str.replace(
+      /\w\S*/g,
+      function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      }
+    );
+  }
 
 
 // add the event listeners to anu searches that use the "judge-datalist"...datalist.

@@ -3,6 +3,7 @@
     text-align:center;
     margin-bottom: 10px;
 }
+
 .car-container{
     border-radius:5px;
     margin:0 auto;
@@ -11,64 +12,54 @@
     margin-bottom: 10px;
     padding: 10px;
 }
+
 .is-new{
     background-color: rgba(255,255,0,0.4);
 }
+
 .is-test::before{
     content: "This is a test case review.";
 }
+
 .is-draft{
     border: 6px dashed #ccc;
 }
-input{
-    height: 25px;
-    padding: 5px;
-    border-radius:5px;
-}
-button{
-    border-radius: 10px;
-    padding:5px;
-}
+
 a{
     text-decoration: none;
 }
+
 p{
     font-weight: bold;
 }
+
 .error-pop-up-container{
     text-align: center;
     background-color: orange;
     font-weight: bolder;
 }
+
 label{
     display: block;
 }
 
-.filter-form label, select{
-
-    display: inline-block;
-}
-.checkbox-option, .checkbox-label, .add-review{
-    float: right;
-    margin-left: 10px;
-}
 .admin-area{
     text-align: right;
     float: right;
 }
+
 .title, .decision-date, .subject-1, .subject-2{
     font-weight: 900;
 }
 .subject-2{
     margin-bottom: 2%;
 }
-label{
-    margin-bottom: 5px;
-}
+
 .additional-info label{
     display: inline-block;
     margin-right: 10px;
 }
+
 .checkbox-label, .checkbox-option{
     display: inline-block;
 }
@@ -94,16 +85,7 @@ label{
 
     padding-top:0px;
 }
-select {
-    height: 30px;
-}
-input[type=checkbox], label[for="summarize"]{
-    float: right;
-}
-input[type=text]{
-    height: 29px;
-    border-radius: unset;
-}
+
 @media only screen and (max-width:768px){
     .car-container{
         width:100%;
@@ -115,7 +97,7 @@ input[type=text]{
     select{
         max-width:65%;
     }
-    form#filter-form {
+    form#car-search-form {
         height:4em;
     }
     .add-review {
@@ -130,4 +112,10 @@ input[type=text]{
     #stage-content{
         padding:0px;
     }
+}
+.add-review{
+    float:unset;
+}
+.search-filters{
+    text-align: center;
 }

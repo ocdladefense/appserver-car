@@ -8,8 +8,6 @@
 
     $isUpdate = $car->getId() != null;
     $headerMessage = $isUpdate ? "Update Case Review" : "Create a Case Review";
-
-    $shouldCheckTest = ($isUpdate && $car->isTest()) || !$isUpdate ? true : false;
 ?>
 
 <link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/car-form.css" />
@@ -23,7 +21,7 @@
 
     <?php
         $checkFlagged = $car->isFlagged() ? "checked" : "";
-        $checkTest = $shouldCheckTest ? "checked" : "";
+        
         $checkDraft = $car->isDraft() ? "checked" : "";
 
         $subjectDefault = array("" => "None Selected");
@@ -36,10 +34,20 @@
         $allCounties = $countyDefault + $counties;
 
         $selectedSubject = empty($car->getSubject1()) ? "" : $car->getSubject1();
+
         $selectedCounty = empty($car->getCircuit()) ? "" : $car->getCircuit();
 
         // Create the datalist element for the judge name autocomplete.
         print createDataListElement("judge-datalist", $judges);
+
+        $importanceLevels = array(
+            "" => "none selected",
+            "1" => "1",
+            "2" => "2",
+            "3" => "3",
+            "4" => "4",
+            "5" => "5"
+        );
 
     ?>
 
@@ -49,98 +57,99 @@
 
         <?php if($car->getId() != null) : ?>
 
-            <div class="form-item">
-                <a class="delete-review" data-car-id="<?php print $car->getId(); ?>" href="/car/delete/<?php print $car->getId(); ?>"><i style="font-size: x-large;" class="fas fa-trash-alt"></i></a>
-            </div>
+            <a class="delete-review" data-car-id="<?php print $car->getId(); ?>" href="/car/delete/<?php print $car->getId(); ?>">
+                <i style="font-size: x-large;" class="fas fa-trash-alt"></i>
+            </a>
+
         <?php endif; ?>
 
         <div class="checkbox-area">
-            <div class="form-item">
+            <div>
                 <input class="checkbox-option" name="is_flagged" value="1" <?php print $checkFlagged; ?> type="checkbox" />
                 <label class="checkbox-label">Flag</label>
             </div>
 
-            <div class="form-item">
+            <div>
                 <input class="checkbox-option" name="is_draft" value ="1" <?php print $checkDraft; ?> type="checkbox" />
                 <label class="checkbox-label">Is Draft</label>
-            </div>
-
-            <div class="form-item">
-                <input class="checkbox-option" name="is_test" value="1" type="checkbox" <?php print $checkTest; ?> />
-                <label class="checkbox-label">Is Test</label>
             </div>
         </div>
 
         <input type="hidden" name="id" value="<?php print $car->getId(); ?>" />
 
-        <div class="decision-date form-item">
+        <div>
             <label>Decision Date</label>
-            <input type="date" name="date" value="<?php print $car->getPickerCompatibleDate(); ?>">
+            <input required type="date" name="date" value="<?php print $car->getPickerCompatibleDate(); ?>">
         </div>
 
-        <div class="form-item">
+        <!-- <div>
+            <label>Importance</label>
+            <?php print createSelectElement("importance", $importanceLevels); ?>
+        </div> -->
+
+        <div>
             <label>Court</label>
             <?php print createSelectElement("court", $allCourts, $selectedCourt); ?>
         </div>
 
-        <div class="form-item">
-            <label>Appellate #</label>
-            <input type="text" name="a_number" value="<?php print $car->getA_number(); ?>" placeholder="Enter A#" />
-        </div>
 
-        <div class="form-item">
+        <div>
             <label>Plaintiff</label>
-            <input type="text" name="plaintiff" value="<?php print $car->getPlaintiff(); ?>" placeholder="Enter plaintiff..." />
+            <input required type="text" name="plaintiff" value="<?php print empty($car->getPlaintiff()) ? "State" : $car->getPlaintiff(); ?>" placeholder="Enter plaintiff..." />
         </div>
 
-        <div class="form-item">
+        <div>
             <label>Defendant</label>
-            <input type="text" name="defendant" value="<?php print $car->getDefendant(); ?>" placeholder="Enter defendant..." />
+            <input required type="text" name="defendant" value="<?php print $car->getDefendant(); ?>" placeholder="Enter defendant..." />
         </div>
 
-        <div class="form-item">
+        <div>
+            <label>Appellate Judge</label>
+            <input required autocomplete="off" type="text" name="appellate_judge" value="<?php print $car->getAppellateJudge(); ?>" data-datalist="judge-datalist" placeholder="Search by judge name" />
+        </div>
+
+        <div>
+            <label>Trial Judge</label>
+            <input required autocomplete="off" type="text" name="trial_judge" value="<?php print $car->getTrialJudge(); ?>" data-datalist="judge-datalist" placeholder="Search by judge name" />
+        </div>
+
+        <div>
             <label>Primary Subject</label>
             <?php print createSelectElement("subject_1", $allSubjects, $selectedSubject); ?>
             <button type="button" id="new-subject" class="new-subject" onclick="handleNewSubject()">New Subject</button>
         </div>
 
-        <div class="form-item">
+        <div>
             <label>Secondary Subject</label>
             <input type="text" name="subject_2" value="<?php print $car->getSubject2(); ?>" placeholder="Enter Secondary Subject..." />
         </div>
 
-        <div class="form-item">
-            <label>Citation</label>
-            <input type="text" name="citation" value="<?php print $car->getCitation(); ?>" placeholder="Enter Citation...(ex. 311 Or App 542)" />
+        <div>
+            <label>Appellate #</label>
+            <input required type="text" name="a_number" value="<?php print $car->getA_number(); ?>" placeholder="Enter A#" />
         </div>
 
-        <div class="form-item">
+
+        <div>
+            <label>Citation</label>
+            <input required type="text" name="citation" value="<?php print $car->getCitation(); ?>" placeholder="Enter Citation...(ex. 311 Or App 542)" />
+        </div>
+
+        <div>
             <label>County</label>
             <?php print createSelectElement("circuit", $allCounties, $selectedCounty); ?>
         </div>
 
-        <div class="form-item">
-            <label>Judges</label>
-            <input autocomplete="off" type="text" name="majority" value="<?php print $car->getMajority(); ?>" data-datalist="judge-datalist" placeholder="Search by judge name" />
-        </div>
-        
-
-        <div class="form-item">
-            <label>Appellate Judge</label>
-            <input autocomplete="off" type="text" name="judges" value="<?php print $car->getJudges(); ?>" data-datalist="judge-datalist" placeholder="Search by appellate judge name" />
+        <div>
+            <label>Link to review on State of Oregon Law Library</label>
+            <input required type="text" name="external_link" value="<?php print $car->getExternalLink(); ?>" placeholder="Link to State of Oregon Law Library..." />
         </div>
 
-        <div class="form-item">
+        <div>
             <label>Summary</label>
-            <textarea name="summary" placeholder="Enter the entire case summary, including additional information..."><?php print $car->getSummary(); ?></textarea>
+            <textarea required name="summary" placeholder="Enter the entire case summary, including additional information..."><?php print $car->getSummary(); ?></textarea>
         </div>
 
-        <?php if(!empty($car->getResult())) : ?>
-            <div class="form-item">
-                <label>Result</label>
-                <textarea name="result"><?php print $car->getResult(); ?></textarea>
-            </div>
-        <?php endif; ?>
 
         <button type="submit" id="submit">Submit</button>
     </form>

@@ -6,11 +6,11 @@
     <h1 class="list-header">OCDLA Criminal Appellate Review Summaries</h1>
 
     <div class="car-container">
-       <?php print $searchForm; ?>
+       <?php print $searchContainer; ?>
     </div>
 
 	<div class="car-container">
-		<?php print $userMessages; ?>
+		<?php print $messagesContainer; ?>
 	</div>
 
 
@@ -78,12 +78,14 @@
 			</div>
 
 			<div class="car-item subject-1">
-				<?php print $car->getSubject1(); ?>
+				<?php print strtoupper($car->getSubject1()) . " &bull; " . $car->getSubject2(); ?>
 			</div>
 			
-			<div class="car-item subject-2">
+			<!-- <div class="car-item subject-2">
 				<?php print $car->getSubject2(); ?>
-			</div>
+			</div> -->
+
+			<br />
 
 			<label>
 				<?php print $car->getSummary(); ?>
@@ -104,24 +106,32 @@
 				</label>
 				
 				<label>
-					<strong>County:</strong>
+					<strong>Circuit:</strong>
 					<?php print $car->getCircuit(); ?>
 				</label>
 				
 				<label>
-					<strong>Judges:</strong>
-					<?php print $car->getMajority(); ?>
+					<strong>Appellate Judge:</strong>
+					<?php print $car->getAppellateJudge(); ?>
 				</label>
 				
 				<label>
-					<strong>Appellate Judge:</strong>
-					<?php print $car->getJudges(); ?>
+					<strong>Trial Judge:</strong>
+					<?php print $car->getTrialJudge(); ?>
 				</label>
+				
 			</div>
-			
-			<?php if($car->getUrl() != null && $user->isAdmin()) : ?>
-				<a href="<?php print $car->getUrl(); ?>" target="_blank">View on the Library of Defense website</a>
+
+			<?php if(!empty($car->getExternalLink())) : ?>
+				<a href="<?php print $car->getExternalLink(); ?>" target="_blank">View on State of Oregon Law Library</a>
 			<?php endif; ?>
+
+			<br />
+			
+			<?php if(!empty($car->getUrl()) && $user->isAdmin()) : ?>
+				<a href="<?php print $car->getUrl(); ?>" target="_blank">View on the Library of Defense</a>
+			<?php endif; ?>
+
 		</div>
 
 	<?php } ?>
