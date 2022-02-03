@@ -68,6 +68,11 @@ class CarModule extends Module {
 					"fieldname"	=> "court",
 					"op"		=> "=",
 					"syntax"	=> "'%s'"
+				),
+				array(
+					"fieldname"	=> "importance",
+					"op"		=> "=",
+					"syntax"	=> "%s"
 				)
 			)
 		);
@@ -156,8 +161,10 @@ class CarModule extends Module {
 			"judges"					 => $allJudges,
 			"selectedAppellateJudge"     => $params["appellate_judge"],
 			"selectedTrialJudge"         => $params["trial_judge"],
+			"importance"				 => $params["importance"],
 			"user"				 		 => get_current_user(),
-			"doSummarize"		 		 => $this->doSummarize
+			"doSummarize"		 		 => $this->doSummarize,
+			"selectedImportance"		 => $params["importance"]
 		));
 
 	}

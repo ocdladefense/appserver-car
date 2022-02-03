@@ -35,6 +35,8 @@
 
         $selectedSubject = empty($car->getSubject1()) ? "" : $car->getSubject1();
 
+        $selectedSubject = ucwords($selectedSubject);
+
         $selectedCounty = empty($car->getCircuit()) ? "" : $car->getCircuit();
 
         // Create the datalist element for the judge name autocomplete.
@@ -48,6 +50,8 @@
             "4" => "4",
             "5" => "5"
         );
+
+        $selectedImportance = !empty($car->getImportance()) ? $car->getImportance() : "";
 
     ?>
 
@@ -82,10 +86,10 @@
             <input required type="date" name="date" value="<?php print $car->getPickerCompatibleDate(); ?>">
         </div>
 
-        <!-- <div>
+        <div>
             <label>Importance</label>
-            <?php print createSelectElement("importance", $importanceLevels); ?>
-        </div> -->
+            <?php print createSelectElement("importance", $importanceLevels, $selectedImportance); ?>
+        </div>
 
         <div>
             <label>Court</label>

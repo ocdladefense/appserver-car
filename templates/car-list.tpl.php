@@ -46,6 +46,8 @@
 		
 		$title = $car->getTitle();
 		$court = $car->getCourt();
+
+		$importance = !empty($car->getImportance()) ? $car->getImportance() . "/5" : "unset";
 		
 		?>
 
@@ -64,6 +66,10 @@
 					<input class="checkbox-option" id="car-<?php print $car->getId(); ?>" name="is_flagged" data-car-id="<?php print $car->getId(); ?>" type="checkbox" <?php print $isFlagged; ?> />
 				</div> <!-- end admin area  -->
 			<?php endif; ?>
+
+			<div class="car-item">
+				<?php print "Importance: $importance"; ?>
+			</div>
 				
 			<div class="car-item title">
 				<?php print $title; ?>
@@ -88,7 +94,7 @@
 			<br />
 
 			<label>
-				<?php print $car->getSummary(); ?>
+				<?php print nl2br($car->getSummary()); ?>
 			</label>
 
 			<br />

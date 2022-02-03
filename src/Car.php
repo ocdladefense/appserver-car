@@ -3,6 +3,7 @@
 class Car {
 
 	public $id;
+	public $importance;
 	public $title;
 	public $court;
 	public $plaintiff;
@@ -36,6 +37,7 @@ class Car {
 
 		$car = new Self();
 		$car->id = empty($record["id"]) ? null : $record["id"];
+		$car->importance = $record["importance"];
 		$car->plaintiff = $record["plaintiff"];
 		$car->defendant = $record["defendant"];
 
@@ -77,6 +79,11 @@ class Car {
 	public function getId(){
 
 		return $this->id;
+	}
+
+	public function getImportance() {
+
+		return $this->importance;
 	}
 
 	public function getA_number() {
