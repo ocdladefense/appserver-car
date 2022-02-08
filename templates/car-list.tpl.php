@@ -51,7 +51,7 @@
 		
 		?>
 
-		<?php if($newSubject && $groupBy == "subject_1") : ?>
+		<?php if($newSubject && $groupBy == "subject") : ?>
 			<h2 class="subject-header <?php print $isFirstClass; ?>"><?php print $subject; ?></h2>
 		<?php endif; ?>
 

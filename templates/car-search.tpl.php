@@ -36,7 +36,7 @@ $importanceLevels = array(
 
         <div class="search-filters">
 
-            <?php print createSelectElement("subject_1", $allSubjects, $subject); ?>
+            <?php print createSelectElement("subject", $allSubjects, $subject); ?>
             <?php print createSelectElement("year", $allYears, $year); ?>
             <?php print createSelectElement("month", $allMonths, $month); ?>
             <?php print createSelectElement("court", $allCourts, $court); ?>

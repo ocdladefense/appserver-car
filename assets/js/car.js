@@ -63,7 +63,7 @@ function handleNewSubject(e){
 
     let subject = window.prompt("Enter a new primary subject");
 
-    let selectList = document.getElementsByName("subject_1")[0];
+    let selectList = document.getElementsByName("subject")[0];
 
     let newOption = document.createElement("option");
     newOption.setAttribute("value", subject.toLowerCase());

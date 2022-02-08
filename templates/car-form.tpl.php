@@ -119,13 +119,13 @@
 
         <div>
             <label>Primary Subject</label>
-            <?php print createSelectElement("subject_1", $allSubjects, $selectedSubject); ?>
+            <?php print createSelectElement("subject", $allSubjects, $selectedSubject); ?>
             <button type="button" id="new-subject" class="new-subject" onclick="handleNewSubject()">New Subject</button>
         </div>
 
         <div>
             <label>Secondary Subject</label>
-            <input type="text" name="subject_2" value="<?php print $car->getSubject2(); ?>" placeholder="Enter Secondary Subject..." />
+            <input type="text" name="secondary_subject" value="<?php print $car->getSubject2(); ?>" placeholder="Enter Secondary Subject..." />
         </div>
 
         <div>
