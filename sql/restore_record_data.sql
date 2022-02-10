@@ -1,0 +1,1 @@
+UPDATE car SET circuit = 'No circuit info listed', importance = 0 WHERE importance = 1 AND year = 2018;
