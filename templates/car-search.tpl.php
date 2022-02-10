@@ -17,6 +17,16 @@ $summarizeChecked = $doSummarize ? "checked" : "";
 
 print createDataListElement("judge-datalist", $judges);
 
+$importanceLevels = array(
+    "" => "All Importance",
+    1 => "1",
+    2 => "2",
+    3 => "3",
+    4 => "4",
+    5 => "5"
+);
+
+
 ?>
 
 <link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/car-search.css" />
@@ -26,11 +36,12 @@ print createDataListElement("judge-datalist", $judges);
 
         <div class="search-filters">
 
-            <?php print createSelectElement("subject_1", $allSubjects, $subject); ?>
+            <?php print createSelectElement("subject", $allSubjects, $subject); ?>
             <?php print createSelectElement("year", $allYears, $year); ?>
             <?php print createSelectElement("month", $allMonths, $month); ?>
             <?php print createSelectElement("court", $allCourts, $court); ?>
             <?php print createSelectElement("circuit", $allCounties, $county); ?>
+            <?php print createSelectElement("importance", $importanceLevels, $selectedImportance); ?>
 
             <input autocomplete="off" type="text" name="appellate_judge" value="<?php print $selectedAppellateJudge; ?>" data-datalist="judge-datalist" placeholder="Appellate Judge" onchange="submitForm()" />
             <input autocomplete="off" type="text" name="trial_judge" value="<?php print $selectedTrialJudge; ?>" data-datalist="judge-datalist" placeholder="Trial Judge" onchange="submitForm()" />

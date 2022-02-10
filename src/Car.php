@@ -3,14 +3,15 @@
 class Car {
 
 	public $id;
+	public $importance;
 	public $title;
 	public $court;
 	public $plaintiff;
 	public $defendant;
 	public $trial_judge;
 	public $appellate_judge;
-	public $subject_1;
-	public $subject_2;
+	public $subject;
+	public $secondary_subject;
 	public $summary;
 	public $a_number;
 	public $citation;
@@ -36,6 +37,7 @@ class Car {
 
 		$car = new Self();
 		$car->id = empty($record["id"]) ? null : $record["id"];
+		$car->importance = $record["importance"];
 		$car->plaintiff = $record["plaintiff"];
 		$car->defendant = $record["defendant"];
 
@@ -47,8 +49,8 @@ class Car {
 		$car->court = $record["court"];
 		$car->trial_judge = $record["trial_judge"];
 		$car->appellate_judge = $record["appellate_judge"];
-		$car->subject_1 = $record["subject_1"];
-		$car->subject_2 = $record["subject_2"];
+		$car->subject = $record["subject"];
+		$car->secondary_subject = $record["secondary_subject"];
 		$car->summary = $record["summary"];
 		$car->a_number = $record["a_number"];
 		$car->citation = $record["citation"];
@@ -79,6 +81,11 @@ class Car {
 		return $this->id;
 	}
 
+	public function getImportance() {
+
+		return $this->importance;
+	}
+
 	public function getA_number() {
 
 		return $this->a_number;
@@ -86,12 +93,12 @@ class Car {
 
 	public function getSubject1(){
 
-		return $this->subject_1;
+		return $this->subject;
 	}
 
 	public function getSubject2(){
 
-		return $this->subject_2;
+		return $this->secondary_subject;
 	}
 
 	public function getSummary(){

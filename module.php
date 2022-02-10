@@ -30,7 +30,7 @@ class CarModule extends Module {
 			"op" => "AND",
 			"conditions" => array(
 				array(
-					"fieldname"	=> "subject_1",
+					"fieldname"	=> "subject",
 					"op"		=> "LIKE",
 					"syntax"	=> "'%s%%'"
 				),
@@ -68,6 +68,11 @@ class CarModule extends Module {
 					"fieldname"	=> "court",
 					"op"		=> "=",
 					"syntax"	=> "'%s'"
+				),
+				array(
+					"fieldname"	=> "importance",
+					"op"		=> "=",
+					"syntax"	=> "%s"
 				)
 			)
 		);
@@ -82,7 +87,7 @@ class CarModule extends Module {
 
 		if(!empty($params)) $sql->setConditions($conditions, $params);
 
-		$orderBy = $this->doSummarize ? "subject_1, year DESC, month DESC, day DESC" : "year DESC, month DESC, day DESC";
+		$orderBy = $this->doSummarize ? "subject, year DESC, month DESC, day DESC" : "year DESC, month DESC, day DESC";
 		$sql->setOrderBy($orderBy);
 
 		$query = $sql->compile();
@@ -120,7 +125,7 @@ class CarModule extends Module {
 				"searchContainer" 	 => $this->getCarSearch($params, $query),
 				"messagesContainer"  => $this->getUserFriendlyMessages($params, $cars, $query),
 				"user"			     => get_current_user(),
-				"groupBy"		     => $this->doSummarize ? "subject_1" : null
+				"groupBy"		     => $this->doSummarize ? "subject" : null
 			)
 		);
 	}
@@ -128,7 +133,7 @@ class CarModule extends Module {
 
 	public function getCarSearch($params, $query) {
 
-		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
+		$subjects = DbHelper::getDistinctFieldValues("car", "subject");
 
 		
 
@@ -144,7 +149,7 @@ class CarModule extends Module {
 
 		return $tpl->render(array(
 			"subjects" 					 => $subjects,
-			"subject"					 => $params["subject_1"],
+			"subject"					 => $params["subject"],
 			"years"						 => $years,
 			"year"						 => $params["year"],
 			"allMonths"					 => $this->getMonths(),
@@ -156,8 +161,10 @@ class CarModule extends Module {
 			"judges"					 => $allJudges,
 			"selectedAppellateJudge"     => $params["appellate_judge"],
 			"selectedTrialJudge"         => $params["trial_judge"],
+			"importance"				 => $params["importance"],
 			"user"				 		 => get_current_user(),
-			"doSummarize"		 		 => $this->doSummarize
+			"doSummarize"		 		 => $this->doSummarize,
+			"selectedImportance"		 => $params["importance"]
 		));
 
 	}
@@ -181,7 +188,7 @@ class CarModule extends Module {
 		$month = $this->getStringMonth($params["month"]);
 		$day = $params["day"];
 		$court = $params["court"];
-		$subject = $params["subject_1"];
+		$subject = $params["subject"];
 		$county = $params["circuit"];
 
 		$courtMsg = empty($court) ? "" : "in $court";
@@ -218,7 +225,7 @@ class CarModule extends Module {
 		
 		$car = !empty($carId) ? select("SELECT * FROM car WHERE id = '$carId'") : new Car();
 
-		$subjects = DbHelper::getDistinctFieldValues("car", "subject_1");
+		$subjects = DbHelper::getDistinctFieldValues("car", "subject");
 		$subjects = array_map(function($subject) { return ucwords($subject); }, $subjects);
 
 		$appellateJudges = DbHelper::getDistinctFieldValues("car", "appellate_judge");
