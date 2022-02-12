@@ -323,6 +323,59 @@ class CarModule extends Module {
 	}
 	
 
+	public function doMail(){
+
+		$query = "SELECT * FROM car ORDER BY year DESC LIMIT 3";
+		$cars = select($query);
+		
+		$carsTemplate = new Template("car-email-list");
+		$carsTemplate->addPath(__DIR__ . "/templates");
+
+		$carsHTML = $carsTemplate->render(["cars" => $cars]);
+
+		$emailTemplate = new Template("car-email");
+		$emailTemplate->addPath(__DIR__ . "/templates");
+
+		$params = [
+			"car" => $cars[0],
+			"carList" => $carsHTML 
+		];
+
+		$to = "trevoruehlinx1@gmail.com";
+		$email = $emailTemplate->render($params);
+		$headers = [
+			"From: trevoruehlinx1@gmail.com",
+			"Subject: Appellate Review - COA, " . $cars[0]->getDate(false),
+			"Content-Type: text/html"
+		];
+
+		print $email;exit;
+
+		if(mail($to, $subject, $email, implode("\r\n", $headers))) print "mail sent";
+		else print "mail failed";
+		exit;
+	}
+
+
+
+	public function getStringMonth($numMonth){
+		
+		$numMonth = strlen($numMonth) == 1 ? "0$numMonth" : $numMonth;
+
+		return $this->getMonths()[$numMonth];
+	}
+
+
+
+
+
+
+	
+	############################################################################################################################
+	###################### HARD CODED DATA FUNCTIONS ###########################################################################
+	############################################################################################################################
+
+
 	public function getOregonCounties(){
 
 		return array(
@@ -385,13 +438,6 @@ class CarModule extends Module {
 		);
 	}
 
-
-	public function getStringMonth($numMonth){
-		
-		$numMonth = strlen($numMonth) == 1 ? "0$numMonth" : $numMonth;
-
-		return $this->getMonths()[$numMonth];
-	}
 
 
 	public function getAppellateCourts(){
