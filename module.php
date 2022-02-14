@@ -5,6 +5,7 @@ use Http\HttpRequest;
 use Http\HttpHeader;
 use Mysql\DbHelper;
 use Mysql\QueryBuilder;
+use Http\HttpHeaderCollection;
 
 use function Mysql\insert;
 use function Mysql\update;
@@ -323,7 +324,7 @@ class CarModule extends Module {
 	}
 	
 
-	public function doMail(){
+	public function dailyUpdate($date = "2022-01-05") {
 
 		$query = "SELECT * FROM car ORDER BY year DESC LIMIT 3";
 		$cars = select($query);
@@ -341,20 +342,30 @@ class CarModule extends Module {
 			"carList" => $carsHTML 
 		];
 
-		$date = $cars[0]->getDate(false);
+		//$date = $cars[0]->getDate(false);
 
-		$emailHTML = $emailTemplate->render($params);
+		$html = $emailTemplate->render($params);
+
+		return $this->doMail($html);
+
+	}
+
+
+
+	public function doMail($html){
 
 		$headers = [
-			"to" 		   => "To: trevoruehlinx1@gmail.com",
-			"from" 		   => "From: trevoruehlinx1@gmail.com",
-			"subject" 	   => "Subject: Appellate Review, COA, $date",
-			"content-type" => "Content-Type: text/html"
+			"To" 		   => "trevoruehlinx1@gmail.com",
+			"From" 		   => "trevoruehlinx1@gmail.com",
+			"Subject" 	   => "Appellate Review, COA, $date",
+			"Content-Type" => "text/html"
 		];
 
+		$httpHeaders = HttpHeaderCollection::fromArray($headers);
+
 		$mailMessage = new MailMessage();
-		$mailMessage->setBody($emailHTML);
-		$mailMessage->setHeaders($headers);
+		$mailMessage->setBody($html);
+		$mailMessage->setHeaders($httpHeaders);
 
 		return $mailMessage;
 	}

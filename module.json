@@ -46,9 +46,8 @@
 			"authorization":"webserver"
 		},
 		"car/mail":{
-			"callback":"doMail",
-			"content-type":"text/html",
-			"application":"mail"
+			"callback":"dailyUpdate",
+			"content-type":"text/html"
 		}
 	}
 }
