@@ -172,13 +172,15 @@ class Car {
 	}
 	
 	
-	public function getDate(){
+	public function getDate(Bool $showWeekDay = true){
 
 		$dateString = $this->year . "-" . $this->month . "-" . $this->day;
 
 		$date = new DateTime($dateString);
 
-		$formated = $date->format("l, F jS, Y");
+		$format = $showWeekDay ? "l, F jS, Y" : "F jS, Y";
+
+		$formated = $date->format($format);
 
 		return $formated;
 	}

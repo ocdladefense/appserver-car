@@ -21,10 +21,6 @@
 			"access":"is_authenticated",
 			"authorization":"webserver"
 		},
-		"car/test":{
-			"callback":"testCarRoute",
-			"content-type":"text/html"
-		},
 		"car/new":{
 			"callback":"showCarForm",
 			"content-type":"text/html",
@@ -49,8 +45,8 @@
 			"access":"is_authenticated",
 			"authorization":"webserver"
 		},
-		"car/update/anumber":{
-			"callback":"updateCarANumber",
+		"car/mail":{
+			"callback":"doMail",
 			"content-type":"text/html"
 		}
 	}
