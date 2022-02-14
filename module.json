@@ -47,7 +47,8 @@
 		},
 		"car/mail":{
 			"callback":"doMail",
-			"content-type":"text/html"
+			"content-type":"text/html",
+			"application":"mail"
 		}
 	}
 }
