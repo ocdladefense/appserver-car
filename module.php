@@ -341,19 +341,23 @@ class CarModule extends Module {
 			"carList" => $carsHTML 
 		];
 
-		$to = "trevoruehlinx1@gmail.com";
-		$email = $emailTemplate->render($params);
-		$headers = [
-			"From: trevoruehlinx1@gmail.com",
-			"Subject: Appellate Review - COA, " . $cars[0]->getDate(false),
-			"Content-Type: text/html"
-		];
+		$emailHTML = $emailTemplate->render($params);
 
-		print $email;exit;
+		return $emailHTML;
 
-		if(mail($to, $subject, $email, implode("\r\n", $headers))) print "mail sent";
-		else print "mail failed";
-		exit;
+		// $to = "trevoruehlinx1@gmail.com";
+		// $email = $emailTemplate->render($params);
+		// $headers = [
+		// 	"From: trevoruehlinx1@gmail.com",
+		// 	"Subject: Appellate Review - COA, " . $cars[0]->getDate(false),
+		// 	"Content-Type: text/html"
+		// ];
+
+		// print $email;exit;
+
+		// if(mail($to, $subject, $email, implode("\r\n", $headers))) print "mail sent";
+		// else print "mail failed";
+		// exit;
 	}
 
 
