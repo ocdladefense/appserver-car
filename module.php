@@ -5,6 +5,7 @@ use Http\HttpRequest;
 use Http\HttpHeader;
 use Mysql\DbHelper;
 use Mysql\QueryBuilder;
+use Http\HttpHeaderCollection;
 
 use function Mysql\insert;
 use function Mysql\update;
@@ -323,7 +324,10 @@ class CarModule extends Module {
 	}
 	
 
-	public function doMail(){
+	public function dailyUpdate($date = "2022-01-05") {
+
+
+		$subject = "Appellate Review, COA, $date";
 
 		$query = "SELECT * FROM car ORDER BY year DESC LIMIT 3";
 		$cars = select($query);
@@ -341,19 +345,33 @@ class CarModule extends Module {
 			"carList" => $carsHTML 
 		];
 
-		$to = "trevoruehlinx1@gmail.com";
-		$email = $emailTemplate->render($params);
+	
+		$html = $emailTemplate->render($params);
+
+		return $this->doMail($subject, $html);
+
+	}
+
+
+
+	public function doMail($subject, $html){
+		$trevor = "trevoruehlinx1@gmail.com";
+		$jose = "jbernal.web.dev@gmail.com";
+
 		$headers = [
-			"From: trevoruehlinx1@gmail.com",
-			"Subject: Appellate Review - COA, " . $cars[0]->getDate(false),
-			"Content-Type: text/html"
+			"To" 		   => $jose,
+			"From" 		   => "trevoruehlinx1@gmail.com",
+			"Subject" 	   => $subject,
+			"Content-Type" => "text/html"
 		];
 
-		print $email;exit;
+		$headers = HttpHeaderCollection::fromArray($headers);
 
-		if(mail($to, $subject, $email, implode("\r\n", $headers))) print "mail sent";
-		else print "mail failed";
-		exit;
+		$message = new MailMessage();
+		$message->setBody($html);
+		$message->setHeaders($headers);
+
+		return $message;
 	}
 
 
