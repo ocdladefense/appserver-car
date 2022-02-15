@@ -326,6 +326,9 @@ class CarModule extends Module {
 
 	public function dailyUpdate($date = "2022-01-05") {
 
+
+		$subject = "Appellate Review, COA, $date";
+
 		$query = "SELECT * FROM car ORDER BY year DESC LIMIT 3";
 		$cars = select($query);
 		
@@ -342,32 +345,33 @@ class CarModule extends Module {
 			"carList" => $carsHTML 
 		];
 
-		//$date = $cars[0]->getDate(false);
-
+	
 		$html = $emailTemplate->render($params);
 
-		return $this->doMail($html);
+		return $this->doMail($subject, $html);
 
 	}
 
 
 
-	public function doMail($html){
+	public function doMail($subject, $html){
+		$trevor = "trevoruehlinx1@gmail.com";
+		$jose = "jbernal.web.dev@gmail.com";
 
 		$headers = [
-			"To" 		   => "trevoruehlinx1@gmail.com",
+			"To" 		   => $jose,
 			"From" 		   => "trevoruehlinx1@gmail.com",
-			"Subject" 	   => "Appellate Review, COA, $date",
+			"Subject" 	   => $subject,
 			"Content-Type" => "text/html"
 		];
 
-		$httpHeaders = HttpHeaderCollection::fromArray($headers);
+		$headers = HttpHeaderCollection::fromArray($headers);
 
-		$mailMessage = new MailMessage();
-		$mailMessage->setBody($html);
-		$mailMessage->setHeaders($httpHeaders);
+		$message = new MailMessage();
+		$message->setBody($html);
+		$message->setHeaders($headers);
 
-		return $mailMessage;
+		return $message;
 	}
 
 
