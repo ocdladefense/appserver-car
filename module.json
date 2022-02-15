@@ -45,8 +45,12 @@
 			"access":"is_authenticated",
 			"authorization":"webserver"
 		},
-		"car/mail":{
-			"callback":"dailyUpdate",
+		"car/mail/create":{
+			"callback":"showMailForm",
+			"content-type":"text/html"
+		},
+		"car/mail/send":{
+			"callback":"newMail",
 			"content-type":"text/html"
 		}
 	}
