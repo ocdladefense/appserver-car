@@ -1,0 +1,19 @@
+.email-container{
+    background-color: lightblue;
+}
+.date-group{
+    text-align:center;
+    margin: 5% 0 5% 0;
+}
+
+@media only screen and (min-width: 1000px) {
+
+    .email-container{
+        max-width: 60%;
+        padding: 2vw;
+    }
+    input[type=date]{
+        display: inline;
+        max-width: 20%;
+    }        
+}
