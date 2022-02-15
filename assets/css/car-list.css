@@ -97,9 +97,6 @@ label{
     select{
         max-width:65%;
     }
-    form#car-search-form {
-        height:4em;
-    }
     .add-review {
         float: unset;
         margin-left: 0px;
