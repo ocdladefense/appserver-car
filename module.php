@@ -163,7 +163,6 @@ class CarModule extends Module {
 			"selectedAppellateJudge"     => $params["appellate_judge"],
 			"selectedTrialJudge"         => $params["trial_judge"],
 			"importance"				 => $params["importance"],
-			"user"				 		 => get_current_user(),
 			"doSummarize"		 		 => $this->doSummarize,
 			"selectedImportance"		 => $params["importance"]
 		));
@@ -349,10 +348,10 @@ class CarModule extends Module {
 
 	public function newMail() {
 
-		$params = !empty($_POST) ? $_POST : $_GET;
+		$params = $this->getRequest()->getBody();
 
-		list($startYear, $startMonth, $startDay) = explode("-", $params["startDate"]);
-		list($endYear, $endMonth, $endDay) = explode("-", $params["endDate"]);
+		list($startYear, $startMonth, $startDay) = explode("-", $params->startDate);
+		list($endYear, $endMonth, $endDay) = explode("-", $params->endDate);
 
 		$query = "SELECT * FROM car WHERE year >= $startYear AND month >= $startMonth AND day >= $startDay AND year <= $endYear AND month <= $endMonth AND day <= $endDay ORDER BY year DESC, month DESC, day DESC";
 		$cars = select($query);
@@ -380,9 +379,9 @@ class CarModule extends Module {
 	public function doMail($params, $html){
 
 		$headers = [
-			"To" 		   => $params["to"],
-			"From" 		   => $params["from"],
-			"Subject" 	   => $params["subject"],
+			"To" 		   => $params->to,
+			"From" 		   => $params->from,
+			"Subject" 	   => $params->subject,
 			"Content-Type" => "text/html"
 		];
 

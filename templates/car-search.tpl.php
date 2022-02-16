@@ -53,10 +53,6 @@ $importanceLevels = array(
 
             <a class="filter-item" href="/car/list">Clear</a>
 
-            <?php if($user->isAdmin()) : ?>
-                <a class="add-review filter-item" href="/car/new">Add Review <i class="fas fa-plus" aria-hidden="true"></i></a>
-            <?php endif; ?>
-
             <label class="checkbox-label">summarize</label>
             <input id="summarize-checkbox" class="checkbox-option filter-item" type="checkbox" <?php print $summarizeChecked; ?> name="summarize" value="1" />
 
