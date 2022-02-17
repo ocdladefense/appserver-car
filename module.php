@@ -387,11 +387,9 @@ class CarModule extends Module {
 
 		$headers = HttpHeaderCollection::fromArray($headers);
 
-		$collection = new HttpHeaderCollection($headers);
-
 		$message = new MailMessage();
 		$message->setBody($html);
-		$message->setHeaders($collection);
+		$message->setHeaders($headers);
 
 		return $message;
 	}
