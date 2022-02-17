@@ -6,20 +6,22 @@
 	"files": [
 		"Car.php"
 	],
-	"links": {
-		"parentLinkId": "case-reviews",
-		"sublinks": [
-			{
-				"href":"/car/new",
-				"label": "Add Case Review"
-			},
-			{
-				"href":"/car/mail/create",
-				"label": "Send Mail"
-			}
-		],
-		"top-level-links":[]
-	},
+	"links": [
+		{
+			"href":"/car/new",
+			"label": "Add Case Review",
+			"isSublink": true,
+			"adminLink": true,
+			"parentLinkId":"car"
+		},
+		{
+			"href":"/car/mail/create",
+			"label": "Send Mail",
+			"isSublink": true,
+			"adminLink": true,
+			"parentLinkId":"car"
+		}
+	],
 	"routes": {
 		"car/list/%id":{
 			"callback":"showCars",
