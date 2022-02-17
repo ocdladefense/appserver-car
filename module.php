@@ -163,7 +163,6 @@ class CarModule extends Module {
 			"selectedAppellateJudge"     => $params["appellate_judge"],
 			"selectedTrialJudge"         => $params["trial_judge"],
 			"importance"				 => $params["importance"],
-			"user"				 		 => get_current_user(),
 			"doSummarize"		 		 => $this->doSummarize,
 			"selectedImportance"		 => $params["importance"]
 		));
@@ -324,12 +323,37 @@ class CarModule extends Module {
 	}
 	
 
-	public function dailyUpdate($date = "2022-01-05") {
 
+	############################################################################################################################
+	################################ EMAIL FUNCTIONS ###########################################################################
+	############################################################################################################################
 
-		$subject = "Appellate Review, COA, $date";
+	public function showMailForm() {
 
-		$query = "SELECT * FROM car ORDER BY year DESC LIMIT 3";
+		$today = new DateTime();
+		$pickerDate = $today->format("Y-m-d");
+		$emailDate = $today->format("M d, Y");
+
+		$form = new Template("car-email-form");
+		$form->addPath(__DIR__ . "/templates");
+
+		$params = [
+			"defaultEmail"		=> get_current_user()->getEmail(),
+			"defaultSubject"	=> "Appellate Review - COA, $emailDate",
+			"defaultPickerDate" => $pickerDate
+		];
+
+		return $form->render($params);
+	}
+
+	public function newMail() {
+
+		$params = $this->getRequest()->getBody();
+
+		list($startYear, $startMonth, $startDay) = explode("-", $params->startDate);
+		list($endYear, $endMonth, $endDay) = explode("-", $params->endDate);
+
+		$query = "SELECT * FROM car WHERE year >= $startYear AND month >= $startMonth AND day >= $startDay AND year <= $endYear AND month <= $endMonth AND day <= $endDay ORDER BY year DESC, month DESC, day DESC";
 		$cars = select($query);
 		
 		$carsTemplate = new Template("car-email-list");
@@ -340,36 +364,34 @@ class CarModule extends Module {
 		$emailTemplate = new Template("car-email");
 		$emailTemplate->addPath(__DIR__ . "/templates");
 
-		$params = [
+		$templateParams = [
 			"car" => $cars[0],
 			"carList" => $carsHTML 
 		];
 
 	
-		$html = $emailTemplate->render($params);
+		$html = $emailTemplate->render($templateParams);
 
-		return $this->doMail($subject, $html);
+		return $this->doMail($params, $html);
 
 	}
 
-
-
-	public function doMail($subject, $html){
-		$trevor = "trevoruehlinx1@gmail.com";
-		$jose = "jbernal.web.dev@gmail.com";
+	public function doMail($params, $html){
 
 		$headers = [
-			"To" 		   => $jose,
-			"From" 		   => "trevoruehlinx1@gmail.com",
-			"Subject" 	   => $subject,
+			"To" 		   => $params->to,
+			"From" 		   => $params->from,
+			"Subject" 	   => $params->subject,
 			"Content-Type" => "text/html"
 		];
 
 		$headers = HttpHeaderCollection::fromArray($headers);
 
+		$collection = new HttpHeaderCollection($headers);
+
 		$message = new MailMessage();
 		$message->setBody($html);
-		$message->setHeaders($headers);
+		$message->setHeaders($collection);
 
 		return $message;
 	}
