@@ -5,8 +5,8 @@ Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 */
 
-$title = "DUII Defense 2022";
-$content = "Hello World!";
+$title = "Recent Case Reviews";
+
 ?>
 
 

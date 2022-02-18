@@ -355,15 +355,25 @@ class CarModule extends Module {
 		list($startYear, $startMonth, $startDay) = explode("-", $params->startDate);
 		list($endYear, $endMonth, $endDay) = explode("-", $params->endDate);
 
-		$query = "SELECT * FROM car WHERE year >= $startYear AND month >= $startMonth AND day >= $startDay AND year <= $endYear AND month <= $endMonth AND day <= $endDay ORDER BY year DESC, month DESC, day DESC";
+
+		$html = $this->getRecentCarList($startYear,$startMonth,$startDat);
+
+		return $this->doMail($html);
+	}
+
+
+	public function getRecentCarList($year, $month, $day) {
+
+		$query = "SELECT * FROM car WHERE year = $year AND month = $month AND day = $day";
+		// ORDER BY year DESC, month DESC, day DESC";
 		$cars = select($query);
 		
-		$carsTemplate = new Template("car-email-list");
+		$carsTemplate = new Template("email-list");
 		$carsTemplate->addPath(__DIR__ . "/templates");
 
 		$carsHTML = $carsTemplate->render(["cars" => $cars]);
 
-		$emailTemplate = new Template("car-email");
+		$emailTemplate = new Template("email-body");
 		$emailTemplate->addPath(__DIR__ . "/templates");
 
 		$templateParams = [
@@ -372,33 +382,48 @@ class CarModule extends Module {
 		];
 
 	
-		$html = $emailTemplate->render($templateParams);
-
-		return $this->doMail($params, $html);
+		return $emailTemplate->render($templateParams);
 	}
 
 
 
 
-	
-	public function doMail($params, $html){
+
+	public function doMail($to, $subject, $content, $headers = array()){
 
 		$headers = [
-			"To" 		   => $params->to,
-			"From" 		   => $params->from,
-			"Subject" 	   => $params->subject,
+			"From" 		   => "notifications@ocdla.org",
 			"Content-Type" => "text/html"
 		];
 
 		$headers = HttpHeaderCollection::fromArray($headers);
 
-		$collection = new HttpHeaderCollection($headers);
+		$template = new Template("email-template");
+		$template->addPath(__DIR__ . "/templates");
+		$body = $template->render(array("content" => $content));
 
-		$message = new MailMessage();
-		$message->setBody($html);
-		$message->setHeaders($collection);
+		$message = new MailMessage($to);
+		$message->setSubject($subject);
+		$message->setBody($body);
+		$message->setHeaders($headers);
 
 		return $message;
+	}
+
+
+
+	public function testMail() {
+
+
+		$to = "jbernal.web.dev@gmail.com,rankinjohnsonpdx@gmail.com";
+		$subject = "Newest Case Review updates";
+
+
+
+		$content = $this->getRecentCarList(2022, 2, 10);
+		
+
+		return $this->doMail($to, $subject, $content);
 	}
 
 
