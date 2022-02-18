@@ -346,6 +346,8 @@ class CarModule extends Module {
 		return $form->render($params);
 	}
 
+
+
 	public function newMail() {
 
 		$params = $this->getRequest()->getBody();
@@ -373,9 +375,12 @@ class CarModule extends Module {
 		$html = $emailTemplate->render($templateParams);
 
 		return $this->doMail($params, $html);
-
 	}
 
+
+
+
+	
 	public function doMail($params, $html){
 
 		$headers = [
