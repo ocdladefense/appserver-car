@@ -72,6 +72,10 @@
 			"content-type":"text/html",
 			"access":"is_authenticated",
 			"authorization":"webserver"
+		},
+		"car/mail/test":{
+			"callback":"testMail",
+			"content-type":"text/html"
 		}
 	}
 }

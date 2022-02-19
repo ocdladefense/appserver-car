@@ -20,6 +20,13 @@
             <label>Email Subject</label>
             <input type="text" class="form-control" name="subject" value="<?php print $defaultSubject; ?>" placeholder="Enter email subject line...">
         </div>
+        <div class="form-group">
+            <label>Court</label>
+            <select name="court" class="form-control">
+                <option selected value="Oregon Appellate Court">Oregon Appellate Court</option>
+                <option value="Oregon Supreme Court">Oregon Supreme Court</option>
+            </select>
+        </div>
         <div class="form-group date-group">
             <h5>Case Reviews Date Range</h5>
             <label>From: </label>
