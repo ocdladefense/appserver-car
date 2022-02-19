@@ -10,7 +10,7 @@
     $appURL = "https://ocdla.app/car/list?year=$year&month=$month&day=$day";
 ?>
 
-<img src="https://ocdla.app/content/images/appellate-court-image.png" alt="Apellate Court image" />
+<!--<img src="https://ocdla.app/content/images/criminal-appellate-review.png" alt="Appellate Court image" />-->
 
 <p>Dear OCDLA Members,</p>
  

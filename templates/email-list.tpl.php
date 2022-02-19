@@ -21,20 +21,24 @@ foreach($cars as $car):
 
 
 
-    <h4>
+    <h4 style="font-size:12pt;">
         <?php print $title; ?>
-    </h4>
-
-    <p style="font-weight: bold;">
-        Important: <?php print $importance; ?>
-    </p>
-    <p>
-        <?php print nl2br($car->getSummary()); ?>
-    </p>
-    <p>
+        <br />
         <a href="https://ocdla.app/car/list/<?php print $car->getId(); ?>">
             <?php print $car->getTitle(); ?>
         </a>
+        <br />
+        <span style="font-weight:bold;">Important: <?php print $importance; ?></span>
+    </h4>
+
+    <p style="font-size:11pt;">
+        <?php print nl2br($car->getSummary()); ?>
+    </p>
+    <p style="font-size:11pt;">
+        <a href="https://ocdla.app/car/list/<?php print $car->getId(); ?>">
+            <?php print $car->getTitle(); ?>
+        </a>
+        <br />
         <?php print "$citation ($date) ($aJudge) ($county, $tJudge)"; ?>
         <br />
         -------------------------------------

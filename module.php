@@ -352,37 +352,55 @@ class CarModule extends Module {
 
 		$params = $this->getRequest()->getBody();
 
-		list($startYear, $startMonth, $startDay) = explode("-", $params->startDate);
-		list($endYear, $endMonth, $endDay) = explode("-", $params->endDate);
+		$startDate = new DateTime($params->startDate);
+		$endDate = new DateTime($params->endDate);
 
+		// var_dump($params); exit;
 
-		$html = $this->getRecentCarList($startYear,$startMonth,$startDat);
+		$html = $this->getRecentCarList($params->court, $startDate, $endDate);
+		
 
-		return $this->doMail($html);
+		return $this->doMail($params->to, $params->subject, $html);
 	}
 
 
-	public function getRecentCarList($year, $month, $day) {
+	public function getRecentCarList($court = 'Oregon Appellate Court', DateTime $begin = null, DateTime $end = null) {
+		$begin = null == $begin ? new DateTime() : $begin;
+		
+		$beginMysql = $begin->format('Y-m-j');
 
-		$query = "SELECT * FROM car WHERE year = $year AND month = $month AND day = $day";
+		if(null == $end) {
+			$query = "SELECT * FROM car WHERE decision_date = '{$beginMysql}'";
+			$query .= " AND court = '{$court}'";
+		} else {
+			$endMysql = $end->format('Y-m-j');
+	
+			$query = "SELECT * FROM car WHERE decision_date >= '{$beginMysql}'";
+			$query .= " AND decision_date <= '{$endMysql}'";
+			$query .= " AND court = '{$court}'";
+		}
+
+		// print $query;exit;
 		// ORDER BY year DESC, month DESC, day DESC";
 		$cars = select($query);
 		
-		$carsTemplate = new Template("email-list");
-		$carsTemplate->addPath(__DIR__ . "/templates");
+		// var_dump($cars);exit;
 
-		$carsHTML = $carsTemplate->render(["cars" => $cars]);
+		$list = new Template("email-list");
+		$list->addPath(__DIR__ . "/templates");
 
-		$emailTemplate = new Template("email-body");
-		$emailTemplate->addPath(__DIR__ . "/templates");
+		$listHtml = $list->render(["cars" => $cars]);
 
-		$templateParams = [
+		$body = new Template("email-body");
+		$body->addPath(__DIR__ . "/templates");
+
+		$params = [
 			"car" => $cars[0],
-			"carList" => $carsHTML 
+			"carList" => $listHtml 
 		];
 
 	
-		return $emailTemplate->render($templateParams);
+		return $body->render($params);
 	}
 
 
@@ -415,12 +433,13 @@ class CarModule extends Module {
 	public function testMail() {
 
 
-		$to = "jbernal.web.dev@gmail.com,rankinjohnsonpdx@gmail.com";
+		$to = "jbernal.web.dev@gmail.com";//,rankinjohnsonpdx@gmail.com";
 		$subject = "Newest Case Review updates";
 
 
-
-		$content = $this->getRecentCarList(2022, 2, 10);
+		$range = new DateTime("2022-1-10");
+		// $end = new DateTime();
+		$content = $this->getRecentCarList('Oregon Appellate Court', $range, $end);
 		
 
 		return $this->doMail($to, $subject, $content);
