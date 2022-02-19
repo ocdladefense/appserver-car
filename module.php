@@ -416,13 +416,11 @@ class CarModule extends Module {
 
 		$headers = HttpHeaderCollection::fromArray($headers);
 
-		$template = new Template("email-template");
-		$template->addPath(__DIR__ . "/templates");
-		$body = $template->render(array("content" => $content));
+
 
 		$message = new MailMessage($to);
 		$message->setSubject($subject);
-		$message->setBody($body);
+		$message->setBody($content);
 		$message->setHeaders($headers);
 
 		return $message;
@@ -438,7 +436,7 @@ class CarModule extends Module {
 
 
 		$range = new DateTime("2022-1-10");
-		// $end = new DateTime();
+		$end = new DateTime();
 		$content = $this->getRecentCarList('Oregon Appellate Court', $range, $end);
 		
 
