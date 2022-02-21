@@ -112,7 +112,7 @@
 				</label>
 				
 				<label>
-					<strong>Circuit:</strong>
+					<strong>County:</strong>
 					<?php print $car->getCircuit(); ?>
 				</label>
 				
