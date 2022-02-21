@@ -27,6 +27,8 @@ class CarModule extends Module {
 
 	public function showCars($newCarId = null) {
 
+		$user = get_current_user();
+
 		$conditions = array(
 			"op" => "AND",
 			"conditions" => array(
@@ -74,11 +76,19 @@ class CarModule extends Module {
 					"fieldname"	=> "importance",
 					"op"		=> "=",
 					"syntax"	=> "%s"
+				),
+				array(
+					"fieldname"	=> "is_draft",
+					"op"		=> "!=",
+					"syntax"	=> "%s"
 				)
 			)
 		);
 
+
 		$params = !empty($_GET) ? $_GET : $_POST;
+
+		if(!$user->isAdmin()) $params["is_draft"] = 1;
 
 		$this->doSummarize = !empty($params["summarize"]);
 
@@ -125,7 +135,7 @@ class CarModule extends Module {
 				"cars"			     => $cars,
 				"searchContainer" 	 => $this->getCarSearch($params, $query),
 				"messagesContainer"  => $this->getUserFriendlyMessages($params, $cars, $query),
-				"user"			     => get_current_user(),
+				"user"			     => $user,
 				"groupBy"		     => $this->doSummarize ? "subject" : null
 			)
 		);
