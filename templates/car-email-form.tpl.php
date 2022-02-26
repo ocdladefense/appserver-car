@@ -4,21 +4,21 @@
 
 <div class="container email-container">
 
-    <form action="/car/mail/send?mail=true" method="post">
+    <form action="/car/mail/send" method="post">
 
         <h1>Send Case Review Email</h1>
 
         <div class="form-group">
             <label>To:</label>
-            <input required id="to" type="email" class="form-control" name="to" value="<?php print $defaultEmail; ?>" aria-describedby="emailHelp" placeholder="To"...>
+            <input required id="to" type="email" class="form-control" name="to" value="<?php print $defaultEmail; ?>" aria-describedby="emailHelp" placeholder="To..." />
         </div>
         <div class="form-group">
             <label>From:</label>
-            <input required type="email" class="form-control" name="from" aria-describedby="emailHelp" placeholder="From"...>
+            <input required type="email" class="form-control" name="from" aria-describedby="emailHelp" placeholder="From..." />
         </div>
         <div class="form-group">
             <label>Email Subject</label>
-            <input type="text" class="form-control" name="subject" value="<?php print $defaultSubject; ?>" placeholder="Enter email subject line...">
+            <input type="text" class="form-control" name="subject" value="<?php print $defaultSubject; ?>" placeholder="Enter email subject line..." />
         </div>
         <div class="form-group">
             <label>Court</label>
@@ -30,10 +30,10 @@
         <div class="form-group date-group">
             <h5>Case Reviews Date Range</h5>
             <label>From: </label>
-            <input required type="date" id="startDate" name="startDate" class="form-control">
+            <input required type="date" id="startDate" name="startDate" class="form-control" />
 
             <label>To: </label>
-            <input required type="date" name="endDate" class="form-control" value="<?php print $defaultPickerDate; ?>">
+            <input required type="date" name="endDate" class="form-control" value="<?php print $defaultPickerDate; ?>" />
         </div>
         <button type="submit" class="btn btn-primary">Send Mail</button>
 

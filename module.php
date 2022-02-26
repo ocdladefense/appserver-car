@@ -390,6 +390,8 @@ class CarModule extends Module {
 			$query .= " AND court = '{$court}'";
 		}
 
+
+
 		// print $query;exit;
 		// ORDER BY year DESC, month DESC, day DESC";
 		$cars = select($query);
@@ -405,7 +407,10 @@ class CarModule extends Module {
 		$body->addPath(__DIR__ . "/templates");
 
 		$params = [
-			"car" => $cars[0],
+			"year" => $begin->format('Y'),
+			"month" => $begin->format('m'),
+			"day" => $begin->format('j'),
+			"date" => $begin->format('l, M j  Y'),
 			"carList" => $listHtml 
 		];
 
