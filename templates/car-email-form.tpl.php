@@ -4,7 +4,7 @@
 
 <div class="container email-container">
 
-    <form action="/car/mail/send?mail=true" method="post">
+    <form action="/car/mail/send" method="post">
 
         <h1>Send Case Review Email</h1>
 
