@@ -1,5 +1,25 @@
 # Appserver CAR Module
 
+## Example queries
+SELECT * FROM car WHERE year=2022 AND month=2 AND published_date=0000-00-0 ORDER BY day DESC;
+
+UPDATE car SET decision_date = CAST(CONCAT_WS("-",year,month,day) AS DATE) WHERE year=2022 AND month=2 AND published_date=0000-00-0
+
+
+UPDATE car SET decision_date = 20220224 WHERE year=2022 AND month=2
+
+
+SELECT CAST(CONCAT_WS("-",year,month,day) AS DATE) FROM car WHERE year=2022 AND month=2
+
+UPDATE car SET decision_date = STR_TO_DATE(CONCAT_WS("-",year,month,day),'%Y-%m,%d') WHERE year=2022 AND month=2 AND published_date=0000-00-0
+
+
+SELECT id, published_date, decision_date FROM car WHERE year=2022 AND month=2
+
+
+SELECT CONCAT_WS("-",year,month,day) FROM car WHERE year=2022 
+
+
 ## Installation
 ### Summary
 Installation consists of a PHP executable component and a MySQL database component. 
