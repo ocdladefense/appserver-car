@@ -1,8 +1,5 @@
 <?php
-    $year = $car->getYear();
-    $month = $car->getMonth();
-    $day = $car->getDay();
-    $date = $car->getDate(false);
+
 
     $ocdlaLatitude = "44.044495";
     $ocdlaLongitude = "-123.090919";
