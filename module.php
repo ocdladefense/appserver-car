@@ -360,7 +360,7 @@ class CarModule extends Module {
 		$html = $this->getRecentCarList($params->court, $startDate, $endDate);
 		
 
-		return $this->doMail($params->to, $params->subject, $html);
+		return $this->doMail($params->to, $params->subject, "OCDLA Criminal Appellate Review", $html);
 	}
 
 
@@ -412,7 +412,7 @@ class CarModule extends Module {
 
 
 
-	public function doMail($to, $subject, $content, $headers = array()){
+	public function doMail($to, $subject, $title, $content, $headers = array()){
 
 		$headers = [
 			"From" 		   => "notifications@ocdla.org",
@@ -427,6 +427,7 @@ class CarModule extends Module {
 		$message->setSubject($subject);
 		$message->setBody($content);
 		$message->setHeaders($headers);
+		$message->setTitle($title);
 
 		return $message;
 	}
@@ -445,7 +446,7 @@ class CarModule extends Module {
 		$content = $this->getRecentCarList('Oregon Appellate Court', $range, $end);
 		
 
-		return $this->doMail($to, $subject, $content);
+		return $this->doMail($to, $subject, "OCDLA Criminal Appellate Review", $content);
 	}
 
 
