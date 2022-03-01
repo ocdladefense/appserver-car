@@ -13,13 +13,6 @@
 			"isSublink": true,
 			"adminLink": true,
 			"parentLinkId":"car"
-		},
-		{
-			"href":"/car/mail/create",
-			"label": "Send Mail",
-			"isSublink": true,
-			"adminLink": true,
-			"parentLinkId":"car"
 		}
 	],
 	"routes": {
