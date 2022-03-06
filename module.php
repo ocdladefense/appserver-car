@@ -6,11 +6,17 @@ use Http\HttpHeader;
 use Mysql\DbHelper;
 use Mysql\QueryBuilder;
 use Http\HttpHeaderCollection;
+use GIS\Political\Countries\US\Oregon;
+use Ocdla\Date;
+
 
 use function Mysql\insert;
 use function Mysql\update;
 use function Mysql\select;
 use function Session\get_current_user;
+
+
+
 
 
 class CarModule extends Module {
@@ -25,7 +31,91 @@ class CarModule extends Module {
 		$this->name = "car";
 	}
 
-	public function showCars($newCarId = null) {
+
+
+
+	/**
+	 * @method showCars
+	 * 
+	 * Show our CAR page with a list of CAR entries
+	 * that resulted from the query.  Default query is to show all CARs,
+	 * with the most recent CARs first.  The page includes a search widget, a message for
+	 * the user summarizing the results of their query and the 
+	 * actual list of CAR entires.
+	 * 
+	 * @param $carId
+	 */
+	public function showCars($carId = null) {
+
+		$query = $this->getQuery();
+
+		$cars = select($query);
+
+		if(!is_array($cars)) $cars = array($cars);
+
+
+		// If there is a new car show it at the top of the list.
+		if(!empty($carId)) {
+
+			$promote = select("SELECT * FROM car WHERE id = '$carId'");
+
+			$promote->isNew(true);
+
+			for($i = 0; $i < count($cars); $i++){
+
+				if($cars[$i]->getId() == $promote->getId()){
+	
+					unset($cars[$i]);
+				}
+			}
+
+			array_unshift($cars, $promote);
+		}
+
+
+
+
+
+		$tpl = new Template("car-list");
+		$tpl->addPath(__DIR__ . "/templates");
+
+
+		// $tpl = new Template("results-widget");
+
+		// $tpl = new Template("search-widget");
+
+
+
+		$list = $tpl->render(
+			array(
+				"cars" => $cars
+			)
+		);
+
+
+
+		/*
+		"searchContainer" 	 => $this->getCarSearch($params, $query),
+		"messagesContainer"  => $this->getUserFriendlyMessages($params, $cars, $query),
+		"user"			     => get_current_user(),
+		"groupBy"		     => $this->doSummarize ? "subject" : null
+		*/
+
+		$search = "";
+		$message = "";
+		$tpl = new Template("car-page");
+		return $tpl->render(array(
+			"results" => $list,
+			"searchWidget" => $search,
+			"messageWidget" => $message
+		));
+	}
+
+
+
+
+	private function getQuery() {
+
 
 		$conditions = array(
 			"op" => "AND",
@@ -91,127 +181,13 @@ class CarModule extends Module {
 		$orderBy = $this->doSummarize ? "subject, year DESC, month DESC, day DESC" : "year DESC, month DESC, day DESC";
 		$sql->setOrderBy($orderBy);
 
-		$query = $sql->compile();
-
-		$cars = select($query);
-
-		if(!is_array($cars)) $cars = array($cars);
-
-
-		// If there is a new car show it at the top of the list.
-		if(!empty($newCarId)) {
-
-			$newCar = select("SELECT * FROM car WHERE id = '$newCarId'");
-
-			$newCar->isNew(true);
-
-			for($i = 0; $i < count($cars); $i++){
-
-				if($cars[$i]->getId() == $newCar->getId()){
-	
-					unset($cars[$i]);
-				}
-			}
-
-			array_unshift($cars, $newCar);
-		}
-
-
-		$tpl = new Template("car-list");
-		$tpl->addPath(__DIR__ . "/templates");
-
-		return $tpl->render(
-			array(
-				"cars"			     => $cars,
-				"searchContainer" 	 => $this->getCarSearch($params, $query),
-				"messagesContainer"  => $this->getUserFriendlyMessages($params, $cars, $query),
-				"user"			     => get_current_user(),
-				"groupBy"		     => $this->doSummarize ? "subject" : null
-			)
-		);
+		return $sql->compile();
 	}
 
 
-	public function getCarSearch($params, $query) {
-
-		$subjects = DbHelper::getDistinctFieldValues("car", "subject");
-
-		
-
-		$years = DbHelper::getDistinctFieldValues("car", "year");
-
-		$appellateJudges = DbHelper::getDistinctFieldValues("car", "appellate_judge");
-		$trialJudges = DbHelper::getDistinctFieldValues("car", "trial_judge");
-
-		$allJudges = array_merge($appellateJudges, $trialJudges);
-
-		$tpl = new Template("car-search");
-		$tpl->addPath(__DIR__ . "/templates");
-
-		return $tpl->render(array(
-			"subjects" 					 => $subjects,
-			"subject"					 => $params["subject"],
-			"years"						 => $years,
-			"year"						 => $params["year"],
-			"allMonths"					 => $this->getMonths(),
-			"month"     				 => $this->getStringMonth($params["month"]),
-			"allCourts" 				 => $this->getAppellateCourts(),
-			"court"     				 => $params["court"],
-			"counties"					 => $this->getOregonCounties(),
-			"county"					 => $params["circuit"],
-			"judges"					 => $allJudges,
-			"selectedAppellateJudge"     => $params["appellate_judge"],
-			"selectedTrialJudge"         => $params["trial_judge"],
-			"importance"				 => $params["importance"],
-			"doSummarize"		 		 => $this->doSummarize,
-			"selectedImportance"		 => $params["importance"]
-		));
-
-	}
-
-	public function getUserFriendlyMessages($params, $cars, $query){
-
-		$tpl = new Template("car-message");
-		$tpl->addPath(__DIR__ . "/templates");
-
-		return $tpl->render(array(
-			"message"      => $this->getUserMessage($params, count($cars)),
-			"user"		   => get_current_user(),
-			"query"        => $query
-		));
-	}
 
 
-	public function getUserMessage($params, $count){
 
-		$year = $params["year"];
-		$month = $this->getStringMonth($params["month"]);
-		$day = $params["day"];
-		$court = $params["court"];
-		$subject = $params["subject"];
-		$county = $params["circuit"];
-
-		$courtMsg = empty($court) ? "" : "in $court";
-
-		$month = $month == "All Months" ? null : $month;
-
-		if(!empty($month)) $dateMsg = empty($year) ? "for the month of $month (All Years)" : "for $month";
-		if(!empty($day)) $dateMsg .= ", $day";
-		if(!empty($year)) $dateMsg .= empty($month) ? "for $year" : ", $year";
-
-		$msg = "";
-
-		if(!empty($subject)) $msg .= "<h3>$subject</h3>";
-
-		$msg .= "showing " . $count . " case review(s)";
-		if(!empty($courtMsg)) $msg .= " $courtMsg";
-		if(!empty($dateMsg)) $msg .= " $dateMsg";
-
-		if(!empty($county)) $msg .= "<h4>$count decision(s) made in $county County</h4>";
-
-
-		return $msg;
-	}
 
 
 
@@ -451,96 +427,14 @@ class CarModule extends Module {
 
 
 
-	public function getStringMonth($numMonth){
-		
-		$numMonth = strlen($numMonth) == 1 ? "0$numMonth" : $numMonth;
-
-		return $this->getMonths()[$numMonth];
-	}
 
 
 
 
 
 
-	
-	############################################################################################################################
-	###################### HARD CODED DATA FUNCTIONS ###########################################################################
-	############################################################################################################################
 
 
-	public function getOregonCounties(){
-
-		return array(
-			"Baker" 		=> "Baker",
-			"Benton" 		=> "Benton",
-			"Clackamas"		=> "Clackamas",
-			"Clatsop" 		=> "Clatsop",
-			"Columbia"		=> "Columbia",
-			"Coos"			=> "Coos",
-			"Crook"			=> "Crook",
-			"Curry"			=> "Curry",
-			"Deschutes"		=> "Deschutes",
-			"Douglas"		=> "Douglas",
-			"Gillam"		=> "Gillam",
-			"Grant"			=> "Grant",
-			"Harney"		=> "Harney",
-			"Hood River"	=> "Hood River",
-			"Jackson"		=> "Jackson",
-			"Jefferson"		=> "Jefferson",
-			"Josephine"		=> "Josephine",
-			"Klamath"		=> "Klamath",
-			"Lake"			=> "Lake",
-			"Lane"			=> "Lane",
-			"Lincoln"		=> "Lincoln",
-			"Linn"			=> "Linn",
-			"Malheur"		=> "Malheur",
-			"Marion"		=> "Marion",
-			"Morrow"		=> "Morrow",
-			"Multnomah"		=> "Multnomah",
-			"Polk"			=> "Polk",
-			"Sherman"		=> "Sherman",
-			"Tillamook"		=> "Tillamook",
-			"Umatilla"		=> "Umatilla",
-			"Union"			=> "Union",
-			"Wallowa"		=> "Wallowa",
-			"Wasco"			=> "Wasco",
-			"Washington"	=> "Washington",
-			"Wheeler"		=> "Wheeler",
-			"Yamhill"		=> "Yamhill"
-		);
-	}
-
-
-	public function getMonths(){
-
-		return array(
-			"" 	   => "All Months",
-			"01"   => "January",
-			"02"   => "February",
-			"03"   => "March",
-			"04"   => "April",
-			"05"   => "May",
-			"06"   => "June",
-			"07"   => "July",
-			"08"   => "August",
-			"09"   => "September",
-			"10"   => "October",
-			"11"   => "November",
-			"12"   => "December"
-		);
-	}
-
-
-
-	public function getAppellateCourts(){
-
-		return array(
-			"" 						 => "All Courts",
-			"Oregon Appellate Court" => "Oregon Appellate Court",
-			"Oregon Supreme Court"   => "Oregon Supreme Court"
-		);
-	}
 }
 
 

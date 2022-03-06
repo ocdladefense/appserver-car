@@ -1,20 +1,29 @@
+<link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/car-list.css" />
 
 
 <div id="car-list-container" class="list-containter">
 
-    <?php if(empty($cars)): ?>
+    <h1 class="list-header">OCDLA Criminal Appellate Review Summaries</h1>
+
+    <div class="car-container">
+       <?php print $searchContainer; ?>
+    </div>
+
+	<div class="car-container">
+		<?php print $messagesContainer; ?>
+	</div>
+
+
+
+    <?php if(empty($cars)) { ?>
     
-		<div class="car-container" style="text-align: center;">
-			<h1>No case reviews were found.</h1>
-		</div>
+
+	<div class="car-container" style="text-align: center;">
+		<h1>No case reviews were found.</h1>
+	</div>
 	
-    <?php endif; ?>
 
-
-
-
-
-
+    <?php } ?>
     
 	<?php $index = 0; ?>
 	<?php foreach($cars as $car) {
@@ -42,15 +51,9 @@
 		
 		?>
 
-
-
 		<?php if($newSubject && $groupBy == "subject") : ?>
-			<h2 class="subject-header <?php print $isFirstClass; ?>">
-				<?php print $subject; ?>
-			</h2>
+			<h2 class="subject-header <?php print $isFirstClass; ?>"><?php print $subject; ?></h2>
 		<?php endif; ?>
-
-
 
 		<div class="car-container <?php print $classes; ?>">
 		
@@ -142,3 +145,8 @@
 
 
 </div> <!-- end list container -->
+
+
+<script src="<?php print module_path(); ?>/assets/js/car-flag.js"></script>
+<script src="<?php print module_path(); ?>/assets/js/car.js"></script>
+

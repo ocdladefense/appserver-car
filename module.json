@@ -3,9 +3,7 @@
 	"description": "Retrieve OCDLA Case Reviews.",
 	"comment": "Module definition file.",
 	"connectedApp": "default",
-	"files": [
-		"Car.php"
-	],
+	"files": ["Car.php","SearchWidget.php","MessageWidget.php"],
 	"links": [
 		{
 			"href":"/car/new",
