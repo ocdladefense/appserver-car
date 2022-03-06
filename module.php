@@ -104,6 +104,7 @@ class CarModule extends Module {
 		$search = "";
 		$message = "";
 		$tpl = new Template("car-page");
+		$tpl->addPath(__DIR__ . "/templates");
 		return $tpl->render(array(
 			"results" => $list,
 			"searchWidget" => $search,

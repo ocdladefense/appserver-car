@@ -3,7 +3,15 @@
 
 
 
-class SearchWidget extends Component {
+class SearchWidget extends Presentation\Component {
+
+
+	public function __construct($name) {
+
+		parent::__construct($name);
+		$this->template = "car-search";
+	}
+
 
 
 	public function getCarSearch($params, $query) {
@@ -28,7 +36,7 @@ class SearchWidget extends Component {
 			"years"						 => $years,
 			"year"						 => $params["year"],
 			"allMonths"					 => Date::getMonths(),
-			"month"     				 => $this->getStringMonth($params["month"]),
+			"month"     				 => Date::getStringMonth($params["month"]),
 			"allCourts" 				 => Oregon::getAppellateCourts(),
 			"court"     				 => $params["court"],
 			"counties"					 => Oregon::getCounties(),
@@ -44,8 +52,6 @@ class SearchWidget extends Component {
 	}
 
 
-
-	
 
 
 

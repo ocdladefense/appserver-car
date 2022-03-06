@@ -2,10 +2,14 @@
 
 
 
-class MessageWidget extends Component {
+class MessageWidget extends Presentation\Component {
 
 
-		
+	public function __construct($name) {
+
+		parent::__construct($name);
+		$this->template = "car-message";
+	}	
 
 	public function getUserFriendlyMessages($params, $cars, $query){
 
@@ -52,6 +56,17 @@ class MessageWidget extends Component {
 
 		return $msg;
 	}
+
+
+
+    public function toHtml($params = null) {
+
+        
+        $params = empty($params) ? $this->params : $params;
+
+		return "<h2>Hello World!</h2>";
+        load_template($this->template, $params);
+    }
 
 
 }

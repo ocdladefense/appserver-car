@@ -13,5 +13,8 @@
         "ocdladefense/lib-database" : "dev-development",
         "ocdladefense/lib-date": "dev-development",
         "ocdladefense/lib-gis": "dev-development"
+    },
+    "autoload":{
+        "classmap": ["components/"]
     }
 }
