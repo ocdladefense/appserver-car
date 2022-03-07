@@ -1,5 +1,14 @@
 <?php
 
+use Mysql\Database;
+use Http\HttpRequest;
+use Http\HttpHeader;
+use Mysql\DbHelper;
+use Mysql\QueryBuilder;
+use Http\HttpHeaderCollection;
+use GIS\Political\Countries\US\Oregon;
+use Ocdla\Date;
+
 use function Html\createDataListElement;
 use function Html\createSelectElement;
 
@@ -7,6 +16,8 @@ use function Html\createSelectElement;
 
 
 class SearchWidget extends Presentation\Component {
+
+	private $data;
 
 
 	public function __construct($name) {
@@ -19,9 +30,14 @@ class SearchWidget extends Presentation\Component {
 
 
 	public function getSubjects() {
+
+		$subjects = DbHelper::getDistinctFieldValues("car", "subject");
+		$subjects = array_map(function($subject) { return ucwords($subject); }, $subjects);
 	
 		$subjectDefault = array("" => "All Subjects");
 		$allSubjects = $subjectDefault + $subjects;
+
+		$subject = "Crimes";
 
 		return createSelectElement("subject", $allSubjects, $subject);
 	}

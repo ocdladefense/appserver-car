@@ -14,7 +14,7 @@ use function Html\createSelectElement;
         <div class="search-filters">
 
             <?php /*print createSelectElement("subject", $allSubjects, $subject);*/ ?>
-            <?php /* print $this->getSubjects(); */?>
+            <?php print $this->getSubjects(); ?>
             <?php /* print createSelectElement("year", $allYears, $year); */ ?>
             <?php /* print createSelectElement("month", $allMonths, $month); */ ?>
             <?php /* print createSelectElement("court", $allCourts, $court); */?>
