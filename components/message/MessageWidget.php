@@ -6,18 +6,17 @@ class MessageWidget extends Presentation\Component {
 
 
 
-	public function __construct($name) {
+	public function __construct($name, $id, $params = array()) {
 
-		parent::__construct($name);
+		parent::__construct($name, $id, $params);
 		$this->template = "car-message";
 	}	
 
 
 
 	public function getMessage() {
-		// var_dump($this->getRequest());
-		
-		return "<h2>The message.</h2>";
+
+		return $this->getUserMessage($this->getParams(), 8);
 
 		$tpl = new Template("car-message");
 		$tpl->addPath(__DIR__ . "/templates");
@@ -35,7 +34,7 @@ class MessageWidget extends Presentation\Component {
 	public function getUserMessage($params, $count){
 
 		$year = $params["year"];
-		$month = $this->getStringMonth($params["month"]);
+		$month = $params["month"];
 		$day = $params["day"];
 		$court = $params["court"];
 		$subject = $params["subject"];

@@ -13,7 +13,10 @@
 		$controller = new stdClass();
 		*/
 		?>
-		<?php component('MessageWidget'); ?>
+
+		<?php //var_dump($controller->getRequest()); exit; ?>
+		
+		<?php component('MessageWidget', null, $controller->getRequest()->getBody()); ?>
 	</div>
 
 
