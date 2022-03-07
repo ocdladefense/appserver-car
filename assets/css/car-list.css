@@ -83,7 +83,7 @@ label{
 
 .car-item.title {
     font-size: 25px;
-    line-height: 45px;
+    line-height: 30px;
     display:inline-block;
     vertical-align:middle;
 }
@@ -102,10 +102,23 @@ label{
     padding-top:0px;
 }
 
+.add-review{
+    float:unset;
+}
+
+
+
+
+
 @media only screen and (max-width:768px){
     .car-container{
         width:100%;
     }
+    #stage-content{
+        padding:0px;
+    }
+
+    /*
     .car-sub-container{
         width: 100%;
         padding: 15px;
@@ -122,10 +135,8 @@ label{
         float:unset;
         text-align:unset;
     }
-    #stage-content{
-        padding:0px;
-    }
+
+    */
 }
-.add-review{
-    float:unset;
-}
+
+

@@ -92,38 +92,38 @@
 
 			<br />
 
-			<label>
+			<div>
 				<?php print nl2br($car->getSummary()); ?>
-			</label>
+			</div>
 
 			<br />
 
 			<div class="additional-info">
 
-				<label>
+				<span>
 					<strong>Appellate #: </strong>
 					<?php print !empty($car->getA_number()) ? $car->getA_number() : "Not available"; ?>
-				</label>
+			</span>
 
-				<label>
+				<span>
 					<strong>Citation: </strong>
 					<?php print $car->getCitation(); ?>
-				</label>
+			</span>
 				
-				<label>
+				<span>
 					<strong>Circuit:</strong>
 					<?php print $car->getCircuit(); ?>
-				</label>
+			</span>
 				
-				<label>
+				<span>
 					<strong>Appellate Judge:</strong>
 					<?php print $car->getAppellateJudge(); ?>
-				</label>
+			</span>
 				
-				<label>
+				<span>
 					<strong>Trial Judge:</strong>
 					<?php print $car->getTrialJudge(); ?>
-				</label>
+			</span>
 				
 			</div>
 
