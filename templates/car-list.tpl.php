@@ -64,12 +64,14 @@
 				</div> <!-- end admin area  -->
 			<?php endif; ?>
 
-			<div class="car-item">
-				<?php print "Importance: $importance"; ?>
-			</div>
+
 				
 			<div class="car-item title">
 				<?php print $title; ?>
+			</div>
+
+			<div class="car-item car-rank">
+				<?php print "Importance: $importance"; ?>
 			</div>
 
 			<div class="car-item court">
