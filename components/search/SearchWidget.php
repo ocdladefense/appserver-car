@@ -1,5 +1,8 @@
 <?php
 
+use function Html\createDataListElement;
+use function Html\createSelectElement;
+
 
 
 
@@ -12,6 +15,52 @@ class SearchWidget extends Presentation\Component {
 		$this->template = "car-search";
 	}
 
+
+
+
+	public function getSubjects() {
+	
+		$subjectDefault = array("" => "All Subjects");
+		$allSubjects = $subjectDefault + $subjects;
+
+		return createSelectElement("subject", $allSubjects, $subject);
+	}
+
+
+	public function getYears() {
+
+		$yearDefault = array("" => "All Years");
+		$allYears = $yearDefault + $years;
+	}
+
+
+	public function getCounties() {
+		$countyDefault = array("" => "All Counties");
+		$allCounties = $countyDefault + $counties;
+	}
+
+
+	
+	public function getJudges() {
+		print createDataListElement("judge-datalist", $judges);
+	}
+
+
+
+	public function getImportance() {
+		$importanceLevels = array(
+			"" => "All Importance",
+			1 => "1",
+			2 => "2",
+			3 => "3",
+			4 => "4",
+			5 => "5"
+		);
+	}
+
+	public function isSummary() {
+		$summarizeChecked = $doSummarize ? "checked" : "";
+	}
 
 
 	public function getCarSearch($params, $query) {
