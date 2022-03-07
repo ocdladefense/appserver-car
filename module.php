@@ -106,6 +106,7 @@ class CarModule extends Module {
 		$tpl = new Template("car-page");
 		$tpl->addPath(__DIR__ . "/templates");
 		return $tpl->render(array(
+			"controller" => $this,
 			"results" => $list,
 			"searchWidget" => $search,
 			"messageWidget" => $message

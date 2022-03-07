@@ -4,13 +4,16 @@
 
 <div class="messages-container">
     <h3>
-        <?php print $message; ?>
+        <?php 
+        // var_dump($this);
+        print $this->getMessage(); ?>
     </h3>
 
-    <?php if($user->isAdmin()) : ?>
+    <?php if(false && $user->isAdmin()):  ?>
         
         <h3>
             <?php print $query; ?>
         </h3>
+        
     <?php endif; ?>
 </div>

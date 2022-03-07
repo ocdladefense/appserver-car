@@ -5,13 +5,19 @@
 class MessageWidget extends Presentation\Component {
 
 
+
 	public function __construct($name) {
 
 		parent::__construct($name);
 		$this->template = "car-message";
 	}	
 
-	public function getUserFriendlyMessages($params, $cars, $query){
+
+
+	public function getMessage() {
+		// var_dump($this->getRequest());
+		
+		return "<h2>The message.</h2>";
 
 		$tpl = new Template("car-message");
 		$tpl->addPath(__DIR__ . "/templates");
@@ -58,7 +64,7 @@ class MessageWidget extends Presentation\Component {
 	}
 
 
-
+/*
     public function toHtml($params = null) {
 
         
@@ -67,6 +73,6 @@ class MessageWidget extends Presentation\Component {
 		return "<h2>Hello World!</h2>";
         load_template($this->template, $params);
     }
-
+*/
 
 }
