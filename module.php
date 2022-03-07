@@ -23,6 +23,8 @@ class CarModule extends Module {
 
 	private $doSummarize;
 
+	
+
 
 	public function __construct() {
 	
@@ -102,7 +104,12 @@ class CarModule extends Module {
 		*/
 
 		$search = "";
+
+
+
+
 		$message = "";
+
 		$tpl = new Template("car-page");
 		$tpl->addPath(__DIR__ . "/templates");
 		return $tpl->render(array(
@@ -289,6 +296,28 @@ class CarModule extends Module {
 
 		return "success";
 	}
+
+
+	public function getOptionLists(){
+
+		$subjects = DbHelper::getDistinctFieldValues("car", "subject");
+		$subjects = array_map(function($subject) { return ucwords($subject); }, $subjects);
+
+		$appellateJudges = DbHelper::getDistinctFieldValues("car", "appellate_judge");
+		$trialJudges = DbHelper::getDistinctFieldValues("car", "trial_judge");
+
+		$allJudges = array_merge($appellateJudges, $trialJudges);
+
+		$oregon = new Oregon();
+		$counties = $oregon->getCounties();
+
+		return [
+			"subjects" => $subjects,
+			"allJudges" => $allJudges,
+			"counties" => $counties
+		];
+	}
+
 	
 
 

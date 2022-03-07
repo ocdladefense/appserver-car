@@ -3,18 +3,21 @@
 
 <h1 class="list-header">OCDLA Criminal Appellate Review Summaries</h1>
 
-<div class="component car-component component-search-widget">
-	<?php component('SearchWidget'); ?>
-</div>
+	<div class="car-container">
+       <?php component('SearchWidget'); ?>
+    </div>
 
-<div class="component car-component component-search-message">
-	<?php
-	/* global $controller;
-	$controller = new stdClass();
-	*/
-	?>
-	<?php component('MessageWidget'); ?>
-</div>
+	<div class="car-container">
+		<?php
+		/* global $controller;
+		$controller = new stdClass();
+		*/
+		?>
+
+		<?php //var_dump($controller->getRequest()); exit; ?>
+		
+		<?php component('MessageWidget', null, $controller->getRequest()->getBody()); ?>
+	</div>
 
 
 
