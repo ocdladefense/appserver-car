@@ -1,8 +1,6 @@
 
 <?php
 
-use function Html\createDataListElement;
-use function Html\createSelectElement;
 
 ?>
 
@@ -11,22 +9,53 @@ use function Html\createSelectElement;
 <div class="search-container">
     <form id="car-search-form" class="car-search-form" action="/car/list" method="post">
 
-        <div class="search-filters">
 
-            <?php /*print createSelectElement("subject", $allSubjects, $subject);*/ ?>
-            <?php print $this->getSubjects(); ?>
-            <?php /* print createSelectElement("year", $allYears, $year); */ ?>
-            <?php /* print createSelectElement("month", $allMonths, $month); */ ?>
-            <?php /* print createSelectElement("court", $allCourts, $court); */?>
-            <?php /* print createSelectElement("circuit", $allCounties, $county); */?>
-            <?php /* print createSelectElement("importance", $importanceLevels, $selectedImportance); */ ?>
+        <?php /*print createSelectElement("subject", $allSubjects, $subject);*/ ?>
 
-            <input autocomplete="off" type="text" name="appellate_judge" value="<?php print $selectedAppellateJudge; ?>" data-datalist="judge-datalist" placeholder="Appellate Judge" onchange="submitForm()" />
-            
-            <input autocomplete="off" type="text" name="trial_judge" value="<?php print $selectedTrialJudge; ?>" data-datalist="judge-datalist" placeholder="Trial Judge" onchange="submitForm()" />
+        <div class="form-item">
 
+            <?php
 
+                // var_dump($this->getSubjects());exit;
+                print Html\Select("subject", $this->getSubjects(), $this->getInput("subject"));
+                
+            ?>
         </div>
+
+        <div class="form-item">
+            <?php $max = null; ?>
+            <?php 
+                // print Html\Date("decision_date", "2018-01-01", $max);
+            ?>
+        </div>
+
+        <div class="form-item">
+            <?php /* print Html\Select("court", $allCourts, $court); */?>
+        </div>
+
+        <div class="form-item">
+            <?php /* print Html\Select("county", $allCounties, $county); */?>
+        </div>
+
+        <div class="form-item">
+            <?php
+                // print Html\DataList("judge-datalist", $this->getJudges(), $this->request->judge);
+            ?>
+        </div>
+
+        <div class="form-item">
+            <?php /* print Html\Select("importance", $importanceLevels, $selectedImportance); */ ?>
+        </div>
+
+
+        <div class="form-item">
+            <input autocomplete="off" type="text" name="appellate_judge" value="<?php print $selectedAppellateJudge; ?>" data-datalist="judge-datalist" placeholder="Appellate Judge" onchange="submitForm()" />
+        </div>
+
+        <div class="form-item">
+            <input autocomplete="off" type="text" name="trial_judge" value="<?php print $selectedTrialJudge; ?>" data-datalist="judge-datalist" placeholder="Trial Judge" onchange="submitForm()" />
+        </div>
+
 
         <div class="search-filters bottom-row">
 

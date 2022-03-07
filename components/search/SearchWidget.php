@@ -31,19 +31,22 @@ class SearchWidget extends Presentation\Component {
 
 	public function getSubjects() {
 
+
+
 		$subjects = DbHelper::getDistinctFieldValues("car", "subject");
 		$subjects = array_map(function($subject) { return ucwords($subject); }, $subjects);
 	
 		$subjectDefault = array("" => "All Subjects");
 		$allSubjects = $subjectDefault + $subjects;
 
-		$subject = "Crimes";
+		// var_dump($allSubjects);exit;
 
-		return createSelectElement("subject", $allSubjects, $subject);
+		return $allSubjects;
 	}
 
 
-	public function getYears() {
+	public function getDate() {
+
 
 		$yearDefault = array("" => "All Years");
 		$allYears = $yearDefault + $years;
@@ -51,6 +54,10 @@ class SearchWidget extends Presentation\Component {
 
 
 	public function getCounties() {
+
+
+
+
 		$countyDefault = array("" => "All Counties");
 		$allCounties = $countyDefault + $counties;
 	}
@@ -58,7 +65,16 @@ class SearchWidget extends Presentation\Component {
 
 	
 	public function getJudges() {
-		print createDataListElement("judge-datalist", $judges);
+
+
+
+		$appellateJudges = DbHelper::getDistinctFieldValues("car", "appellate_judge");
+		$trialJudges = DbHelper::getDistinctFieldValues("car", "trial_judge");
+
+		$allJudges = array_merge($appellateJudges, $trialJudges);
+
+
+		
 	}
 
 
@@ -79,6 +95,7 @@ class SearchWidget extends Presentation\Component {
 	}
 
 
+	// DON'T USE.  
 	public function getCarSearch($params, $query) {
 
 		$subjects = DbHelper::getDistinctFieldValues("car", "subject");

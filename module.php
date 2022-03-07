@@ -128,22 +128,12 @@ class CarModule extends Module {
 					"syntax"	=> "'%s%%'"
 				),
 				array(
-					"fieldname"	=> "year",
+					"fieldname"	=> "decision_date",
 					"op"		=> "=",
 					"syntax"	=> "%s"
 				),
 				array(
-					"fieldname"	=> "month",
-					"op"		=> "=",
-					"syntax"	=> "%s"
-				),
-				array(
-					"fieldname"	=> "day",
-					"op"		=> "=",
-					"syntax"	=> "%s"
-				),
-				array(
-					"fieldname"	=> "circuit",
+					"fieldname"	=> "county",
 					"op"		=> "LIKE",
 					"syntax"	=> "'%%%s%%'"
 				),
