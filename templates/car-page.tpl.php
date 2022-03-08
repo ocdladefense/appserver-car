@@ -16,7 +16,7 @@
 
 		<?php //var_dump($controller->getRequest()); exit; ?>
 		
-		<?php component('MessageWidget', null, $controller->getRequest()->getBody()); ?>
+		<?php component('MessageWidget'); ?>
 	</div>
 
 
