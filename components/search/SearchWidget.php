@@ -33,6 +33,8 @@ class SearchWidget extends Presentation\Component {
 
 	public $rank;
 
+	public $summarize;
+
 
 	public function __construct($name) {
 
@@ -47,6 +49,8 @@ class SearchWidget extends Presentation\Component {
 		$this->appellate_judge = $input->appellate_judge;
 		$this->trial_judge = $input->trial_judge;
 		$this->rank = $input->importance;
+		$this->min_date = "2018-01-01";
+		$this->summarize = $input->summarize;
 	}
 
 
@@ -55,16 +59,19 @@ class SearchWidget extends Presentation\Component {
 	public function getSubjects() {
 
 
+		$subjects = array();
+		$distinct = DbHelper::getDistinctFieldValues("car", "subject");
 
-		$subjects = DbHelper::getDistinctFieldValues("car", "subject");
-		$subjects = array_map(function($subject) { return ucwords($subject); }, $subjects);
+		array_walk($distinct, function($value) use(&$subjects) {
+			$subjects[$value] = ucwords($value);
+		});
 	
-		$subjectDefault = array("" => "All Subjects");
-		$allSubjects = $subjectDefault + $subjects;
+		$default = array("" => "All Subjects");
+		$all = $default + $subjects;
 
 		// var_dump($allSubjects);exit;
 
-		return $allSubjects;
+		return $all;
 	}
 
 

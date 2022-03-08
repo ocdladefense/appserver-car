@@ -8,12 +8,15 @@
 
 <form id="car-search" class="form-inline" action="/car/list" method="post">
 
+    <?php print Html\DataList("judges", $this->getJudges()); ?>
+
+
     <div class="form-item">
-        <?php print Html\Select("subject", $this->getSubjects(), $this->getInput("subject")); ?>
+        <?php print Html\Select("subject", $this->getSubjects(), $subject); ?>
     </div>
 
     <div class="form-item">
-        <?php print Html\Date("decision_date", "2018-01-01"); ?>
+        <?php print Html\Date("decision_date", $min_date); ?>
     </div>
 
     <div class="form-item">
@@ -28,8 +31,6 @@
     <div class="form-item">
         <?php print Html\Select("importance", $this->getRanks(), $rank); ?>
     </div>
-
-    <?php print Html\DataList("judges", $this->getJudges()); ?>
 
     <div class="form-item">
         <?php print Html\Autocomplete("appellate_judge", "judges", $appellate_judge, "Appellate Judge"); ?>
@@ -46,7 +47,7 @@
     
 
     <div class="form-item">
-        <?php print Html\Checkbox("summarize", $checked = false); ?>
+        <?php print Html\Checkbox("summarize", $summarize ? true : false); ?>
         <label class="checkbox-label">summarize</label>
     </div>
 
