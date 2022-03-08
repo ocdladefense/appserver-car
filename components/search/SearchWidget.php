@@ -46,7 +46,7 @@ class SearchWidget extends Presentation\Component {
 		$this->court = $input->court;
 		$this->appellate_judge = $input->appellate_judge;
 		$this->trial_judge = $input->trial_judge;
-		$this->rank = $input->rank;
+		$this->rank = $input->importance;
 	}
 
 
@@ -129,6 +129,19 @@ class SearchWidget extends Presentation\Component {
 	}
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// DON'T USE.  
 	public function getCarSearch($params, $query) {
 
@@ -166,9 +179,4 @@ class SearchWidget extends Presentation\Component {
 		));
 
 	}
-
-
-
-
-
 }

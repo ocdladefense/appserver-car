@@ -13,7 +13,7 @@
     </div>
 
     <div class="form-item">
-        <?php /* print Html\Date("decision_date", "2018-01-01", $max); */ ?>
+        <?php print Html\Date("decision_date", "2018-01-01"); ?>
     </div>
 
     <div class="form-item">
@@ -24,14 +24,14 @@
         <?php print Html\Select("court", $this->getCourts(), $court); ?>
     </div>
 
-    <div class="form-item">
-        <?php print Html\DataList("judges", $this->getJudges()); ?>
-    </div>
 
     <div class="form-item">
         <?php print Html\Select("importance", $this->getRanks(), $rank); ?>
     </div>
 
+    <div class="form-item">
+        <?php print Html\DataList("judges", $this->getJudges()); ?>
+    </div>
 
     <div class="form-item">
         <?php print Html\Autocomplete("appellate_judge", "judges", $appellate_judge, "Appellate Judge"); ?>
@@ -43,11 +43,9 @@
 
 
     <div class="form-item">
-        <?php print Html\Button("clear","Clear"); ?>
+        <?php print Html\Button("resetBtn","Reset"); ?>
     </div>
-    <div class="form-item">
-        <?php print Html\Button("reset","Reset"); ?>
-    </div>
+    
 
     <div class="form-item">
         <?php print Html\Checkbox("summarize", $checked = false); ?>
@@ -64,15 +62,20 @@
     for(var i = 0; i < submissionNodes.length; i++){
 
         submissionNodes[i].addEventListener("change", function(){
-            $form = document.getElementById("car-search");
-            $form.submit();
+            var form = document.getElementById("car-search");
+            form.submit();
         });
     }
 
-    document.getElementById("summarize-checkbox").addEventListener("change", function(){
-            $form = document.getElementById("car-search");
-            $form.submit();
-        });
+    document.getElementById("summarize").addEventListener("change", function(){
+        var form = document.getElementById("car-search");
+        form.submit();
+    });
+
+
+    document.getElementById("resetBtn").addEventListener("click", function(){
+        window.location.replace();
+    });
     
     
 </script>
