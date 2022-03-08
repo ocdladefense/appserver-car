@@ -65,65 +65,63 @@
 			<?php endif; ?>
 
 
+			<div class="meta car-source">
+				<div class="car-item title">
+					<?php print $title; ?>
+				</div>
+
+				<div class="car-item car-rank">
+					<?php print "Importance: $importance"; ?>
+				</div>
+
+				<div class="car-item court">
+					<?php print "<h3>$court</h3>"; ?>
+				</div>
 				
-			<div class="car-item title">
-				<?php print $title; ?>
-			</div>
+				<div class="car-item decision-date">
+					<?php print $car->getDate(); ?>
+				</div>
 
-			<div class="car-item car-rank">
-				<?php print "Importance: $importance"; ?>
-			</div>
-
-			<div class="car-item court">
-				<?php print "<h3>$court</h3>"; ?>
+				<div class="car-item subject-1">
+					<?php print strtoupper($car->getSubject1()) . " &bull; " . $car->getSubject2(); ?>
+				</div>
 			</div>
 			
-			<div class="car-item decision-date">
-				<?php print $car->getDate(); ?>
-			</div>
 
-			<div class="car-item subject-1">
-				<?php print strtoupper($car->getSubject1()) . " &bull; " . $car->getSubject2(); ?>
-			</div>
-			
-			<!-- <div class="car-item subject-2">
-				<?php print $car->getSubject2(); ?>
-			</div> -->
+		
 
-			<br />
-
-			<div>
+			<div class="car-summary">
 				<?php print nl2br($car->getSummary()); ?>
 			</div>
 
-			<br />
+		
 
-			<div class="additional-info">
+			<div class="additional-info car-meta">
 
 				<span>
 					<strong>Appellate #: </strong>
 					<?php print !empty($car->getA_number()) ? $car->getA_number() : "Not available"; ?>
-			</span>
+				</span>
 
 				<span>
 					<strong>Citation: </strong>
 					<?php print $car->getCitation(); ?>
-			</span>
+				</span>
 				
 				<span>
-					<strong>Circuit:</strong>
+					<strong>County:</strong>
 					<?php print $car->getCircuit(); ?>
-			</span>
+				</span>
 				
 				<span>
 					<strong>Appellate Judge:</strong>
 					<?php print $car->getAppellateJudge(); ?>
-			</span>
+				</span>
 				
 				<span>
 					<strong>Trial Judge:</strong>
 					<?php print $car->getTrialJudge(); ?>
-			</span>
+				</span>
 				
 			</div>
 

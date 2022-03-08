@@ -1,13 +1,19 @@
-#car-search-form .form-item {
+#car-search .form-item {
     display: inline-block;
 }
 
 
 
 
-#car-search-form input,
-#car-search-form select {
+#car-search input,
+#car-search select,
+#car-search button {
     height:30px;
     vertical-align: middle;
 }
 
+
+#car-search button {
+    padding-left:11px;
+    padding-right:11px;
+}

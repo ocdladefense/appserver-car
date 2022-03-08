@@ -1,7 +1,17 @@
+.car-source {
+    font-size: 0.9em;
+    margin-bottom:10px;
+}
+
+
 
 .list-header {
     margin-bottom: 10px;
     font-size: 18px;
+}
+
+.form-inline {
+    margin-left: -5px;
 }
 
 
@@ -22,9 +32,7 @@
 
 .car-container{
     border-radius:5px;
-    width:80%;
     margin-bottom: 23px;
-    padding: 10px;
 }
 
 .is-new{
