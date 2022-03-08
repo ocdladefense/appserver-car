@@ -21,6 +21,11 @@
 			<?php print $car->getSubject(); ?>
 		</h2>
 	<?php endif; ?>
+
+
+	<?php module_template("car", $car); ?>
+
+
 <?php $subject = $car->getSubject();
 } ?>
 

@@ -15,11 +15,11 @@
 	],
 	"routes": {
 		"car/list/%id":{
-			"callback":"showCars",
+			"callback":"getList",
 			"content-type":"text\/html"
 		},
 		"car/list":{
-			"callback":"showCars",
+			"callback":"getList",
 			"content-type":"text\/html"
 		},
 		"car/flag":{

@@ -45,54 +45,50 @@ class CarModule extends Module {
 	 * 
 	 * @param $carId
 	 */
-	public function showCars($carId = null) {
+	public function getList($recordId = null) {
 
 		$query = $this->getQuery();
 
-		$cars = select($query);
+		$records = select($query);
 
-		if(!is_array($cars)) $cars = array($cars);
+		if(!is_array($records)) $records = array($records);
 
 
 		// If there is a new car show it at the top of the list.
 		if(!empty($carId)) {
 
-			$promote = select("SELECT * FROM car WHERE id = '$carId'");
+			$promote = select("SELECT * FROM car WHERE id = '$recordId'");
 
 			$promote->isNew(true);
 
 			for($i = 0; $i < count($cars); $i++){
 
-				if($cars[$i]->getId() == $promote->getId()){
+				if($records[$i]->getId() == $promote->getId()){
 	
-					unset($cars[$i]);
+					unset($records[$i]);
 				}
 			}
 
-			array_unshift($cars, $promote);
+			array_unshift($records, $promote);
 		}
 
 
-		$tpl = new Template("car-list");
+		$tpl = new Template("list");
 		$tpl->addPath(__DIR__ . "/templates");
 
 
 		$list = $tpl->render(
 			array(
-				"cars" => $cars
+				"records" => $records
 			)
 		);
 
 
-		$search = "";
-		$message = "";
-		$tpl = new Template("car-page");
+		$tpl = new Template("page");
 		$tpl->addPath(__DIR__ . "/templates");
+
 		return $tpl->render(array(
-			"controller" => $this,
-			"results" => $list,
-			"searchWidget" => $search,
-			"messageWidget" => $message
+			"records" => $records
 		));
 	}
 
