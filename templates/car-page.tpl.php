@@ -8,13 +8,6 @@
     </div>
 
 	<div class="car-container">
-		<?php
-		/* global $controller;
-		$controller = new stdClass();
-		*/
-		?>
-
-		<?php //var_dump($controller->getRequest()); exit; ?>
 		
 		<?php component('MessageWidget'); ?>
 	</div>

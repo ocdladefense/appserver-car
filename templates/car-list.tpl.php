@@ -1,6 +1,6 @@
 
 
-<div id="car-list-container" class="list-containter">
+
 
     <?php if(empty($cars)): ?>
     
@@ -143,4 +143,3 @@
 
 
 
-</div> <!-- end list container -->

@@ -1,0 +1,13 @@
+#car-search-form .form-item {
+    display: inline-block;
+}
+
+
+
+
+#car-search-form input,
+#car-search-form select {
+    height:30px;
+    vertical-align: middle;
+}
+

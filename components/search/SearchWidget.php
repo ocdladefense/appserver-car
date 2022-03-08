@@ -19,11 +19,34 @@ class SearchWidget extends Presentation\Component {
 
 	private $data;
 
+	public $court;
+
+	public $county;
+
+	public $subject;
+
+	public $date;
+
+	public $appellate_judge;
+
+	public $trial_judge;
+
+	public $rank;
+
 
 	public function __construct($name) {
 
 		parent::__construct($name);
 		$this->template = "car-search";
+
+		$input = $this->getInput();
+
+		$this->subject = $input->subject;
+		$this->county = $input->county;
+		$this->court = $input->court;
+		$this->appellate_judge = $input->appellate_judge;
+		$this->trial_judge = $input->trial_judge;
+		$this->rank = $input->rank;
 	}
 
 
@@ -56,31 +79,40 @@ class SearchWidget extends Presentation\Component {
 	public function getCounties() {
 
 
+		$loaded = Oregon::getCounties();
+
+		$default = array("" => "All Counties");
+		$counties = $default + $loaded;
+
+		return $counties;
+	}
 
 
-		$countyDefault = array("" => "All Counties");
-		$allCounties = $countyDefault + $counties;
+	public function getCourts() {
+
+
+		$loaded = Oregon::getCourts();
+
+		$default = array("" => "All Courts");
+		$courts = $default + $loaded;
+
+		return $courts;
 	}
 
 
 	
 	public function getJudges() {
 
-
-
 		$appellateJudges = DbHelper::getDistinctFieldValues("car", "appellate_judge");
 		$trialJudges = DbHelper::getDistinctFieldValues("car", "trial_judge");
 
-		$allJudges = array_merge($appellateJudges, $trialJudges);
-
-
-		
+		return array_merge($appellateJudges, $trialJudges);
 	}
 
 
 
-	public function getImportance() {
-		$importanceLevels = array(
+	public function getRanks() {
+		return array(
 			"" => "All Importance",
 			1 => "1",
 			2 => "2",
@@ -89,6 +121,8 @@ class SearchWidget extends Presentation\Component {
 			5 => "5"
 		);
 	}
+
+
 
 	public function isSummary() {
 		$summarizeChecked = $doSummarize ? "checked" : "";
