@@ -94,7 +94,7 @@ class CarModule extends Module {
 
 
 
-	private function carPreprocess() {
+	private function recordPreprocess($record) {
 
 		static $index = 0; 
 

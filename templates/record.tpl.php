@@ -27,7 +27,7 @@
 
 		<div class="car-item car-rank">
 			<?php print "Importance: $importance"; ?>
-
+			<span class="fa fa-star checked"></span>
 		</div>
 
 		<div class="car-item court">
@@ -39,7 +39,7 @@
 		</div>
 
 		<div class="car-item subject-1">
-			<?php print strtoupper($car->getSubject1()) . " &bull; " . $car->getSubject2(); ?>
+			<?php print strtoupper($car->getSubject()) . " &bull; " . $car->getSubject2(); ?>
 		</div>
 	</div>
 	
