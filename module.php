@@ -77,49 +77,20 @@ class CarModule extends Module {
 		$tpl->addPath(__DIR__ . "/templates");
 
 
-		$list = $tpl->render(
-			array(
-				"records" => $records
-			)
-		);
+		$list = $tpl->render(array("records" => $records));
 
-
+		
 		$tpl = new Template("page");
 		$tpl->addPath(__DIR__ . "/templates");
 
 		return $tpl->render(array(
-			"records" => $records
+			"list" => $list
 		));
 	}
 
 
 
-	private function recordPreprocess($record) {
 
-		static $index = 0; 
-
-		$isFirstClass = $index == 0 ? "is-first" : "";
-		$index++;
-				
-		$isFlagged = $car->isFlagged() ? "checked" : "";
-
-		$classesArray = array();
-
-		if($car->isNew()) $classesArray[] = "is-new";
-
-		$classes = implode(" ", $classesArray);
-
-		$previousSubject = $subject;
-		$subject = trim($car->getSubject1());
-
-		$newSubject = $previousSubject != $subject;
-		
-		$title = $car->getTitle();
-		$court = $car->getCourt();
-
-		$importance = !empty($car->getImportance()) ? $car->getImportance() . "/5" : "unset";
-		
-	}
 
 
 	private function getQuery() {
@@ -298,16 +269,44 @@ class CarModule extends Module {
 	
 
 
-
-
-
-
-
-
-
-
-
-
 }
 
 
+function recordPreprocess($record) {
+
+	static $index = 0; 
+
+	/*
+	$isFirstClass = $index == 0 ? "is-first" : "";
+	$index++;
+			
+	$isFlagged = $car->isFlagged() ? "checked" : "";
+
+	$classesArray = array();
+
+	if($car->isNew()) $classesArray[] = "is-new";
+
+	$classes = implode(" ", $classesArray);
+
+	$previousSubject = $subject;
+	$subject = trim($car->getSubject1());
+
+	$newSubject = $previousSubject != $subject;
+	
+	$title = $car->getTitle();
+	$court = $car->getCourt();
+
+	$importance = !empty($car->getImportance()) ? $car->getImportance() . "/5" : "unset";
+	*/									
+
+
+	return array(
+		"car" 			=> $record,
+		"summary" 		=> nl2br($record->getSummary()),
+		"counter" 		=> 1,
+		"classes" 		=> "hello",
+		"title" 		=> $record->getTitle(),
+		"importance" 	=> 5,
+		"court" 		=> "Oregon Court of Appeals"
+	);
+}

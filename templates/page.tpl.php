@@ -16,7 +16,7 @@
 
 <div id="car-list-container" class="list-containter">
 
-	<?php print $results; ?>
+	<?php print $list; ?>
 
 </div> <!-- end list container -->
 

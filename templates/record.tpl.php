@@ -47,8 +47,7 @@
 
 
 	<div class="car-summary">
-		<?php /* print nl2br($car->getSummary()); */ ?>
-		<?php print $car->getSummary(); ?>
+		<?php print $summary; ?>
 	</div>
 
 
