@@ -73,17 +73,8 @@ class CarModule extends Module {
 		}
 
 
-
-
-
 		$tpl = new Template("car-list");
 		$tpl->addPath(__DIR__ . "/templates");
-
-
-		// $tpl = new Template("results-widget");
-
-		// $tpl = new Template("search-widget");
-
 
 
 		$list = $tpl->render(
@@ -92,14 +83,6 @@ class CarModule extends Module {
 			)
 		);
 
-
-
-		/*
-		"searchContainer" 	 => $this->getCarSearch($params, $query),
-		"messagesContainer"  => $this->getUserFriendlyMessages($params, $cars, $query),
-		"user"			     => get_current_user(),
-		"groupBy"		     => $this->doSummarize ? "subject" : null
-		*/
 
 		$search = "";
 		$message = "";
@@ -114,6 +97,33 @@ class CarModule extends Module {
 	}
 
 
+
+	private function carPreprocess() {
+
+		static $index = 0; 
+
+		$isFirstClass = $index == 0 ? "is-first" : "";
+		$index++;
+				
+		$isFlagged = $car->isFlagged() ? "checked" : "";
+
+		$classesArray = array();
+
+		if($car->isNew()) $classesArray[] = "is-new";
+
+		$classes = implode(" ", $classesArray);
+
+		$previousSubject = $subject;
+		$subject = trim($car->getSubject1());
+
+		$newSubject = $previousSubject != $subject;
+		
+		$title = $car->getTitle();
+		$court = $car->getCourt();
+
+		$importance = !empty($car->getImportance()) ? $car->getImportance() . "/5" : "unset";
+		
+	}
 
 
 	private function getQuery() {
@@ -162,7 +172,7 @@ class CarModule extends Module {
 
 		$params = !empty($_GET) ? $_GET : $_POST;
 
-		$this->doSummarize = !empty($params["summarize"]);
+		$summarize = !empty($params["summarize"]);
 
 		$sql = new QueryBuilder("car");
 
@@ -170,8 +180,8 @@ class CarModule extends Module {
 
 		if(!empty($params)) $sql->setConditions($conditions, $params);
 
-		$orderBy = $this->doSummarize ? "subject, year DESC, month DESC, day DESC" : "year DESC, month DESC, day DESC";
-		$sql->setOrderBy($orderBy);
+	
+		$sql->setOrderBy($summarize ? "subject, decision_date DESC" : "decision_date DESC");
 
 		return $sql->compile();
 	}

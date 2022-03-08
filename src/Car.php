@@ -96,6 +96,11 @@ class Car {
 		return $this->subject;
 	}
 
+	public function getSubject(){
+
+		return $this->subject;
+	}
+
 	public function getSubject2(){
 
 		return $this->secondary_subject;
