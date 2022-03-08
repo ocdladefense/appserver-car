@@ -135,7 +135,7 @@ class CarModule extends Module {
 				),
 				array(
 					"fieldname"	=> "decision_date",
-					"op"		=> "=",
+					"op"		=> ">=",
 					"syntax"	=> "%s"
 				),
 				array(
