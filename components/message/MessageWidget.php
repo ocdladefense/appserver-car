@@ -5,13 +5,14 @@
 class MessageWidget extends Presentation\Component {
 
 
-
+	
 
 
 
 	public function __construct($name, $id, $params = array()) {
 
 		parent::__construct($name, $id, $params);
+		$this->active = false;
 		$this->template = "car-message";
 
 		$this->court = "Oregon Supreme Court";
