@@ -29,9 +29,7 @@
         <?php print Html\Select("importance", $this->getRanks(), $rank); ?>
     </div>
 
-    <div class="form-item">
-        <?php print Html\DataList("judges", $this->getJudges()); ?>
-    </div>
+    <?php print Html\DataList("judges", $this->getJudges()); ?>
 
     <div class="form-item">
         <?php print Html\Autocomplete("appellate_judge", "judges", $appellate_judge, "Appellate Judge"); ?>
