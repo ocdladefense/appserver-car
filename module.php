@@ -160,36 +160,34 @@ class CarModule extends Module {
 
 
 
-	public function showCarForm($carId = null){
+	public function showRecordForm($recordId = null, $object = "car"){
 
 		$user = get_current_user();
 
-		
+		$class = ucwords($object);
+
 		if(!$user->isAdmin()) throw new \Exception("You don't have access.");
 		
 		
-		$car = !empty($carId) ? select("SELECT * FROM car WHERE id = '$carId'") : new Car();
+		$record = !empty($recordId) ? select("SELECT * FROM {$object} WHERE id = '$recordId'") : new $class();
 
-		$subjects = DbHelper::getDistinctFieldValues("car", "subject");
+		$subjects = DbHelper::getDistinctFieldValues($object, "subject");
 		$subjects = array_map(function($subject) { return ucwords($subject); }, $subjects);
 
-		$appellateJudges = DbHelper::getDistinctFieldValues("car", "appellate_judge");
-		$trialJudges = DbHelper::getDistinctFieldValues("car", "trial_judge");
+		$appellate = DbHelper::getDistinctFieldValues($object, "appellate_judge");
+		$trial = DbHelper::getDistinctFieldValues($object, "trial_judge");
 
-		$allJudges = array_merge($appellateJudges, $trialJudges);
+		$judges = array_merge($appellate, $trial);
 
-		// var_dump($subjects);exit;   
-		$counties = $this->getOregonCounties();
-
-		$tpl = new Template("car-form");
+		$tpl = new Template("form");
 		$tpl->addPath(__DIR__ . "/templates");
 
 		return $tpl->render(array(
-			"car" => $car,
-			"subjects" => $subjects,
-			"counties" => $counties,
-			"judges"   => $allJudges,
-			"allCourts"	   => $this->getAppellateCourts()
+			"record" 		=> $record,
+			"subjects" 		=> $subjects,
+			"counties" 		=> Oregon::getCounties(),
+			"judges"   		=> $judges,
+			"courts"	   	=> Oregon::getCourts()
 		));
 	}
 

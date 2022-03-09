@@ -29,7 +29,7 @@
 			"authorization":"webserver"
 		},
 		"car/new":{
-			"callback":"showCarForm",
+			"callback":"showRecordForm",
 			"content-type":"text/html",
 			"access":"is_authenticated",
 			"authorization":"webserver"
