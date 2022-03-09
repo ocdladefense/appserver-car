@@ -6,7 +6,7 @@
  */
 ?>
 
-<form id="car-search" class="form-inline" action="/car/list" method="post">
+<form id="record-search" class="form-inline" action="/car/list" method="post">
 
     <?php print Html\DataList("judges", $this->getJudges()); ?>
 
@@ -42,39 +42,22 @@
 
 
     <div class="form-item">
-        <?php print Html\Button("resetBtn","Reset"); ?>
+        <?php print Html\Form\Submit("search-submit","Submit"); ?>
+    </div>
+
+    <div class="form-item">
+        <?php print Html\Button("search-reset","Reset"); ?>
+    </div>
+
+    <div class="form-item">
+        <?php print Html\Button("search-clear","Clear"); ?>
     </div>
     
 
     <div class="form-item">
-        <?php print Html\Checkbox("summarize", $summarize ? true : false); ?>
-        <label class="checkbox-label">summarize</label>
+        <?php print Html\Button("summarize", "Summarize", $summarize ? true : false); ?>
     </div>
 
 
 </form>
 
-<script>
-
-    var submissionNodes = document.getElementsByTagName("select");
-
-    for(var i = 0; i < submissionNodes.length; i++){
-
-        submissionNodes[i].addEventListener("change", function(){
-            var form = document.getElementById("car-search");
-            form.submit();
-        });
-    }
-
-    document.getElementById("summarize").addEventListener("change", function(){
-        var form = document.getElementById("car-search");
-        form.submit();
-    });
-
-
-    document.getElementById("resetBtn").addEventListener("click", function(){
-        window.location.replace();
-    });
-    
-    
-</script>
