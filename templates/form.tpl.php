@@ -1,8 +1,6 @@
-
-
 <?php
     $isUpdate = $record->getId() != null;
-    $headerMessage = $isUpdate ? "Update Case Review" : "Create a Case Review";
+    $headerMessage = $isUpdate ? "Update record" : "Create record";
 ?>
 
 <link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/form.css" />
@@ -19,24 +17,6 @@
 
 
     <?php
-        $checkFlagged = $record->isFlagged() ? "checked" : "";
-        
-        $checkDraft = $record->isDraft() ? "checked" : "";
-
-        $subjectDefault = array("" => "None Selected");
-        $allSubjects = $subjectDefault + $subjects;
-
-        $selectedCourt = empty($record->getCourt()) ? "" : $record->getCourt();
-        $allCourts[""] = "none selected";
-
-        $countyDefault = array("" => "None Selected");
-        $allCounties = $countyDefault + $counties;
-
-        $selectedSubject = empty($record->getSubject1()) ? "" : $record->getSubject1();
-
-        $selectedSubject = ucwords($selectedSubject);
-
-        $selectedCounty = empty($record->getCircuit()) ? "" : $record->getCircuit();
 
         // Create the datalist element for the judge name autocomplete.
         print Html\Datalist("judge-datalist", $judges);
@@ -50,10 +30,9 @@
             "5" => "5"
         );
 
-        $selectedImportance = !empty($record->getImportance()) ? $record->getImportance() : "";
     ?>
 
-
+ 
 
     <form id="car-form" class="car-form" action="/car/save" method="post">
 

@@ -15,15 +15,21 @@ class Car {
 	public $summary;
 	public $a_number;
 	public $citation;
-	public $circuit;
-	public $month;
-	public $day;
-	public $year;
+	public $circuit; // aliased by getCounty;
+	public $county;
+
+	public $decision_date;
+	public $published_date;
+
 	public $external_link;
 	public $url;
 	public $is_draft;
 	public $is_flagged;
 
+	// These should no longer be used as the decision_date.
+	public $month;
+	public $day;
+	public $year;
 
 	// This is to hold the data that will not be used as a column when inserting data.
 	private $meta = array();
@@ -152,6 +158,11 @@ class Car {
 	}
 
 	public function getCircuit(){
+
+		return explode(" County", $this->circuit)[0];
+	}
+
+	public function getCounty(){
 
 		return explode(" County", $this->circuit)[0];
 	}

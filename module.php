@@ -21,7 +21,14 @@ use function Session\get_current_user;
 
 class CarModule extends Module {
 
-	private $doSummarize;
+
+	// API name of the object.
+	// Objects can register their own methods
+	// for handling CRUD operations.
+	protected $object = "car";
+
+
+
 
 
 	public function __construct() {
@@ -160,83 +167,112 @@ class CarModule extends Module {
 
 
 
-	public function showRecordForm($recordId = null, $object = "car"){
+	public function showRecordForm($recordId = null) {
 
-		$user = get_current_user();
+	
 
-		$class = ucwords($object);
+		$class = ucwords($this->object);
 
-		if(!$user->isAdmin()) throw new \Exception("You don't have access.");
+
 		
-		
-		$record = !empty($recordId) ? select("SELECT * FROM {$object} WHERE id = '$recordId'") : new $class();
+		$record = !empty($recordId) ? select("SELECT * FROM {$this->object} WHERE id = '$recordId'") : new $class();
 
-		$subjects = DbHelper::getDistinctFieldValues($object, "subject");
+		$subjects = DbHelper::getDistinctFieldValues($this->object, "subject");
 		$subjects = array_map(function($subject) { return ucwords($subject); }, $subjects);
 
-		$appellate = DbHelper::getDistinctFieldValues($object, "appellate_judge");
-		$trial = DbHelper::getDistinctFieldValues($object, "trial_judge");
+		$appellate = DbHelper::getDistinctFieldValues($this->object, "appellate_judge");
+		$trial = DbHelper::getDistinctFieldValues($this->object, "trial_judge");
 
 		$judges = array_merge($appellate, $trial);
+
+
+
+
+		$flagged = $record->isFlagged() ? "checked" : "";
+        
+        $draft = $record->isDraft() ? "checked" : "";
+
+        $subject = array("" => "None Selected");
+        $subjects = $subjectDefault + $subjects;
+
+        $court = empty($record->getCourt()) ? "" : $record->getCourt();
+        $courts[""] = "none selected";
+
+        $counties = array("" => "None Selected");
+        $counties = $countyDefault + $counties;
+
+        $subject = empty($record->getSubject()) ? "" : $record->getSubject();
+        $subject = ucwords($subject);
+
+        $county = empty($record->getCircuit()) ? "" : $record->getCircuit();
+
+        $importance = !empty($record->getImportance()) ? $record->getImportance() : "";
+
 
 		$tpl = new Template("form");
 		$tpl->addPath(__DIR__ . "/templates");
 
 		return $tpl->render(array(
-			"record" 		=> $record,
-			"subjects" 		=> $subjects,
-			"counties" 		=> Oregon::getCounties(),
-			"judges"   		=> $judges,
-			"courts"	   	=> Oregon::getCourts()
+			"record" 			=> $record,
+			"subjects" 			=> $subjects,
+			"counties" 			=> Oregon::getCounties(),
+			"county" 			=> $county,
+			"judges"   			=> $judges,
+			"courts"	   		=> Oregon::getCourts(),
+			"flagged"	 		=> $flagged,
+			"draft" 			=> $draft,
+			"subjects" 			=> $subjects,
+			"court" 			=> $court
 		));
 	}
 
 
 
-	public function saveCar(){
+	public function save() {
 
 		$req = $this->getRequest();
-		$record = (array) $req->getBody();
+		$input = (array) $req->getBody();
 
-		foreach($record as $key => $value){
+		// How do we blank out a value?
+		foreach($input as $key => $value){
 
-			if(empty($value)) unset($record[$key]);
+			if(empty($value)) unset($record[$input]);
 		}
 
-		$car = Car::from_array_or_standard_object($record);
+		$record = Car::from_array_or_standard_object($input);
 
-		return empty($record["id"]) ? $this->createCar($car) : $this->updateCar($car);
+		return empty($record["id"]) ? $this->create($record) : $this->update($record);
 	}
 
 
 
+	// public function create(SObject $record).
+	public function create($record) {
 
-	public function createCar(Car $car) {
+		$result = insert($record);
 
-		$result = insert($car);
-
-		return redirect("/car/list/{$car->getId()}");
+		return redirect("/car/list/{$record->getId()}");
 	}
 	
 	
 	
 	
 	// For now only allow updates on test reviews.
-	public function updateCar(Car $car) {
+	public function update($record) {
 	
-		$result = update($car);
+		$result = update($record);
 
-		return redirect("/car/list/{$car->getId()}");
+		return redirect("/car/list/{$record->getId()}");
 	}
 
 
 
 
-	public function deleteCar($id){
+	public function delete($id){
 
-		$car = select("SELECT * FROM car WHERE id = '$id'");
+		$record = select("SELECT * FROM {$this->object} WHERE id = '$id'");
 
-		$query = "DELETE FROM car WHERE Id = '$id'";
+		$query = "DELETE FROM {$this->object} WHERE Id = '$id'";
 
 		$db = new Database();
 
@@ -248,16 +284,16 @@ class CarModule extends Module {
 
 
 
-	public function flagReview(){
+	public function flag() {
 
 		$req = $this->getRequest();
 		$body = $req->getBody();
 
-		$table = $body->tableName;
-		$id = $body->carId;
-		$isFlagged = $body->is_flagged;
+		
+		$id = $body->id;
+		$bool = $body->is_flagged;
 
-		$query = "UPDATE $table SET is_flagged = $isFlagged WHERE Id = '$id'";
+		$query = "UPDATE {$this->object} SET is_flagged = $bool WHERE id = '$id'";
 
 		$database = new Database();
 		$result = $database->update($query);
@@ -274,40 +310,24 @@ function recordPreprocess($record) {
 
 	static $index = 0; 
 
-	/*
-	$isFirstClass = $index == 0 ? "is-first" : "";
-	$index++;
-			
-	$isFlagged = $car->isFlagged() ? "checked" : "";
 
-	$classesArray = array();
+	$classes = array();
 
-	if($car->isNew()) $classesArray[] = "is-new";
+	if($record->isNew()) $classes[] = "is-new";
 
-	$classes = implode(" ", $classesArray);
-
-	$previousSubject = $subject;
-	$subject = trim($car->getSubject1());
-
-	$newSubject = $previousSubject != $subject;
-	
-	$title = $car->getTitle();
-	$court = $car->getCourt();
-
-	$importance = !empty($car->getImportance()) ? $car->getImportance() . "/5" : "unset";
-	*/									
-
+	$classes = implode(" ", $classes);
 
 	return array(
 		"car" 					=> $record,
 		"summary" 				=> nl2br($record->getSummary()),
 		"date"					=> $record->getDate(),
 		"subject"				=> $record->getSubject(),
+		"flagged"				=> $record->isFlagged(),
 		"secondary_subject" 	=> $record->getSubject2(),
-		"counter" 				=> 1,
-		"classes" 				=> "hello",
+		"counter" 				=> $index++,
+		"classes" 				=> $classes,
 		"title" 				=> $record->getTitle(),
-		"importance" 			=> 5,
-		"court" 				=> "Oregon Court of Appeals"
+		"importance" 			=> !empty($record->getImportance()) ? $record->getImportance() . "/5" : "unset",
+		"court" 				=> $record->getCourt()
 	);
 }

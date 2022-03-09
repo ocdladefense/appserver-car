@@ -23,7 +23,7 @@
 			"content-type":"text\/html"
 		},
 		"car/flag":{
-			"callback":"flagReview",
+			"callback":"flag",
 			"content-type":"application/json",
 			"access":"is_authenticated",
 			"authorization":"webserver"
