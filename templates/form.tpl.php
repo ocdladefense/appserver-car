@@ -5,7 +5,7 @@
     $headerMessage = $isUpdate ? "Update Case Review" : "Create a Case Review";
 ?>
 
-<link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/car-form.css" />
+<link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/form.css" />
 
 
 <div id="form-container" class="car-form-container">
@@ -157,4 +157,5 @@
     </form>
 </div>
 
-<script src="<?php print module_path(); ?>/assets/js/car.js"></script>
+<script src="<?php print module_path(); ?>/assets/js/form.js">
+</script>

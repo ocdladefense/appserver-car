@@ -1,6 +1,6 @@
 
 
-<link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/car-messages.css" />
+<link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/car/components/message/main.css" />
 
 <div class="messages-container">
         <?php print "CAR message-widget says... " . $this->court; ?>

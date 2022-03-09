@@ -1,10 +1,10 @@
-
 <?php
-
-
+/**
+ * @component Search Widget
+ * 
+ * Display a search widget with the appropriate filters for the given object.
+ */
 ?>
-
-<link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/components/search/component.css" />
 
 <form id="car-search" class="form-inline" action="/car/list" method="post">
 
