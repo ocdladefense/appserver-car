@@ -35,11 +35,17 @@
 		</div>
 		
 		<div class="car-item decision-date">
-			<?php print $car->getDate(); ?>
+			<?php print $date; ?>
 		</div>
 
-		<div class="car-item subject-1">
-			<?php print strtoupper($car->getSubject()) . " &bull; " . $car->getSubject2(); ?>
+		<div class="car-item subjects">
+			<span class="car-subject">
+				<?php print $subject; ?>
+			</span>
+			&bull;
+			<span class="car-subject-2">
+				<?php print $secondary_subject; ?>
+			</span>
 		</div>
 	</div>
 	

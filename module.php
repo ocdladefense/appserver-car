@@ -301,12 +301,15 @@ function recordPreprocess($record) {
 
 
 	return array(
-		"car" 			=> $record,
-		"summary" 		=> nl2br($record->getSummary()),
-		"counter" 		=> 1,
-		"classes" 		=> "hello",
-		"title" 		=> $record->getTitle(),
-		"importance" 	=> 5,
-		"court" 		=> "Oregon Court of Appeals"
+		"car" 					=> $record,
+		"summary" 				=> nl2br($record->getSummary()),
+		"date"					=> $record->getDate(),
+		"subject"				=> $record->getSubject(),
+		"secondary_subject" 	=> $record->getSubject2(),
+		"counter" 				=> 1,
+		"classes" 				=> "hello",
+		"title" 				=> $record->getTitle(),
+		"importance" 			=> 5,
+		"court" 				=> "Oregon Court of Appeals"
 	);
 }
