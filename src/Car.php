@@ -84,7 +84,7 @@ class Car {
 		$car->summary = $record["summary"];
 		$car->a_number = $record["a_number"];
 		$car->citation = $record["citation"];
-		//$car->circuit = $record["county"];
+		$car->circuit = $record["county"];
 		$car->county = $record["county"];
 
 		$car->published_date = empty($record["published_date"]) ? $car->publishedToday() : $record["published_date"];
