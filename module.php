@@ -38,7 +38,22 @@ class CarModule extends Module {
 		$this->name = "car";
 	}
 
+	public function dev() {
 
+		$appellate = DbHelper::getDistinctFieldValues($this->object, "appellate_judge");
+
+
+		$values = array();
+		foreach($appellate as $judge) {
+			$arr = explode(",", $judge);
+			$values = array_merge($values,$arr);
+		}
+
+		var_dump($values);
+		exit;
+
+		$trial = DbHelper::getDistinctFieldValues($this->object, "trial_judge");
+	}
 
 
 	/**
