@@ -28,7 +28,7 @@ class Car {
 
 	public $citation;
 
-	//public $circuit; // aliased by getCounty;
+	public $circuit; // aliased by getCounty;
 	
 	public $county;
 
