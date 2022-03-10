@@ -28,7 +28,7 @@ class Car {
 
 	public $citation;
 
-	public $circuit; // aliased by getCounty;
+	//public $circuit; // aliased by getCounty;
 	
 	public $county;
 
@@ -74,6 +74,8 @@ class Car {
 			$car->title = $record["title"] != null ? $record["title"] : $record["plaintiff"] . " v. " . $record["defendant"];
 		}
 
+		//var_dump($record);exit;
+
 		$car->court = $record["court"];
 		$car->trial_judge = $record["trial_judge"];
 		$car->appellate_judge = $record["appellate_judge"];
@@ -82,16 +84,20 @@ class Car {
 		$car->summary = $record["summary"];
 		$car->a_number = $record["a_number"];
 		$car->citation = $record["citation"];
-		$car->circuit = $record["county"];
+		//$car->circuit = $record["county"];
 		$car->county = $record["county"];
+
+		$car->published_date = empty($record["published_date"]) ? $car->publishedToday() : $record["published_date"];
+		$car->decision_date = $record["decision_date"];
+		
 		$car->external_link = $record["external_link"];
 		$car->is_flagged = !empty($record["is_flagged"]) ? $record["is_flagged"] : "0";
 		$car->is_draft = !empty($record["is_draft"]) ? $record["is_draft"] : "0";
 		$car->url = $record["url"];
 
-		if(!empty($record["date"])){
+		if(!empty($record["decision_date"])){
 
-			list($car->year, $car->month, $car->day) = explode("-",$record["date"]);
+			list($car->year, $car->month, $car->day) = explode("-",$record["decision_date"]);
 
 		} else {
 
@@ -99,6 +105,8 @@ class Car {
 			$car->day = $record["day"];
 			$car->year = $record["year"];
 		}
+
+		//var_dump($car);exit;
 
 		return $car;
 	}
@@ -113,6 +121,11 @@ class Car {
 	public function getImportance() {
 
 		return $this->importance;
+	}
+
+	public function getDecisionDate() {
+
+		return $this->decision_date;
 	}
 
 	public function getA_number() {
@@ -208,6 +221,14 @@ class Car {
 	public function getDateString() {
 	
 		return $this->year . "-" . $this->month . "-" . $this->day;
+	}
+
+
+	public function publishedToday() {
+
+		$today = new DateTime();
+
+		return $today->format("yy-m-d");
 	}
 	
 	
