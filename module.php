@@ -167,44 +167,45 @@ class CarModule extends Module {
 
 	public function showRecordForm($recordId = null) {
 
-	
-
 		$class = ucwords($this->object);
 
-
-		
 		$record = !empty($recordId) ? select("SELECT * FROM {$this->object} WHERE id = '$recordId'") : new $class();
 
+		$importance = !empty($record->getImportance()) ? $record->getImportance() : "";
+
+		// Build the list of courts and set the selected court.
+		$courts = Oregon::getCourts();
+		$courts[""] = "none selected";
+		$court = empty($record->getCourt()) ? "" : $record->getCourt();
+
+
+		// Build the list of subjects and set the selected subject.
 		$subjects = DbHelper::getDistinctFieldValues($this->object, "subject");
 		$subjects = array_map(function($subject) { return ucwords($subject); }, $subjects);
+		$subjectDefault = array("" => "None Selected");
+        $subjects = $subjectDefault + $subjects;
+		$subject = empty($record->getSubject()) ? "" : $record->getSubject();
+        $subject = ucwords($subject);
 
+
+		// Build the list of counties and set the selected county.
+		$counties = Oregon::getCounties();
+		$countyDefault = array("" => "None Selected");
+        $counties = $countyDefault + $counties;
+        $county = empty($record->getCircuit()) ? "" : $record->getCircuit();
+
+
+		// Build the list of judges.
 		$appellate = DbHelper::getDistinctFieldValues($this->object, "appellate_judge");
 		$trial = DbHelper::getDistinctFieldValues($this->object, "trial_judge");
-
 		$judges = array_merge($appellate, $trial);
 
 
-
-
 		$flagged = $record->isFlagged() ? "checked" : "";
-        
         $draft = $record->isDraft() ? "checked" : "";
 
-        $subject = array("" => "None Selected");
-        $subjects = $subjectDefault + $subjects;
 
-        $court = empty($record->getCourt()) ? "" : $record->getCourt();
-        $courts[""] = "none selected";
 
-        $counties = array("" => "None Selected");
-        $counties = $countyDefault + $counties;
-
-        $subject = empty($record->getSubject()) ? "" : $record->getSubject();
-        $subject = ucwords($subject);
-
-        $county = empty($record->getCircuit()) ? "" : $record->getCircuit();
-
-        $importance = !empty($record->getImportance()) ? $record->getImportance() : "";
 
 
 		$tpl = new Template("form");
@@ -212,15 +213,16 @@ class CarModule extends Module {
 
 		return $tpl->render(array(
 			"record" 			=> $record,
+			"importance"		=> $importance,
+			"court" 			=> $court,
+			"courts"	   		=> $courts,
+			"subject" 			=> $subject,
 			"subjects" 			=> $subjects,
-			"counties" 			=> Oregon::getCounties(),
 			"county" 			=> $county,
+			"counties" 			=> $counties,
 			"judges"   			=> $judges,
-			"courts"	   		=> Oregon::getCourts(),
 			"flagged"	 		=> $flagged,
-			"draft" 			=> $draft,
-			"subjects" 			=> $subjects,
-			"court" 			=> $court
+			"draft" 			=> $draft
 		));
 	}
 
