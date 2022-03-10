@@ -19,7 +19,7 @@
     <?php
 
         // Create the datalist element for the judge name autocomplete.
-        print Html\Datalist("judge-datalist", $judges);
+        print Html\Datalist("judges", $judges);
 
         $importanceLevels = array(
             "" => "none selected",
@@ -60,7 +60,7 @@
 
         <div>
             <label>Decision Date</label>
-            <input required type="date" name="date" value="<?php print $record->getPickerCompatibleDate(); ?>">
+            <input required type="date" name="decision_date" value="<?php print $record->getDecisionDate(); ?>">
         </div>
 
         <div>
@@ -86,12 +86,12 @@
 
         <div>
             <label>Appellate Judge</label>
-            <input required autocomplete="off" type="text" name="appellate_judge" value="<?php print $record->getAppellateJudge(); ?>" data-datalist="judge-datalist" placeholder="Search by judge name" />
+            <input required autocomplete="off" type="text" name="appellate_judge" value="<?php print $record->getAppellateJudge(); ?>" list="judges" placeholder="Search by judge name" />
         </div>
 
         <div>
             <label>Trial Judge</label>
-            <input required autocomplete="off" type="text" name="trial_judge" value="<?php print $record->getTrialJudge(); ?>" data-datalist="judge-datalist" placeholder="Search by judge name" />
+            <input required autocomplete="off" type="text" name="trial_judge" value="<?php print $record->getTrialJudge(); ?>" list="judges" placeholder="Search by judge name" />
         </div>
 
         <div>
@@ -118,7 +118,7 @@
 
         <div>
             <label>County</label>
-            <?php print Html\Select("circuit", $counties, $county); ?>
+            <?php print Html\Select("county", $counties, $county); ?>
         </div>
 
         <div>

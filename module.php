@@ -216,11 +216,9 @@ class CarModule extends Module {
 		$trial = DbHelper::getDistinctFieldValues($this->object, "trial_judge");
 		$judges = array_merge($appellate, $trial);
 
-
+		// Set other variables.
 		$flagged = $record->isFlagged() ? "checked" : "";
         $draft = $record->isDraft() ? "checked" : "";
-
-
 
 
 
@@ -255,9 +253,9 @@ class CarModule extends Module {
 			if(empty($value)) unset($record[$input]);
 		}
 
-		$record = Car::from_array_or_standard_object($input);
+		$car = Car::from_array_or_standard_object($input);
 
-		return empty($record["id"]) ? $this->create($record) : $this->update($record);
+		return empty($car->getId()) ? $this->create($car) : $this->update($car);
 	}
 
 
