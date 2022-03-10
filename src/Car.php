@@ -3,30 +3,58 @@
 class Car {
 
 	public $id;
+
 	public $importance;
+
 	public $title;
+
 	public $court;
+
 	public $plaintiff;
+
 	public $defendant;
+
 	public $trial_judge;
+
 	public $appellate_judge;
+
 	public $subject;
+
 	public $secondary_subject;
+
 	public $summary;
+
 	public $a_number;
+
 	public $citation;
-	public $circuit;
-	public $month;
-	public $day;
-	public $year;
+
+	public $circuit; // aliased by getCounty;
+	
+	public $county;
+
+	public $decision_date;
+	
+	public $published_date;
+
 	public $external_link;
+	
 	public $url;
+	
 	public $is_draft;
+	
 	public $is_flagged;
 
+	// These should no longer be used as the decision_date.
+	public $month;
+	
+	public $day;
+	
+	public $year;
 
 	// This is to hold the data that will not be used as a column when inserting data.
 	private $meta = array();
+
+
 
 
 	public function __construct($id = null) {}
@@ -46,6 +74,8 @@ class Car {
 			$car->title = $record["title"] != null ? $record["title"] : $record["plaintiff"] . " v. " . $record["defendant"];
 		}
 
+		//var_dump($record);exit;
+
 		$car->court = $record["court"];
 		$car->trial_judge = $record["trial_judge"];
 		$car->appellate_judge = $record["appellate_judge"];
@@ -54,15 +84,20 @@ class Car {
 		$car->summary = $record["summary"];
 		$car->a_number = $record["a_number"];
 		$car->citation = $record["citation"];
-		$car->circuit = $record["circuit"];
+		$car->circuit = $record["county"];
+		$car->county = $record["county"];
+
+		$car->published_date = empty($record["published_date"]) ? $car->publishedToday() : $record["published_date"];
+		$car->decision_date = $record["decision_date"];
+		
 		$car->external_link = $record["external_link"];
 		$car->is_flagged = !empty($record["is_flagged"]) ? $record["is_flagged"] : "0";
 		$car->is_draft = !empty($record["is_draft"]) ? $record["is_draft"] : "0";
 		$car->url = $record["url"];
 
-		if(!empty($record["date"])){
+		if(!empty($record["decision_date"])){
 
-			list($car->year, $car->month, $car->day) = explode("-",$record["date"]);
+			list($car->year, $car->month, $car->day) = explode("-",$record["decision_date"]);
 
 		} else {
 
@@ -70,6 +105,8 @@ class Car {
 			$car->day = $record["day"];
 			$car->year = $record["year"];
 		}
+
+		//var_dump($car);exit;
 
 		return $car;
 	}
@@ -86,12 +123,22 @@ class Car {
 		return $this->importance;
 	}
 
+	public function getDecisionDate() {
+
+		return $this->decision_date;
+	}
+
 	public function getA_number() {
 
 		return $this->a_number;
 	}
 
 	public function getSubject1(){
+
+		return $this->subject;
+	}
+
+	public function getSubject(){
 
 		return $this->subject;
 	}
@@ -151,6 +198,11 @@ class Car {
 		return explode(" County", $this->circuit)[0];
 	}
 
+	public function getCounty(){
+
+		return explode(" County", $this->circuit)[0];
+	}
+
 	public function getAppellateJudge(){
 
 		return $this->appellate_judge;
@@ -169,6 +221,14 @@ class Car {
 	public function getDateString() {
 	
 		return $this->year . "-" . $this->month . "-" . $this->day;
+	}
+
+
+	public function publishedToday() {
+
+		$today = new DateTime();
+
+		return $today->format("yy-m-d");
 	}
 	
 	

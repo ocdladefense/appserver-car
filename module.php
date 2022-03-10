@@ -1,21 +1,33 @@
 <?php
 
 use Mysql\Database;
-use Http\HttpRequest;
-use Http\HttpHeader;
 use Mysql\DbHelper;
 use Mysql\QueryBuilder;
+use Http\HttpRequest;
+use Http\HttpHeader;
 use Http\HttpHeaderCollection;
+use GIS\Political\Countries\US\Oregon;
+use Ocdla\Date;
+
 
 use function Mysql\insert;
 use function Mysql\update;
 use function Mysql\select;
-use function Session\get_current_user;
+
+
+
 
 
 class CarModule extends Module {
 
-	private $doSummarize;
+
+	// API name of the object.
+	// Objects can register their own methods
+	// for handling CRUD operations.
+	protected $object = "car";
+
+
+
 
 
 	public function __construct() {
@@ -25,7 +37,90 @@ class CarModule extends Module {
 		$this->name = "car";
 	}
 
-	public function showCars($newCarId = null) {
+
+	
+	public function dev() {
+
+		$appellate = DbHelper::getDistinctFieldValues($this->object, "appellate_judge");
+
+
+		$values = array();
+		foreach($appellate as $judge) {
+			$arr = explode(",", $judge);
+			$values = array_merge($values,$arr);
+		}
+
+		var_dump($values);
+		exit;
+
+		$trial = DbHelper::getDistinctFieldValues($this->object, "trial_judge");
+	}
+
+
+	/**
+	 * @method showCars
+	 * 
+	 * Show our CAR page with a list of CAR entries
+	 * that resulted from the query.  Default query is to show all CARs,
+	 * with the most recent CARs first.  The page includes a search widget, a message for
+	 * the user summarizing the results of their query and the 
+	 * actual list of CAR entires.
+	 * 
+	 * @param $carId
+	 */
+	public function getList($recordId = null) {
+
+		$query = $this->getQuery();
+		// var_dump($query);
+		$records = select($query);
+
+		if(!is_array($records)) $records = array($records);
+
+
+		// If there is a new car show it at the top of the list.
+		if(!empty($carId)) {
+
+			$promote = select("SELECT * FROM car WHERE id = '$recordId'");
+
+			$promote->isNew(true);
+
+			for($i = 0; $i < count($records); $i++){
+
+				if($records[$i]->getId() == $promote->getId()){
+	
+					unset($records[$i]);
+				}
+			}
+
+			array_unshift($records, $promote);
+		}
+
+
+		$tpl = new Template("list");
+		$tpl->addPath(__DIR__ . "/templates");
+
+
+		$list = $tpl->render(array("records" => $records));
+
+		
+		$tpl = new Template("page");
+		$tpl->addPath(__DIR__ . "/templates");
+
+		return $tpl->render(array(
+			"list" => $list,
+			"query" => $query,
+			"count" => count($records),
+			"results" => count($records) > 0
+		));
+	}
+
+
+
+
+
+
+	private function getQuery() {
+
 
 		$user = get_current_user();
 
@@ -38,22 +133,7 @@ class CarModule extends Module {
 					"syntax"	=> "'%s%%'"
 				),
 				array(
-					"fieldname"	=> "year",
-					"op"		=> "=",
-					"syntax"	=> "%s"
-				),
-				array(
-					"fieldname"	=> "month",
-					"op"		=> "=",
-					"syntax"	=> "%s"
-				),
-				array(
-					"fieldname"	=> "day",
-					"op"		=> "=",
-					"syntax"	=> "%s"
-				),
-				array(
-					"fieldname"	=> "circuit",
+					"fieldname"	=> "county",
 					"op"		=> "LIKE",
 					"syntax"	=> "'%%%s%%'"
 				),
@@ -87,223 +167,134 @@ class CarModule extends Module {
 
 
 		$params = !empty($_GET) ? $_GET : $_POST;
-
-		if(!$user->isAdmin()) $params["is_draft"] = 1;
-
-		$this->doSummarize = !empty($params["summarize"]);
+		//var_dump($params);exit;
+		$summarize = !empty($params["summarize"]);
 
 		$sql = new QueryBuilder("car");
 
 		$sql->setFields(array("*"));
 
 		if(!empty($params)) $sql->setConditions($conditions, $params);
-
-		$orderBy = $this->doSummarize ? "subject, year DESC, month DESC, day DESC" : "year DESC, month DESC, day DESC";
-		$sql->setOrderBy($orderBy);
-
-		$query = $sql->compile();
-
-		$cars = select($query);
-
-		if(!is_array($cars)) $cars = array($cars);
-
-
-		// If there is a new car show it at the top of the list.
-		if(!empty($newCarId)) {
-
-			$newCar = select("SELECT * FROM car WHERE id = '$newCarId'");
-
-			$newCar->isNew(true);
-
-			for($i = 0; $i < count($cars); $i++){
-
-				if($cars[$i]->getId() == $newCar->getId()){
+		if(!empty(trim($params["year"]))) $sql->addCondition("YEAR(decision_date)={$params['year']}");
 	
-					unset($cars[$i]);
-				}
-			}
+		$sql->setOrderBy($summarize ? "subject, decision_date DESC" : "decision_date DESC");
 
-			array_unshift($cars, $newCar);
-		}
-
-
-		$tpl = new Template("car-list");
-		$tpl->addPath(__DIR__ . "/templates");
-
-		return $tpl->render(
-			array(
-				"cars"			     => $cars,
-				"searchContainer" 	 => $this->getCarSearch($params, $query),
-				"messagesContainer"  => $this->getUserFriendlyMessages($params, $cars, $query),
-				"user"			     => $user,
-				"groupBy"		     => $this->doSummarize ? "subject" : null
-			)
-		);
-	}
-
-
-	public function getCarSearch($params, $query) {
-
-		$subjects = DbHelper::getDistinctFieldValues("car", "subject");
-
-		
-
-		$years = DbHelper::getDistinctFieldValues("car", "year");
-
-		$appellateJudges = DbHelper::getDistinctFieldValues("car", "appellate_judge");
-		$trialJudges = DbHelper::getDistinctFieldValues("car", "trial_judge");
-
-		$allJudges = array_merge($appellateJudges, $trialJudges);
-
-		$tpl = new Template("car-search");
-		$tpl->addPath(__DIR__ . "/templates");
-
-		return $tpl->render(array(
-			"subjects" 					 => $subjects,
-			"subject"					 => $params["subject"],
-			"years"						 => $years,
-			"year"						 => $params["year"],
-			"allMonths"					 => $this->getMonths(),
-			"month"     				 => $this->getStringMonth($params["month"]),
-			"allCourts" 				 => $this->getAppellateCourts(),
-			"court"     				 => $params["court"],
-			"counties"					 => $this->getOregonCounties(),
-			"county"					 => $params["circuit"],
-			"judges"					 => $allJudges,
-			"selectedAppellateJudge"     => $params["appellate_judge"],
-			"selectedTrialJudge"         => $params["trial_judge"],
-			"importance"				 => $params["importance"],
-			"doSummarize"		 		 => $this->doSummarize,
-			"selectedImportance"		 => $params["importance"]
-		));
-
-	}
-
-	public function getUserFriendlyMessages($params, $cars, $query){
-
-		$tpl = new Template("car-message");
-		$tpl->addPath(__DIR__ . "/templates");
-
-		return $tpl->render(array(
-			"message"      => $this->getUserMessage($params, count($cars)),
-			"user"		   => get_current_user(),
-			"query"        => $query
-		));
-	}
-
-
-	public function getUserMessage($params, $count){
-
-		$year = $params["year"];
-		$month = $this->getStringMonth($params["month"]);
-		$day = $params["day"];
-		$court = $params["court"];
-		$subject = $params["subject"];
-		$county = $params["circuit"];
-
-		$courtMsg = empty($court) ? "" : "in $court";
-
-		$month = $month == "All Months" ? null : $month;
-
-		if(!empty($month)) $dateMsg = empty($year) ? "for the month of $month (All Years)" : "for $month";
-		if(!empty($day)) $dateMsg .= ", $day";
-		if(!empty($year)) $dateMsg .= empty($month) ? "for $year" : ", $year";
-
-		$msg = "";
-
-		if(!empty($subject)) $msg .= "<h3>$subject</h3>";
-
-		$msg .= "showing " . $count . " case review(s)";
-		if(!empty($courtMsg)) $msg .= " $courtMsg";
-		if(!empty($dateMsg)) $msg .= " $dateMsg";
-
-		if(!empty($county)) $msg .= "<h4>$count decision(s) made in $county County</h4>";
-
-
-		return $msg;
+		return $sql->compile();
 	}
 
 
 
-	public function showCarForm($carId = null){
 
-		$user = get_current_user();
 
-		
-		if(!$user->isAdmin()) throw new \Exception("You don't have access.");
-		
-		
-		$car = !empty($carId) ? select("SELECT * FROM car WHERE id = '$carId'") : new Car();
 
-		$subjects = DbHelper::getDistinctFieldValues("car", "subject");
+
+
+	public function showRecordForm($recordId = null) {
+
+		$class = ucwords($this->object);
+
+		$record = !empty($recordId) ? select("SELECT * FROM {$this->object} WHERE id = '$recordId'") : new $class();
+
+		$importance = !empty($record->getImportance()) ? $record->getImportance() : "";
+
+		// Build the list of courts and set the selected court.
+		$courts = Oregon::getCourts();
+		$courts[""] = "none selected";
+		$court = empty($record->getCourt()) ? "" : $record->getCourt();
+
+
+		// Build the list of subjects and set the selected subject.
+		$subjects = DbHelper::getDistinctFieldValues($this->object, "subject");
 		$subjects = array_map(function($subject) { return ucwords($subject); }, $subjects);
+		$subjectDefault = array("" => "None Selected");
+        $subjects = $subjectDefault + $subjects;
+		$subject = empty($record->getSubject()) ? "" : $record->getSubject();
+        $subject = ucwords($subject);
 
-		$appellateJudges = DbHelper::getDistinctFieldValues("car", "appellate_judge");
-		$trialJudges = DbHelper::getDistinctFieldValues("car", "trial_judge");
 
-		$allJudges = array_merge($appellateJudges, $trialJudges);
+		// Build the list of counties and set the selected county.
+		$counties = Oregon::getCounties();
+		$countyDefault = array("" => "None Selected");
+        $counties = $countyDefault + $counties;
+        $county = empty($record->getCircuit()) ? "" : $record->getCircuit();
 
-		// var_dump($subjects);exit;   
-		$counties = $this->getOregonCounties();
 
-		$tpl = new Template("car-form");
+		// Build the list of judges.
+		$appellate = DbHelper::getDistinctFieldValues($this->object, "appellate_judge");
+		$trial = DbHelper::getDistinctFieldValues($this->object, "trial_judge");
+		$judges = array_merge($appellate, $trial);
+
+		// Set other variables.
+		$flagged = $record->isFlagged() ? "checked" : "";
+        $draft = $record->isDraft() ? "checked" : "";
+
+
+
+		$tpl = new Template("form");
 		$tpl->addPath(__DIR__ . "/templates");
 
 		return $tpl->render(array(
-			"car" => $car,
-			"subjects" => $subjects,
-			"counties" => $counties,
-			"judges"   => $allJudges,
-			"allCourts"	   => $this->getAppellateCourts()
+			"record" 			=> $record,
+			"importance"		=> $importance,
+			"court" 			=> $court,
+			"courts"	   		=> $courts,
+			"subject" 			=> $subject,
+			"subjects" 			=> $subjects,
+			"county" 			=> $county,
+			"counties" 			=> $counties,
+			"judges"   			=> $judges,
+			"flagged"	 		=> $flagged,
+			"draft" 			=> $draft
 		));
 	}
 
 
 
-	public function saveCar(){
+	public function save() {
 
 		$req = $this->getRequest();
-		$record = (array) $req->getBody();
+		$input = (array) $req->getBody();
 
-		foreach($record as $key => $value){
+		// How do we blank out a value?
+		foreach($input as $key => $value){
 
-			if(empty($value)) unset($record[$key]);
+			if(empty($value)) unset($record[$input]);
 		}
 
-		$car = Car::from_array_or_standard_object($record);
+		$car = Car::from_array_or_standard_object($input);
 
-		return empty($record["id"]) ? $this->createCar($car) : $this->updateCar($car);
+		return empty($car->getId()) ? $this->create($car) : $this->update($car);
 	}
 
 
 
+	// public function create(SObject $record).
+	public function create($record) {
 
-	public function createCar(Car $car) {
+		$result = insert($record);
 
-		$result = insert($car);
-
-		return redirect("/car/list/{$car->getId()}");
+		return redirect("/car/list/{$record->getId()}");
 	}
 	
 	
 	
 	
 	// For now only allow updates on test reviews.
-	public function updateCar(Car $car) {
+	public function update($record) {
 	
-		$result = update($car);
+		$result = update($record);
 
-		return redirect("/car/list/{$car->getId()}");
+		return redirect("/car/list/{$record->getId()}");
 	}
 
 
 
 
-	public function deleteCar($id){
+	public function delete($id){
 
-		$car = select("SELECT * FROM car WHERE id = '$id'");
+		$record = select("SELECT * FROM {$this->object} WHERE id = '$id'");
 
-		$query = "DELETE FROM car WHERE Id = '$id'";
+		$query = "DELETE FROM {$this->object} WHERE Id = '$id'";
 
 		$db = new Database();
 
@@ -315,16 +306,16 @@ class CarModule extends Module {
 
 
 
-	public function flagReview(){
+	public function flag() {
 
 		$req = $this->getRequest();
 		$body = $req->getBody();
 
-		$table = $body->tableName;
-		$id = $body->carId;
-		$isFlagged = $body->is_flagged;
+		
+		$id = $body->id;
+		$bool = $body->is_flagged;
 
-		$query = "UPDATE $table SET is_flagged = $isFlagged WHERE Id = '$id'";
+		$query = "UPDATE {$this->object} SET is_flagged = $bool WHERE id = '$id'";
 
 		$database = new Database();
 		$result = $database->update($query);
@@ -334,223 +325,40 @@ class CarModule extends Module {
 	
 
 
-	############################################################################################################################
-	################################ EMAIL FUNCTIONS ###########################################################################
-	############################################################################################################################
-
-	public function showMailForm() {
-
-		$today = new DateTime();
-		$pickerDate = $today->format("Y-m-d");
-		$emailDate = $today->format("M d, Y");
-
-		$form = new Template("car-email-form");
-		$form->addPath(__DIR__ . "/templates");
-
-		$params = [
-			"defaultEmail"		=> get_current_user()->getEmail(),
-			"defaultSubject"	=> "Appellate Review - COA, $emailDate",
-			"defaultPickerDate" => $pickerDate
-		];
-
-		return $form->render($params);
-	}
-
-
-
-	public function newMail() {
-
-		$params = $this->getRequest()->getBody();
-
-		$startDate = new DateTime($params->startDate);
-		$endDate = new DateTime($params->endDate);
-
-		// var_dump($params); exit;
-
-		$html = $this->getRecentCarList($params->court, $startDate, $endDate);
-		
-
-		return $this->doMail($params->to, $params->subject, "OCDLA Criminal Appellate Review", $html);
-	}
-
-
-	public function getRecentCarList($court = 'Oregon Appellate Court', DateTime $begin = null, DateTime $end = null) {
-		$begin = null == $begin ? new DateTime() : $begin;
-		
-		$beginMysql = $begin->format('Y-m-j');
-
-		if(null == $end) {
-			$query = "SELECT * FROM car WHERE decision_date = '{$beginMysql}'";
-			$query .= " AND court = '{$court}'";
-		} else {
-			$endMysql = $end->format('Y-m-j');
-	
-			$query = "SELECT * FROM car WHERE decision_date >= '{$beginMysql}'";
-			$query .= " AND decision_date <= '{$endMysql}'";
-			$query .= " AND court = '{$court}'";
-		}
-
-
-
-		// print $query;exit;
-		// ORDER BY year DESC, month DESC, day DESC";
-		$cars = select($query);
-		
-		// var_dump($cars);exit;
-
-		$list = new Template("email-list");
-		$list->addPath(__DIR__ . "/templates");
-
-		$listHtml = $list->render(["cars" => $cars]);
-
-		$body = new Template("email-body");
-		$body->addPath(__DIR__ . "/templates");
-
-		$params = [
-			"year" => $begin->format('Y'),
-			"month" => $begin->format('m'),
-			"day" => $begin->format('j'),
-			"date" => $begin->format('l, M j  Y'),
-			"carList" => $listHtml 
-		];
-
-	
-		return $body->render($params);
-	}
-
-
-
-
-
-	public function doMail($to, $subject, $title, $content, $headers = array()){
-
-		$headers = [
-			"From" 		   => "notifications@ocdla.org",
-			"Content-Type" => "text/html"
-		];
-
-		$headers = HttpHeaderCollection::fromArray($headers);
-
-
-
-		$message = new MailMessage($to);
-		$message->setSubject($subject);
-		$message->setBody($content);
-		$message->setHeaders($headers);
-		$message->setTitle($title);
-
-		return $message;
-	}
-
-
-
-	public function testMail() {
-
-
-		$to = "jbernal.web.dev@gmail.com";//,rankinjohnsonpdx@gmail.com";
-		$subject = "Newest Case Review updates";
-
-
-		$range = new DateTime("2022-1-10");
-		$end = new DateTime();
-		$content = $this->getRecentCarList('Oregon Appellate Court', $range, $end);
-		
-
-		return $this->doMail($to, $subject, "OCDLA Criminal Appellate Review", $content);
-	}
-
-
-
-	public function getStringMonth($numMonth){
-		
-		$numMonth = strlen($numMonth) == 1 ? "0$numMonth" : $numMonth;
-
-		return $this->getMonths()[$numMonth];
-	}
-
-
-
-
-
-
-	
-	############################################################################################################################
-	###################### HARD CODED DATA FUNCTIONS ###########################################################################
-	############################################################################################################################
-
-
-	public function getOregonCounties(){
-
-		return array(
-			"Baker" 		=> "Baker",
-			"Benton" 		=> "Benton",
-			"Clackamas"		=> "Clackamas",
-			"Clatsop" 		=> "Clatsop",
-			"Columbia"		=> "Columbia",
-			"Coos"			=> "Coos",
-			"Crook"			=> "Crook",
-			"Curry"			=> "Curry",
-			"Deschutes"		=> "Deschutes",
-			"Douglas"		=> "Douglas",
-			"Gillam"		=> "Gillam",
-			"Grant"			=> "Grant",
-			"Harney"		=> "Harney",
-			"Hood River"	=> "Hood River",
-			"Jackson"		=> "Jackson",
-			"Jefferson"		=> "Jefferson",
-			"Josephine"		=> "Josephine",
-			"Klamath"		=> "Klamath",
-			"Lake"			=> "Lake",
-			"Lane"			=> "Lane",
-			"Lincoln"		=> "Lincoln",
-			"Linn"			=> "Linn",
-			"Malheur"		=> "Malheur",
-			"Marion"		=> "Marion",
-			"Morrow"		=> "Morrow",
-			"Multnomah"		=> "Multnomah",
-			"Polk"			=> "Polk",
-			"Sherman"		=> "Sherman",
-			"Tillamook"		=> "Tillamook",
-			"Umatilla"		=> "Umatilla",
-			"Union"			=> "Union",
-			"Wallowa"		=> "Wallowa",
-			"Wasco"			=> "Wasco",
-			"Washington"	=> "Washington",
-			"Wheeler"		=> "Wheeler",
-			"Yamhill"		=> "Yamhill"
-		);
-	}
-
-
-	public function getMonths(){
-
-		return array(
-			"" 	   => "All Months",
-			"01"   => "January",
-			"02"   => "February",
-			"03"   => "March",
-			"04"   => "April",
-			"05"   => "May",
-			"06"   => "June",
-			"07"   => "July",
-			"08"   => "August",
-			"09"   => "September",
-			"10"   => "October",
-			"11"   => "November",
-			"12"   => "December"
-		);
-	}
-
-
-
-	public function getAppellateCourts(){
-
-		return array(
-			"" 						 => "All Courts",
-			"Oregon Appellate Court" => "Oregon Appellate Court",
-			"Oregon Supreme Court"   => "Oregon Supreme Court"
-		);
-	}
 }
 
 
+function recordPreprocess($record) {
+
+	static $index = 0; 
+
+
+	$classes = array();
+
+	if($record->isNew()) $classes[] = "is-new";
+
+	$classes = implode(" ", $classes);
+
+	$fix = preg_replace("/[\n\r]+/","\n", $record->getSummary());
+	// var_dump($fix);
+	// $fix = str_replace("\n\n","\n",  $fix);
+	// $fix = str_replace("\n\n","\n",  $fix);
+	$fix = str_replace("\n","</p><p>", $fix);
+	$fix = "<p>" . $fix . "</p>";
+
+	return array(
+		"car" 					=> $record,
+		"summary" 				=> $fix,
+		"county"				=> $record->getCounty(),
+		"date"					=> $record->getDate(),
+		"subject"				=> ucwords($record->getSubject()),
+		"flagged"				=> $record->isFlagged(),
+		"secondary_subject" 	=> $record->getSubject2(),
+		"counter" 				=> $index++,
+		"classes" 				=> $classes,
+		"title" 				=> $record->getTitle(),
+		"rank"					=> $record->getImportance(),
+		"importance" 			=> !empty($record->getImportance()) ? $record->getImportance() . "/5" : "unset",
+		"court" 				=> $record->getCourt()
+	);
+}

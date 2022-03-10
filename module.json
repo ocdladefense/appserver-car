@@ -3,9 +3,7 @@
 	"description": "Retrieve OCDLA Case Reviews.",
 	"comment": "Module definition file.",
 	"connectedApp": "default",
-	"files": [
-		"Car.php"
-	],
+	"files": ["Car.php"],
 	"links": [
 		{
 			"href":"/car/new",
@@ -13,69 +11,50 @@
 			"isSublink": true,
 			"adminLink": true,
 			"parentLinkId":"car"
-		},
-		{
-			"href":"/car/mail/create",
-			"label": "Send Mail",
-			"isSublink": true,
-			"adminLink": true,
-			"parentLinkId":"car"
 		}
 	],
 	"routes": {
 		"car/list/%id":{
-			"callback":"showCars",
+			"callback":"getList",
 			"content-type":"text\/html"
 		},
+		"car/dev": {
+			"callback": "dev",
+			"content-type":"text/html"
+		},
 		"car/list":{
-			"callback":"showCars",
+			"callback":"getList",
 			"content-type":"text\/html"
 		},
 		"car/flag":{
-			"callback":"flagReview",
+			"callback":"flag",
 			"content-type":"application/json",
 			"access":"is_authenticated",
 			"authorization":"webserver"
 		},
 		"car/new":{
-			"callback":"showCarForm",
+			"callback":"showRecordForm",
 			"content-type":"text/html",
-			"access":"is_authenticated",
+			"access":"is_admin",
 			"authorization":"webserver"
 		},
 		"car/edit/%id":{
-			"callback":"showCarForm",
+			"callback":"showRecordForm",
 			"content-type":"text/html",
-			"access":"is_authenticated",
+			"access":"is_admin",
 			"authorization":"webserver"
 		},
 		"car/save":{
-			"callback":"saveCar",
+			"callback":"save",
 			"content-type":"text/html",
-			"access":"is_authenticated",
+			"access":"is_admin",
 			"authorization":"webserver"
 		},
 		"car/delete/%id":{
-			"callback":"deleteCar",
+			"callback":"delete",
 			"content-type":"text/html",
-			"access":"is_authenticated",
+			"access":"is_admin",
 			"authorization":"webserver"
-		},
-		"car/mail/create":{
-			"callback":"showMailForm",
-			"content-type":"text/html",
-			"access":"is_authenticated",
-			"authorization":"webserver"
-		},
-		"car/mail/send":{
-			"callback":"newMail",
-			"content-type":"text/html",
-			"access":"is_authenticated",
-			"authorization":"webserver"
-		},
-		"car/mail/test":{
-			"callback":"testMail",
-			"content-type":"text/html"
 		}
 	}
 }

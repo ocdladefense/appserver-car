@@ -1,16 +1,66 @@
-
-.list-header{
-    text-align:center;
-    margin-bottom: 10px;
+.car-source {
+    font-size: 0.9em;
+    margin-bottom:10px;
 }
+
+.car-item.court {
+    font-size: smaller;
+}
+
+@media screen and (min-width: 1024px) {
+
+
+	#stage-content {
+		width: 60%;
+	}
+}
+
+.list-container {
+    margin-top: 25px;
+}
+
+.car-summary p {
+    line-height: 1.4em;
+    margin-bottom: 0.6em;
+}
+
+#search-query {
+    font-style:italic;
+}
+
+.additional-info.car-meta {
+    font-size: 0.8em;
+    margin-top: 8px;
+    border-top: 0.5px solid #eaeaea;
+    border-left: 5px solid #dbd6d6;
+    padding-left: 5px;
+}
+
+
+
+.list-header {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.form-inline {
+    margin-left: -5px;
+}
+
+
+
+.car-rank {
+    color: rgba(203,167,94,1.0);
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    -webkit-font-smoothing: antialiased;
+}
+
 
 .car-container{
     border-radius:5px;
-    margin:0 auto;
-    width:80%;
-    background-color: rgba(50,50,50,0.1);
-    margin-bottom: 10px;
-    padding: 10px;
+    margin-bottom: 40px;
 }
 
 .is-new{
@@ -29,9 +79,7 @@ a{
     text-decoration: none;
 }
 
-p{
-    font-weight: bold;
-}
+
 
 .error-pop-up-container{
     text-align: center;
@@ -43,14 +91,20 @@ label{
     display: block;
 }
 
+.car-meta span {
+    display: inline-block;
+    margin-right: 8px;
+}
+
 .admin-area{
     text-align: right;
     float: right;
 }
 
-.title, .decision-date, .subject-1, .subject-2{
+.title {
     font-weight: 900;
 }
+
 .subject-2{
     margin-bottom: 2%;
 }
@@ -68,8 +122,10 @@ label{
 }
 
 .car-item.title {
-    font-size: 25px;
-    line-height: 45px;
+    font-size: 20px;
+    line-height: 30px;
+    display:inline-block;
+    vertical-align:middle;
 }
 .sidenav{
     display:none;
@@ -86,10 +142,23 @@ label{
     padding-top:0px;
 }
 
+.add-review{
+    float:unset;
+}
+
+
+
+
+
 @media only screen and (max-width:768px){
     .car-container{
         width:100%;
     }
+    #stage-content{
+        padding:0px;
+    }
+
+    /*
     .car-sub-container{
         width: 100%;
         padding: 15px;
@@ -106,13 +175,20 @@ label{
         float:unset;
         text-align:unset;
     }
-    #stage-content{
-        padding:0px;
-    }
+
+    */
 }
-.add-review{
-    float:unset;
+
+
+.meta-highlight {
+    padding:3px;
+    border-radius: 2px;
+    cursor: pointer;
+    
 }
-.search-filters{
-    text-align: center;
+
+.meta-highlight:hover,
+.meta-hightlight:hover a {
+    background-color: #5050cd;
+    color:white !important;
 }
