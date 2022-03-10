@@ -16,7 +16,8 @@
     </div>
 
     <div class="form-item">
-        <?php print Html\Date("decision_date", $min_date); ?>
+        <?php /* print Html\Date("decision_date", $min_date);*/ ?>
+        <?php print Html\Select("year", $this->getYears(), $year); ?>
     </div>
 
     <div class="form-item">
@@ -45,14 +46,16 @@
         <?php print Html\Form\Submit("search-submit","Submit"); ?>
     </div>
 
+    
     <div class="form-item">
-        <?php print Html\Button("search-reset","Reset"); ?>
+        <?php print Html\Form\Reset("search-reset","Reset"); ?>
     </div>
 
+    <!--
     <div class="form-item">
         <?php print Html\Button("search-clear","Clear"); ?>
     </div>
-    
+-->
 
     <div class="form-item">
         <?php print Html\Button("summarize", "Summarize", $summarize ? true : false); ?>

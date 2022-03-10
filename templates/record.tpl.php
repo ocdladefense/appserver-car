@@ -20,33 +20,45 @@
 	<?php /* include car-admin.tpl.php */ ?>
 
 
+
 	<div class="meta car-source">
+
+
 		<div class="car-item title">
 			<?php print $title; ?>
 		</div>
 
-		<div class="car-item car-rank">
-			<?php print "Importance: $importance"; ?>
-			<span class="fa fa-star checked"></span>
+		<div class="car-item decision-date">
+				<i class="fa-solid fa-calendar-day">&nbsp;</i><?php print $date; ?>
+		</div>
+		
+		<div class="car-item subjects">
+			<i class="fa-solid fa-square-check"></i>&nbsp;
+			<span class="car-subject meta-highlight">
+				<?php print $subject; ?>
+			</span>
+			&bull;
+			<span class="car-secondary-subject meta-highlight">
+				<?php print $secondary_subject; ?>
+			</span>
+		</div>
+
+
+
+		<div class="car-item car-rank" title='<?php print "Importance: $importance"; ?>'>
+			<?php for($i = 1; $i <= $rank; $i++): ?>
+				<i class="fa-solid fa-star"></i>
+			<?php endfor; ?>
+
+			<?php for(; $i <= 5; $i++): ?>
+				<i class="fa-regular fa-star"></i>
+			<?php endfor; ?>
 		</div>
 
 		<div class="car-item court">
 			<?php print "<h3>$court</h3>"; ?>
 		</div>
-		
-		<div class="car-item decision-date">
-			<?php print $date; ?>
-		</div>
 
-		<div class="car-item subjects">
-			<span class="car-subject">
-				<?php print $subject; ?>
-			</span>
-			&bull;
-			<span class="car-subject-2">
-				<?php print $secondary_subject; ?>
-			</span>
-		</div>
 	</div>
 	
 
@@ -61,6 +73,15 @@
 	<div class="additional-info car-meta">
 
 		<span>
+			<?php if(!empty($car->getExternalLink())) : ?>
+				Links: <a href="<?php print $car->getExternalLink(); ?>" target="_blank">SOLL</a>
+			<?php endif; ?>
+			<?php if(!empty($car->getUrl()) && false && $user->isAdmin()) : ?>
+				<a href="<?php print $car->getUrl(); ?>" target="_blank">LOD</a>
+			<?php endif; ?>
+		</span>
+
+		<span>
 			<strong>Appellate #: </strong>
 			<?php print !empty($car->getA_number()) ? $car->getA_number() : "Not available"; ?>
 		</span>
@@ -72,7 +93,7 @@
 		
 		<span>
 			<strong>County:</strong>
-			<?php print $car->getCircuit(); ?>
+			<?php print $car->getCounty(); ?>
 		</span>
 		
 		<span>
@@ -85,16 +106,9 @@
 			<?php print $car->getTrialJudge(); ?>
 		</span>
 		
+
 	</div>
 
-	<?php if(!empty($car->getExternalLink())) : ?>
-		<a href="<?php print $car->getExternalLink(); ?>" target="_blank">View on State of Oregon Law Library</a>
-	<?php endif; ?>
 
-	<br />
-	
-	<?php if(!empty($car->getUrl()) && false && $user->isAdmin()) : ?>
-		<a href="<?php print $car->getUrl(); ?>" target="_blank">View on the Library of Defense</a>
-	<?php endif; ?>
 
 </div>

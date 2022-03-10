@@ -1,14 +1,15 @@
-
-domReady(initSearch);
+/**
+ * @main.js
+ * 
+ * Initialize event handlers to perform a record search.
+ * 
+ */
 
 const initSearch = function() {
 
-    // add the event listeners to anu searches that use the "judge-datalist"...datalist.
-    // let judgeSearches = document.querySelectorAll("[list='judges']");
+    let form = document.getElementById("record-search");
+    let reset = document.getElementById("search-reset");
     
-    let form = document.getElementById("search-form");
-    let reset;
-    let clear;
 
 
     form.addEventListener("change", function(e) {
@@ -16,15 +17,14 @@ const initSearch = function() {
     });
 
 
+    resetFn = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.location.assign("/car/list");
+    };
 
-
-    // 
-    document.getElementById("resetBtn").addEventListener("click", function(){
-        window.location.replace();
-    });
-
+    reset.addEventListener("click",resetFn);
 };
 
 
-
-
+domReady(initSearch);

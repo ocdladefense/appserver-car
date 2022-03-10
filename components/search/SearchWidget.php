@@ -27,6 +27,8 @@ class SearchWidget extends Presentation\Component {
 
 	public $date;
 
+	public $year;
+
 	public $appellate_judge;
 
 	public $trial_judge;
@@ -51,6 +53,7 @@ class SearchWidget extends Presentation\Component {
 		$this->rank = $input->importance;
 		$this->min_date = "2018-01-01";
 		$this->summarize = $input->summarize;
+		$this->year = $input->year;
 	}
 
 
@@ -138,6 +141,17 @@ class SearchWidget extends Presentation\Component {
 			3 => "3",
 			4 => "4",
 			5 => "5"
+		);
+	}
+
+	public function getYears() {
+		return array(
+			" " => "All Years",
+			"2022" => "2022",
+			"2021" => "2021",
+			"2020" => "2020",
+			"2019" => "2019",
+			"2018" => "2018"
 		);
 	}
 

@@ -1,19 +1,21 @@
-#car-search .form-item {
+#record-search .form-item {
     display: inline-block;
 }
 
 
 
 
-#car-search input,
-#car-search select,
-#car-search button {
+#record-search input,
+#record-search select,
+#record-search button {
     height:30px;
     vertical-align: middle;
 }
 
 
-#car-search button {
+#record-search button,
+#record-search input[type="submit"],
+#record-search input[type="reset"] {
     padding-left:11px;
     padding-right:11px;
 }

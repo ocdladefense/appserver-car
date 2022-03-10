@@ -3,36 +3,58 @@
 class Car {
 
 	public $id;
+
 	public $importance;
+
 	public $title;
+
 	public $court;
+
 	public $plaintiff;
+
 	public $defendant;
+
 	public $trial_judge;
+
 	public $appellate_judge;
+
 	public $subject;
+
 	public $secondary_subject;
+
 	public $summary;
+
 	public $a_number;
+
 	public $citation;
+
 	public $circuit; // aliased by getCounty;
+	
 	public $county;
 
 	public $decision_date;
+	
 	public $published_date;
 
 	public $external_link;
+	
 	public $url;
+	
 	public $is_draft;
+	
 	public $is_flagged;
 
 	// These should no longer be used as the decision_date.
 	public $month;
+	
 	public $day;
+	
 	public $year;
 
 	// This is to hold the data that will not be used as a column when inserting data.
 	private $meta = array();
+
+
 
 
 	public function __construct($id = null) {}
@@ -60,7 +82,8 @@ class Car {
 		$car->summary = $record["summary"];
 		$car->a_number = $record["a_number"];
 		$car->citation = $record["citation"];
-		$car->circuit = $record["circuit"];
+		$car->circuit = $record["county"];
+		$car->county = $record["county"];
 		$car->external_link = $record["external_link"];
 		$car->is_flagged = !empty($record["is_flagged"]) ? $record["is_flagged"] : "0";
 		$car->is_draft = !empty($record["is_draft"]) ? $record["is_draft"] : "0";

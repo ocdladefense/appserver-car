@@ -14,12 +14,27 @@
 </div>
 
 
+<div id="search-meta">
+    <div id="search-query">Query: <?php print $query; ?></div>
+	<div id="search-count">Showing <?php print $count; ?> results.</div>
+</div>
 
-<div id="car-list-container" class="list-containter">
 
-	<?php print $list; ?>
+<?php if($results): ?>
+	<div id="car-list-container" class="list-container">
 
-</div> <!-- end list container -->
+		<?php print $list; ?>
+
+	</div> <!-- end list container -->
+
+<?php else: ?>
+	<div id="car-list-container" class="list-container">
+
+		Your search returned no results.
+
+	</div> <!-- end list container -->
+<?php endif; ?>
+
 
 
 <script src="<?php print module_path(); ?>/assets/js/flag.js">

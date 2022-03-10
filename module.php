@@ -55,7 +55,7 @@ class CarModule extends Module {
 	public function getList($recordId = null) {
 
 		$query = $this->getQuery();
-
+		// var_dump($query);
 		$records = select($query);
 
 		if(!is_array($records)) $records = array($records);
@@ -68,7 +68,7 @@ class CarModule extends Module {
 
 			$promote->isNew(true);
 
-			for($i = 0; $i < count($cars); $i++){
+			for($i = 0; $i < count($records); $i++){
 
 				if($records[$i]->getId() == $promote->getId()){
 	
@@ -91,7 +91,10 @@ class CarModule extends Module {
 		$tpl->addPath(__DIR__ . "/templates");
 
 		return $tpl->render(array(
-			"list" => $list
+			"list" => $list,
+			"query" => $query,
+			"count" => count($records),
+			"results" => count($records) > 0
 		));
 	}
 
@@ -110,11 +113,6 @@ class CarModule extends Module {
 					"fieldname"	=> "subject",
 					"op"		=> "LIKE",
 					"syntax"	=> "'%s%%'"
-				),
-				array(
-					"fieldname"	=> "decision_date",
-					"op"		=> ">=",
-					"syntax"	=> "%s"
 				),
 				array(
 					"fieldname"	=> "county",
@@ -145,7 +143,7 @@ class CarModule extends Module {
 		);
 
 		$params = !empty($_GET) ? $_GET : $_POST;
-
+		//var_dump($params);exit;
 		$summarize = !empty($params["summarize"]);
 
 		$sql = new QueryBuilder("car");
@@ -153,7 +151,7 @@ class CarModule extends Module {
 		$sql->setFields(array("*"));
 
 		if(!empty($params)) $sql->setConditions($conditions, $params);
-
+		if(!empty(trim($params["year"]))) $sql->addCondition("YEAR(decision_date)={$params['year']}");
 	
 		$sql->setOrderBy($summarize ? "subject, decision_date DESC" : "decision_date DESC");
 
@@ -317,16 +315,25 @@ function recordPreprocess($record) {
 
 	$classes = implode(" ", $classes);
 
+	$fix = preg_replace("/[\n\r]+/","\n", $record->getSummary());
+	// var_dump($fix);
+	// $fix = str_replace("\n\n","\n",  $fix);
+	// $fix = str_replace("\n\n","\n",  $fix);
+	$fix = str_replace("\n","</p><p>", $fix);
+	$fix = "<p>" . $fix . "</p>";
+
 	return array(
 		"car" 					=> $record,
-		"summary" 				=> nl2br($record->getSummary()),
+		"summary" 				=> $fix,
+		"county"				=> $record->getCounty(),
 		"date"					=> $record->getDate(),
-		"subject"				=> $record->getSubject(),
+		"subject"				=> ucwords($record->getSubject()),
 		"flagged"				=> $record->isFlagged(),
 		"secondary_subject" 	=> $record->getSubject2(),
 		"counter" 				=> $index++,
 		"classes" 				=> $classes,
 		"title" 				=> $record->getTitle(),
+		"rank"					=> $record->getImportance(),
 		"importance" 			=> !empty($record->getImportance()) ? $record->getImportance() . "/5" : "unset",
 		"court" 				=> $record->getCourt()
 	);
