@@ -1,10 +1,10 @@
 <?php
 
 use Mysql\Database;
-use Http\HttpRequest;
-use Http\HttpHeader;
 use Mysql\DbHelper;
 use Mysql\QueryBuilder;
+use Http\HttpRequest;
+use Http\HttpHeader;
 use Http\HttpHeaderCollection;
 use GIS\Political\Countries\US\Oregon;
 use Ocdla\Date;
@@ -13,7 +13,6 @@ use Ocdla\Date;
 use function Mysql\insert;
 use function Mysql\update;
 use function Mysql\select;
-use function Session\get_current_user;
 
 
 
@@ -38,6 +37,8 @@ class CarModule extends Module {
 		$this->name = "car";
 	}
 
+
+	
 	public function dev() {
 
 		$appellate = DbHelper::getDistinctFieldValues($this->object, "appellate_judge");

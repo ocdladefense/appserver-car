@@ -17,7 +17,7 @@
 		$form->addPath(__DIR__ . "/templates");
 
 		$params = [
-			"defaultEmail"		=> get_current_user()->getEmail(),
+			"defaultEmail"		=> current_user()->getEmail(),
 			"defaultSubject"	=> "Appellate Review - COA, $emailDate",
 			"defaultPickerDate" => $pickerDate
 		];
