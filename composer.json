@@ -10,9 +10,9 @@
         }
     ],
     "require": {
-        "ocdladefense/lib-database" : "dev-development",
-        "ocdladefense/lib-date": "dev-development",
-        "ocdladefense/lib-gis": "dev-development"
+        "ocdladefense/lib-database" : "~2.0",
+        "ocdladefense/lib-date": "~1.0",
+        "ocdladefense/lib-gis": "~1.0"
     },
     "autoload":{
         "classmap": ["components/"]
