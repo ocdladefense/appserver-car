@@ -65,12 +65,12 @@
 
         <div>
             <label>Importance</label>
-            <?php print Html\Select("importance", $importanceLevels, $selectedImportance); ?>
+            <?php print Html\Select("importance", $importanceLevels, $importance); ?>
         </div>
 
         <div>
             <label>Court</label>
-            <?php print Html\Select("court", $allCourts, $selectedCourt); ?>
+            <?php print Html\Select("court", $courts, $court); ?>
         </div>
 
 
@@ -96,7 +96,7 @@
 
         <div>
             <label>Primary Subject</label>
-            <?php print Html\Select("subject", $allSubjects, $selectedSubject); ?>
+            <?php print Html\Select("subject", $subjects, $subject); ?>
             <button type="button" id="new-subject" class="new-subject" onclick="handleNewSubject()">New Subject</button>
         </div>
 
@@ -118,7 +118,7 @@
 
         <div>
             <label>County</label>
-            <?php print Html\Select("circuit", $allCounties, $selectedCounty); ?>
+            <?php print Html\Select("circuit", $counties, $county); ?>
         </div>
 
         <div>
