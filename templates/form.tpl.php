@@ -6,11 +6,14 @@
 <link rel="stylesheet" type="text/css" href="<?php print module_path(); ?>/assets/css/form.css" />
 
 
-<div id="form-container" class="car-form-container">
+<div id="form-container" class="form-container">
 
-    <a class="back-link" href="/car/list" style="float: left;"><i class="fa fa-arrow-left" style="font-size:48px;color:blue"></i></a>
 
-    <h1 id="car-form-header" class="car-form-header">
+    <a class="back-link" href="/car/list" style="float: left;">
+        <i class="fa fa-arrow-left"></i>
+    </a>&nbsp;
+
+    <h1 class="page-title">
         <?php print $headerMessage; ?>
     </h1>
 
@@ -34,7 +37,9 @@
 
  
 
-    <form id="car-form" class="car-form" action="/car/save" method="post">
+    <form id="record-form" class="record-form" action="/car/save" method="post">
+
+        <input type="hidden" name="id" value="<?php print $record->getId(); ?>" />
 
         <?php if($record->getId() != null) : ?>
 
@@ -44,95 +49,119 @@
 
         <?php endif; ?>
 
-        <div class="checkbox-area">
-            <div>
+
+
+        <div class="form-group">
+            <div class="form-item">
                 <input class="checkbox-option" name="is_flagged" value="1" <?php print $checkFlagged; ?> type="checkbox" />
                 <label class="checkbox-label">Flag</label>
             </div>
 
-            <div>
+            <div class="form-item">
                 <input class="checkbox-option" name="is_draft" value ="1" <?php print $checkDraft; ?> type="checkbox" />
                 <label class="checkbox-label">Is Draft</label>
             </div>
         </div>
 
-        <input type="hidden" name="id" value="<?php print $record->getId(); ?>" />
+        
 
-        <div>
-            <label>Decision Date</label>
-            <input required type="date" name="decision_date" value="<?php print $record->getDecisionDate(); ?>">
-        </div>
+        <div class="form-group">
+            <div class="form-item">
+                <label>Decision Date</label>
+                <input required type="date" name="decision_date" value="<?php print $record->getDecisionDate(); ?>">
+            </div>
 
-        <div>
-            <label>Importance</label>
-            <?php print Html\Select("importance", $importanceLevels, $importance); ?>
-        </div>
+            <div class="form-item">
+                <label>Importance</label>
+                <?php print Html\Select("importance", $importanceLevels, $importance); ?>
+            </div>
 
-        <div>
-            <label>Court</label>
-            <?php print Html\Select("court", $courts, $court); ?>
-        </div>
-
-
-        <div>
-            <label>Plaintiff</label>
-            <input required type="text" name="plaintiff" value="<?php print empty($record->getPlaintiff()) ? "State" : $record->getPlaintiff(); ?>" placeholder="Enter plaintiff..." />
-        </div>
-
-        <div>
-            <label>Defendant</label>
-            <input required type="text" name="defendant" value="<?php print $record->getDefendant(); ?>" placeholder="Enter defendant..." />
-        </div>
-
-        <div>
-            <label>Appellate Judge</label>
-            <input required autocomplete="off" type="text" name="appellate_judge" value="<?php print $record->getAppellateJudge(); ?>" list="judges" placeholder="Search by judge name" />
-        </div>
-
-        <div>
-            <label>Trial Judge</label>
-            <input required autocomplete="off" type="text" name="trial_judge" value="<?php print $record->getTrialJudge(); ?>" list="judges" placeholder="Search by judge name" />
-        </div>
-
-        <div>
-            <label>Primary Subject</label>
-            <?php print Html\Select("subject", $subjects, $subject); ?>
-            <button type="button" id="new-subject" class="new-subject" onclick="handleNewSubject()">New Subject</button>
-        </div>
-
-        <div>
-            <label>Secondary Subject</label>
-            <input type="text" name="secondary_subject" value="<?php print $record->getSubject2(); ?>" placeholder="Enter Secondary Subject..." />
-        </div>
-
-        <div>
-            <label>Appellate #</label>
-            <input required type="text" name="a_number" value="<?php print $record->getA_number(); ?>" placeholder="Enter A#" />
+            <div class="form-item">
+                <label>Court</label>
+                <?php print Html\Select("court", $courts, $court); ?>
+            </div>
         </div>
 
 
-        <div>
-            <label>Citation</label>
-            <input required type="text" name="citation" value="<?php print $record->getCitation(); ?>" placeholder="Enter Citation...(ex. 311 Or App 542)" />
-        </div>
+        <div class="form-group">
+            <div class="form-item">
+                <label>Plaintiff</label>
+                <input required type="text" name="plaintiff" value="<?php print empty($record->getPlaintiff()) ? "State" : $record->getPlaintiff(); ?>" placeholder="Enter plaintiff..." />
+            </div>
 
-        <div>
-            <label>County</label>
-            <?php print Html\Select("county", $counties, $county); ?>
-        </div>
-
-        <div>
-            <label>Link to review on State of Oregon Law Library</label>
-            <input required type="text" name="external_link" value="<?php print $record->getExternalLink(); ?>" placeholder="Link to State of Oregon Law Library..." />
-        </div>
-
-        <div>
-            <label>Summary</label>
-            <textarea required name="summary" placeholder="Enter the entire case summary, including additional information..."><?php print $record->getSummary(); ?></textarea>
+            <div class="form-item">
+                <label>Defendant</label>
+                <input required type="text" name="defendant" value="<?php print $record->getDefendant(); ?>" placeholder="Enter defendant..." />
+            </div>
         </div>
 
 
-        <button type="submit" id="submit">Submit</button>
+
+        <div class="form-group">
+            <div class="form-item">
+                <label>Appellate Judge</label>
+                <input required autocomplete="off" type="text" name="appellate_judge" value="<?php print $record->getAppellateJudge(); ?>" list="judges" placeholder="Search by judge name" />
+            </div>
+
+            <div class="form-item">
+                <label>Trial Judge</label>
+                <input required autocomplete="off" type="text" name="trial_judge" value="<?php print $record->getTrialJudge(); ?>" list="judges" placeholder="Search by judge name" />
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="form-item">
+                <label>Primary Subject</label>
+                <?php print Html\Select("subject", $subjects, $subject); ?>
+                <button type="button" id="new-subject" class="new-subject" onclick="handleNewSubject()">New Subject</button>
+            </div>
+
+            <div class="form-item">
+                <label>Secondary Subject</label>
+                <input type="text" name="secondary_subject" value="<?php print $record->getSubject2(); ?>" placeholder="Enter Secondary Subject..." />
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="form-item">
+                <label>Appellate #</label>
+                <input required type="text" name="a_number" value="<?php print $record->getA_number(); ?>" placeholder="Enter A#" />
+            </div>
+
+
+            <div class="form-item">
+                <label>Citation</label>
+                <input required type="text" name="citation" value="<?php print $record->getCitation(); ?>" placeholder="Enter Citation...(ex. 311 Or App 542)" />
+            </div>
+
+            <div class="form-item">
+                <label>County</label>
+                <?php print Html\Select("county", $counties, $county); ?>
+            </div>
+        </div>
+
+
+
+
+        <div class="form-group">
+            <div class="form-item form-item-summary">
+                <label>Summary</label>
+                <textarea cols="100" rows="15" required name="summary" placeholder="Enter the entire case summary, including additional information..."><?php print $record->getSummary(); ?></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-item form-item-link">
+                <label>Link to review on State of Oregon Law Library</label>
+                <input required size="100" type="text" name="external_link" value="<?php print $record->getExternalLink(); ?>" placeholder="Link to State of Oregon Law Library..." />
+            </div>
+        </div>
+
+        <div class="form-item">
+            <button type="submit" id="submit">Submit</button>
+        </div>
     </form>
 </div>
 
