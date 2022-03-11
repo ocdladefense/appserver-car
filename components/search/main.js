@@ -9,6 +9,11 @@ const initSearch = function() {
 
     let form = document.getElementById("record-search");
     let reset = document.getElementById("search-reset");
+
+    document.getElementById("summarize").addEventListener("click", function(e){
+
+        e.target.classList.toggle("active");
+    });
     
 
 

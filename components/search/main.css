@@ -19,3 +19,7 @@
     padding-left:11px;
     padding-right:11px;
 }
+
+.active{
+    background-color: darkgray;
+}

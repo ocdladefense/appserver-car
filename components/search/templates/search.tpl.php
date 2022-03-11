@@ -58,7 +58,7 @@
 -->
 
     <div class="form-item">
-        <?php print Html\Button("summarize", "Summarize", $summarize ? true : false); ?>
+        <?php print Html\Button("summarize", "Summarize"); ?>
     </div>
 
 
