@@ -1,4 +1,49 @@
+.form-group .form-item {
+    display: inline-block;
+}
 
+.form-item-summary label {
+    display:block;
+}
+
+
+.page-title {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+#record-form input,
+#record-form select,
+#record-form button {
+    height:30px;
+    vertical-align: middle;
+}
+
+
+#record-form button,
+#record-form input[type="submit"],
+#record-form input[type="reset"] {
+    padding-left:11px;
+    padding-right:11px;
+}
+
+label {
+    text-transform: lowercase;
+    font-size: smaller;
+    font-weight: bold;
+    color: #999;
+}
+
+.form-item-link label {
+    display:block;
+}
+
+.form-item-link input {
+    /* width:200px; */
+}
+
+
+/*
  .sidenav{
      display:none;
  }
@@ -82,3 +127,4 @@ a.delete-review {
         border:none;
     }
 }
+*/
