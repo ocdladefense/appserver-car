@@ -20,6 +20,10 @@
     padding-right:11px;
 }
 
-.active{
+/** 
+ When the summarize is checked then highlight the button.
+ 
+*/
+button#summarize[value="1"] {
     background-color: darkgray;
 }

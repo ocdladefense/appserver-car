@@ -9,12 +9,7 @@ const initSearch = function() {
 
     let form = document.getElementById("record-search");
     let reset = document.getElementById("search-reset");
-
-    document.getElementById("summarize").addEventListener("click", function(e){
-
-        e.target.classList.toggle("active");
-    });
-    
+    let summarize = document.getElementById("summarize");
 
 
     form.addEventListener("change", function(e) {
@@ -22,13 +17,24 @@ const initSearch = function() {
     });
 
 
-    resetFn = function(e) {
+    let resetFn = function(e) {
         e.preventDefault();
         e.stopPropagation();
         window.location.assign("/car/list");
     };
 
+    let toggleSummarize = function(e) {
+        let target = e.target;
+        let current = e.target.value;
+        let next = current == "1" ? "0" : "1";
+
+        // target.classList.toggle("active");
+        target.value = next;
+    };
+
+
     reset.addEventListener("click",resetFn);
+    summarize.addEventListener("click", toggleSummarize);
 };
 
 

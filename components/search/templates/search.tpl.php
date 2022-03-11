@@ -51,14 +51,9 @@
         <?php print Html\Form\Reset("search-reset","Reset"); ?>
     </div>
 
-    <!--
-    <div class="form-item">
-        <?php print Html\Button("search-clear","Clear"); ?>
-    </div>
--->
 
     <div class="form-item">
-        <?php print Html\Button("summarize", "Summarize"); ?>
+        <?php print Html\Form\Button("summarize", "Summarize", $summarize); ?>
     </div>
 
 

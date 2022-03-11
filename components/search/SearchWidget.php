@@ -52,7 +52,8 @@ class SearchWidget extends Presentation\Component {
 		$this->trial_judge = $input->trial_judge;
 		$this->rank = $input->importance;
 		$this->min_date = "2018-01-01";
-		$this->summarize = $input->summarize;
+		$this->summarize = null == $input->summarize ? "0" : $input->summarize;
+		
 		$this->year = $input->year;
 	}
 
