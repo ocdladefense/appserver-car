@@ -123,13 +123,33 @@ class SearchWidget extends Presentation\Component {
 	}
 
 
-	
 	public function getJudges() {
 
-		$appellateJudges = DbHelper::getDistinctFieldValues("car", "appellate_judge");
-		$trialJudges = DbHelper::getDistinctFieldValues("car", "trial_judge");
+		$appellate = DbHelper::getDistinctFieldValues("car", "appellate_judge");
+		$trial = DbHelper::getDistinctFieldValues("car", "appellate_judge");
 
-		return array_merge($appellateJudges, $trialJudges);
+
+		
+
+		$judges = array_merge($appellate,$trial);
+		// var_dump($judges);
+		$values = array();
+		foreach($judges as $judge) {
+			$arr = preg_split("/[,;\s\.]/", $judge);
+			$values = array_merge($values,$arr);
+		}
+
+
+		// var_dump($values);
+
+		$filter = function($judge) {
+			return strlen($judge) >= 4
+			  && !in_array($judge,["dissenting","concurring","curiam","part"]);
+		};
+
+		$values = array_filter($values, $filter);
+
+		return array_unique($values);
 	}
 
 
