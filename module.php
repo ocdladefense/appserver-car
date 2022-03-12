@@ -39,23 +39,34 @@ class CarModule extends Module {
 
 
 	
-	public function dev() {
+	public function getJudges() {
 
-		$appellate = DbHelper::getDistinctFieldValues($this->object, "appellate_judge");
+		$appellate = DbHelper::getDistinctFieldValues("car", "appellate_judge");
+		$trial = DbHelper::getDistinctFieldValues("car", "appellate_judge");
 
 
+		
+
+		$judges = array_merge($appellate,$trial);
+		// var_dump($judges);
 		$values = array();
-		foreach($appellate as $judge) {
-			$arr = explode(",", $judge);
+		foreach($judges as $judge) {
+			$arr = preg_split("/[,;\s\.]/", $judge);
 			$values = array_merge($values,$arr);
 		}
 
-		var_dump($values);
-		exit;
 
-		$trial = DbHelper::getDistinctFieldValues($this->object, "trial_judge");
+		// var_dump($values);
+
+		$filter = function($judge) {
+			return strlen($judge) >= 4
+			  && !in_array($judge,["dissenting","concurring","curiam","part"]);
+		};
+
+		$values = array_filter($values, $filter);
+
+		return array_unique($values);
 	}
-
 
 	/**
 	 * @method showCars
@@ -99,8 +110,13 @@ class CarModule extends Module {
 		$tpl = new Template("list");
 		$tpl->addPath(__DIR__ . "/templates");
 
-
-		$list = $tpl->render(array("records" => $records));
+		$params = !empty($_GET) ? $_GET : $_POST;
+		//var_dump($params);exit;
+		$summarize = "1" === $params["summarize"];
+		$list = $tpl->render(array(
+			"summarize" => $summarize,
+			"records" => $records
+		));
 
 		
 		$tpl = new Template("page");
@@ -160,8 +176,8 @@ class CarModule extends Module {
 
 		$params = !empty($_GET) ? $_GET : $_POST;
 		//var_dump($params);exit;
-		$summarize = !empty($params["summarize"]);
-
+		$summarize = "1" === $params["summarize"];
+		// var_dump($params);exit;
 		$sql = new QueryBuilder("car");
 
 		$sql->setFields(array("*"));
@@ -211,11 +227,6 @@ class CarModule extends Module {
         $county = empty($record->getCircuit()) ? "" : $record->getCircuit();
 
 
-		// Build the list of judges.
-		$appellate = DbHelper::getDistinctFieldValues($this->object, "appellate_judge");
-		$trial = DbHelper::getDistinctFieldValues($this->object, "trial_judge");
-		$judges = array_merge($appellate, $trial);
-
 		// Set other variables.
 		$flagged = $record->isFlagged() ? "checked" : "";
         $draft = $record->isDraft() ? "checked" : "";
@@ -234,7 +245,7 @@ class CarModule extends Module {
 			"subjects" 			=> $subjects,
 			"county" 			=> $county,
 			"counties" 			=> $counties,
-			"judges"   			=> $judges,
+			"judges"   			=> $this->getJudges(),
 			"flagged"	 		=> $flagged,
 			"draft" 			=> $draft
 		));

@@ -14,10 +14,10 @@
 
 
 <?php foreach($records as $record) {
-	$grouping = $groupBy == "subject" && $subject != $record->getSubject() ? $record->getSubject() : "";
+	$group = $summarize && $subject != trim($record->getSubject()) ? $record->getSubject() : "";
 ?>
-	<?php if($grouping): ?>
-		<h2 class="subject-header <?php print $isFirstClass; ?>">
+	<?php if(!empty($group)): ?>
+		<h2 class="list-group">
 			<?php print $record->getSubject(); ?>
 		</h2>
 	<?php endif; ?>
@@ -25,7 +25,7 @@
 	<?php module_template("record", __DIR__, $record); ?>
 
 
-<?php $subject = $record->getSubject();
+<?php $subject = trim($record->getSubject());
 } ?>
 
 

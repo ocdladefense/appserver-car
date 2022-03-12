@@ -18,10 +18,7 @@
 			"callback":"getList",
 			"content-type":"text\/html"
 		},
-		"car/dev": {
-			"callback": "dev",
-			"content-type":"text/html"
-		},
+
 		"car/list":{
 			"callback":"getList",
 			"content-type":"text\/html"
