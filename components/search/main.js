@@ -39,3 +39,36 @@ const initSearch = function() {
 
 
 domReady(initSearch);
+
+
+
+
+
+/*
+// add the event listeners to anu searches that use the "judge-datalist"...datalist.
+let judgeSearches = document.querySelectorAll("[data-datalist='judge-datalist']");
+
+for(let i = 0; i < judgeSearches.length; i++){
+
+    judgeSearches[i].addEventListener("keyup", minimumCharacterSearch);
+}
+
+
+function minimumCharacterSearch(e){
+
+    let inputElem = e.target;
+    let dataListId = inputElem.getAttribute("data-datalist")
+    let inputValue = e.target.value;
+
+    if(inputValue.length >= 1){
+
+        inputElem.setAttribute("list", dataListId);
+
+    } else {
+
+        inputElem.removeAttribute("list");
+    }
+
+}
+
+*/

@@ -71,12 +71,12 @@
 
 
 	<div class="additional-info car-meta">
-
+		<?php require "admin.tpl.php"; ?>
 		<span>
 			<?php if(!empty($car->getExternalLink())) : ?>
 				Links: <a href="<?php print $car->getExternalLink(); ?>" target="_blank">SOLL</a>
 			<?php endif; ?>
-			<?php if(!empty($car->getUrl()) && false && $user->isAdmin()) : ?>
+			<?php if(!empty($car->getUrl()) && is_admin_user()): ?>
 				<a href="<?php print $car->getUrl(); ?>" target="_blank">LOD</a>
 			<?php endif; ?>
 		</span>
