@@ -37,8 +37,7 @@
 
 
 
-<script src="<?php print module_path(); ?>/assets/js/flag.js">
+<script src="<?php print module_path(); ?>/assets/js/admin.js">
 </script>
-<script src="<?php print module_path(); ?>/assets/js/car.js">
-</script>
+
 

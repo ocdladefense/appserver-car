@@ -167,3 +167,6 @@
 
 <script src="<?php print module_path(); ?>/assets/js/form.js">
 </script>
+
+<script src="<?php print module_path(); ?>/assets/js/admin.js">
+</script>
