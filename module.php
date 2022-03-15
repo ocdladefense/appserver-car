@@ -138,6 +138,8 @@ class CarModule extends Module {
 	private function getQuery() {
 
 
+		$user = current_user();
+
 		$conditions = array(
 			"op" => "AND",
 			"conditions" => array(

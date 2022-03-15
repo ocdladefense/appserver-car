@@ -107,9 +107,28 @@
                 <label>Trial Judge</label>
                 <input required autocomplete="off" type="text" name="trial_judge" value="<?php print $record->getTrialJudge(); ?>" list="judges" placeholder="Search by judge name" />
             </div>
+
+            <div class="form-item">
+                <label>Alt Judge</label>
+                <input required autocomplete="off" type="text" name="alt_judge" value="" list="judges" placeholder="Search by judge name" />
+            </div>
         </div>
 
 
+        <?php if(true || $alt_judges): ?>
+            <?php foreach($alt_judges as $judge): ?>
+
+            <div class="form-group">
+                <div class="form-item">
+                    <label><?php print $judge["label"]; ?></label>
+                    <input required autocomplete="off" type="text" name="alt_judge" value="" list="judges" placeholder="Search by judge name" />
+                </div>
+            </div>
+
+            <?php endforeach; ?>
+        <?php endif; ?>
+
+        
         <div class="form-group">
             <div class="form-item">
                 <label>Primary Subject</label>
@@ -133,7 +152,7 @@
 
             <div class="form-item">
                 <label>Citation</label>
-                <input required type="text" name="citation" value="<?php print $record->getCitation(); ?>" placeholder="Enter Citation...(ex. 311 Or App 542)" />
+                <input required type="text" name="citation" value="<?php print $record->getCitation(); ?>" placeholder="Enter Citation...(e.g. 311 Or App 542)" />
             </div>
 
             <div class="form-item">
@@ -148,14 +167,14 @@
         <div class="form-group">
             <div class="form-item form-item-summary">
                 <label>Summary</label>
-                <textarea cols="100" rows="15" required name="summary" placeholder="Enter the entire case summary, including additional information..."><?php print $record->getSummary(); ?></textarea>
+                <textarea cols="100" rows="15" required name="summary" placeholder="Enter the entire case summary."><?php print $record->getSummary(); ?></textarea>
             </div>
         </div>
 
         <div class="form-group">
             <div class="form-item form-item-link">
-                <label>Link to review on State of Oregon Law Library</label>
-                <input required size="100" type="text" name="external_link" value="<?php print $record->getExternalLink(); ?>" placeholder="Link to State of Oregon Law Library..." />
+                <label>SOLL Link</label>
+                <input required size="100" type="text" name="external_link" value="<?php print $record->getExternalLink(); ?>" placeholder="SOLL Link" />
             </div>
         </div>
 

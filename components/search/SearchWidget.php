@@ -45,6 +45,8 @@ class SearchWidget extends Presentation\Component {
 
 		$input = $this->getInput();
 
+		// var_dump((array)$input);exit;
+
 		$this->subject = $input->subject;
 		$this->county = $input->county;
 		$this->court = $input->court;
