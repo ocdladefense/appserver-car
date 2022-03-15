@@ -138,7 +138,7 @@ class CarModule extends Module {
 	private function getQuery() {
 
 
-		$user = get_current_user();
+		$user = current_user();
 
 		$conditions = array(
 			"op" => "AND",
@@ -215,7 +215,7 @@ class CarModule extends Module {
 
 		// Build the list of courts and set the selected court.
 		$courts = Oregon::getCourts();
-		$courts[""] = "none selected";
+		$courts[""] = "None Selected";
 		$court = empty($record->getCourt()) ? "" : $record->getCourt();
 
 
@@ -244,6 +244,13 @@ class CarModule extends Module {
 		$tpl = new Template("form");
 		$tpl->addPath(__DIR__ . "/templates");
 
+
+		$data = '{"trial":["name1","name2"],"sentencing":["s1","s2"]}';
+
+		$judges = json_decode($data);
+
+		// var_dump($judges);exit;
+
 		return $tpl->render(array(
 			"record" 			=> $record,
 			"importance"		=> $importance,
@@ -254,6 +261,7 @@ class CarModule extends Module {
 			"county" 			=> $county,
 			"counties" 			=> $counties,
 			"judges"   			=> $this->getJudges(),
+			"alt_judges"		=> $judges,
 			"flagged"	 		=> $flagged,
 			"draft" 			=> $draft
 		));
@@ -266,15 +274,18 @@ class CarModule extends Module {
 		$req = $this->getRequest();
 		$input = (array) $req->getBody();
 
+		$sobject = $this->object;
+
+
 		// How do we blank out a value?
 		foreach($input as $key => $value){
 
 			if(empty($value)) unset($record[$input]);
 		}
 
-		$car = Car::from_array_or_standard_object($input);
+		$record = $sobject::from_array_or_standard_object($input);
 
-		return empty($car->getId()) ? $this->create($car) : $this->update($car);
+		return empty($record->getId()) ? $this->create($record) : $this->update($record);
 	}
 
 
@@ -284,7 +295,7 @@ class CarModule extends Module {
 
 		$result = insert($record);
 
-		return redirect("/car/list/{$record->getId()}");
+		return redirect("/{$this->object}/list/{$record->getId()}");
 	}
 	
 	
@@ -295,7 +306,7 @@ class CarModule extends Module {
 	
 		$result = update($record);
 
-		return redirect("/car/list/{$record->getId()}");
+		return redirect("/{$this->object}/list/{$record->getId()}");
 	}
 
 
@@ -311,7 +322,7 @@ class CarModule extends Module {
 
 		$result = $db->delete($query);
 
-		return redirect("/car/list");
+		return redirect("/{$this->object}/list");
 	}
 
 

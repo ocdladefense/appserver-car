@@ -1,9 +1,20 @@
-.form-group .form-item {
-    display: inline-block;
+
+
+.form-group {
+    display:block;
 }
 
-.form-item-summary label {
+.form-item {
     display:block;
+}
+
+
+
+
+
+.form-item label {
+    display:block;
+    text-transform: capitalize;
 }
 
 
@@ -15,10 +26,38 @@
 #record-form input,
 #record-form select,
 #record-form button {
-    height:30px;
+    min-height: 30px;
     vertical-align: middle;
+    padding: 11px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    width:100%;
 }
 
+#record-form input[type="checkbox"] {
+    width: auto;
+}
+
+
+@media only screen and (min-width:800px) {
+
+    .form-group .form-item {
+        display: inline-block;
+    }
+
+
+    #record-form input,
+    #record-form select,
+    #record-form button {
+        width:auto;
+    }
+}
+
+#record-form textarea {
+    padding:11px;
+    overflow:scroll;
+    max-width:100%;
+}
 
 #record-form button,
 #record-form input[type="submit"],
@@ -32,15 +71,14 @@ label {
     font-size: smaller;
     font-weight: bold;
     color: #999;
+    display:block;
 }
 
 .form-item-link label {
     display:block;
 }
 
-.form-item-link input {
-    /* width:200px; */
-}
+
 
 
 /*
@@ -88,7 +126,7 @@ a.delete-review {
     float: right;
 }
 
-@media only screen and (min-width:1200px){
+@media only screen and (min-width:800px){
 
     .car-form input[type="text"], input[type="date"], select{
         height: 30px;
