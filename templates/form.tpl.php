@@ -115,7 +115,7 @@
         </div>
 
 
-        <?php if(true || $alt_judges): ?>
+        <?php if(false && $alt_judges): ?>
             <?php foreach($alt_judges as $judge): ?>
 
             <div class="form-group">

@@ -243,7 +243,7 @@ class CarModule extends Module {
 
 		$judges = json_decode($data);
 
-		var_dump($judges);exit;
+		// var_dump($judges);exit;
 
 		return $tpl->render(array(
 			"record" 			=> $record,
