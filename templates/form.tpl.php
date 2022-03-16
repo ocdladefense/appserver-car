@@ -108,10 +108,12 @@
                 <input required autocomplete="off" type="text" name="trial_judge" value="<?php print $record->getTrialJudge(); ?>" list="judges" placeholder="Search by judge name" />
             </div>
 
+            <!--
             <div class="form-item">
                 <label>Alt Judge</label>
                 <input required autocomplete="off" type="text" name="alt_judge" value="" list="judges" placeholder="Search by judge name" />
             </div>
+            -->
         </div>
 
 
