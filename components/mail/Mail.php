@@ -40,6 +40,11 @@ class Mail extends \Presentation\Component {
 
 
 
+	public function __construct() {
+		parent::__construct("mail");
+		
+	}
+
 
 	public function getTemplates() {
 
@@ -47,15 +52,49 @@ class Mail extends \Presentation\Component {
 	}
 
 
+	
+	public function getCustomFields() {
+
+		$form = new \Template("custom-fields");
+		$form->addPath(__DIR__ . "/templates");
+
+		return $form->render();
+	}
+
+
+
 
 
 	public function getPreview() {
 
 		$court = "Oregon Court of Appeals";
-		$startDate = new \DateTime("2022-01-01");
-		$endDate = new \DateTime("2022-03-02");
+		$begin = new \DateTime("2022-01-01");
+		$end = new \DateTime("2022-03-02");
 
-		$html = $this->getRecentCarList($court, $startDate, $endDate);
+		$cars = $this->getRecentCarList($court, $begin, $end);
+
+		// var_dump($cars);exit;
+		$list = new \Template("email-list");
+		$list->addPath(__DIR__ . "/templates");
+
+		$html = $list->render(["cars" => $cars]);
+
+		
+		$body = new \Template("email-body");
+		$body->addPath(__DIR__ . "/templates");
+
+		$params = [
+			"year" => $begin->format('Y'),
+			"month" => $begin->format('m'),
+			"day" => $begin->format('j'),
+			"date" => $begin->format('l, M j  Y'),
+			"carList" => $html 
+		];
+
+	
+		return $body->render($params);
+		
+
 		
 
 		// return $this->doMail($params->to, $params->subject, "OCDLA Criminal Appellate Review", $html);
@@ -79,7 +118,7 @@ class Mail extends \Presentation\Component {
 
 		// var_dump($params); exit;
 
-		$html = $this->getRecentCarList($params->court, $startDate, $endDate);
+		$cars = $this->getRecentCarList($params->court, $startDate, $endDate);
 		
 
 		return $this->doMail($params->to, $params->subject, "OCDLA Criminal Appellate Review", $html);
@@ -125,32 +164,7 @@ class Mail extends \Presentation\Component {
 			$query .= " AND court = '{$court}'";
 		}
 
-
-
-		// print $query;exit;
-		// ORDER BY year DESC, month DESC, day DESC";
-		$cars = select($query);
-		
-		// var_dump($cars);exit;
-
-		$list = new \Template("email-list");
-		$list->addPath(__DIR__ . "/templates");
-
-		$listHtml = $list->render(["cars" => $cars]);
-
-		$body = new \Template("email-body");
-		$body->addPath(__DIR__ . "/templates");
-
-		$params = [
-			"year" => $begin->format('Y'),
-			"month" => $begin->format('m'),
-			"day" => $begin->format('j'),
-			"date" => $begin->format('l, M j  Y'),
-			"carList" => $listHtml 
-		];
-
-	
-		return $body->render($params);
+		return select($query);
 	}
 
 

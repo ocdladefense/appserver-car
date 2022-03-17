@@ -15,7 +15,7 @@ foreach($cars as $car):
     $citation = $car->getCitation();
     $date = $car->getDate(false);
     $aJudge = $car->getAppellateJudge();
-    $county = $car->getCircuit() . " County";
+    $county = $car->getCounty() . " County";
     $tJudge = $car->getTrialJudge();
 ?>
 
