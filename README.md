@@ -1,6 +1,8 @@
 # Appserver CAR Module
 
 ## Example queries
+SELECT id, title, plaintiff, defendant, published_date, decision_date FROM car ORDER BY decision_date DESC;
+
 SELECT * FROM car WHERE year=2022 AND month=2 AND published_date=0000-00-0 ORDER BY day DESC;
 
 UPDATE car SET decision_date = CAST(CONCAT_WS("-",year,month,day) AS DATE) WHERE year=2022 AND month=2 AND published_date=0000-00-0

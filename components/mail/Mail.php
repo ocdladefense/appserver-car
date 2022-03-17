@@ -1,13 +1,93 @@
 <?php
 
-
 namespace Car;
 
-class Mail {
+use Mysql\Database;
+use Mysql\DbHelper;
+use Mysql\QueryBuilder;
+use Http\HttpRequest;
+use Http\HttpHeader;
+use Http\HttpHeaderCollection;
+use GIS\Political\Countries\US\Oregon;
+use Ocdla\Date;
 
-	############################################################################################################################
-	################################ EMAIL FUNCTIONS ###########################################################################
-	############################################################################################################################
+
+use function Mysql\insert;
+use function Mysql\update;
+use function Mysql\select;
+/**
+ * 
+ * 
+ * 
+ * Standard Mail class.
+ * 
+ * Each Mail class should have methods for:
+ * 
+ * @method getTemplates Return an array of named templates that can be rendered into an email
+ * body.
+ * 
+ * @method getSample Return a sample for the given email template.  The sample will typically be
+ * an HTML template.
+ * 
+ * 
+ */
+
+
+
+
+
+class Mail extends \Presentation\Component {
+
+
+
+
+	public function getTemplates() {
+
+		return array("car-notification" => "CAR Notification");
+	}
+
+
+
+
+	public function getPreview() {
+
+		$court = "Oregon Court of Appeals";
+		$startDate = new \DateTime("2022-01-01");
+		$endDate = new \DateTime("2022-03-02");
+
+		$html = $this->getRecentCarList($court, $startDate, $endDate);
+		
+
+		// return $this->doMail($params->to, $params->subject, "OCDLA Criminal Appellate Review", $html);
+
+
+		return $html;
+	}
+
+
+
+
+
+
+
+	public function newMail() {
+
+		$params = $this->getRequest()->getBody();
+
+		$startDate = new DateTime($params->startDate);
+		$endDate = new DateTime($params->endDate);
+
+		// var_dump($params); exit;
+
+		$html = $this->getRecentCarList($params->court, $startDate, $endDate);
+		
+
+		return $this->doMail($params->to, $params->subject, "OCDLA Criminal Appellate Review", $html);
+	}
+
+
+
+
 
 	public function showMailForm() {
 
@@ -29,24 +109,8 @@ class Mail {
 
 
 
-	public function newMail() {
-
-		$params = $this->getRequest()->getBody();
-
-		$startDate = new DateTime($params->startDate);
-		$endDate = new DateTime($params->endDate);
-
-		// var_dump($params); exit;
-
-		$html = $this->getRecentCarList($params->court, $startDate, $endDate);
-		
-
-		return $this->doMail($params->to, $params->subject, "OCDLA Criminal Appellate Review", $html);
-	}
-
-
-	public function getRecentCarList($court = 'Oregon Appellate Court', DateTime $begin = null, DateTime $end = null) {
-		$begin = null == $begin ? new DateTime() : $begin;
+	public function getRecentCarList($court = 'Oregon Appellate Court', \DateTime $begin = null, \DateTime $end = null) {
+		$begin = null == $begin ? new \DateTime() : $begin;
 		
 		$beginMysql = $begin->format('Y-m-j');
 
@@ -69,12 +133,12 @@ class Mail {
 		
 		// var_dump($cars);exit;
 
-		$list = new Template("email-list");
+		$list = new \Template("email-list");
 		$list->addPath(__DIR__ . "/templates");
 
 		$listHtml = $list->render(["cars" => $cars]);
 
-		$body = new Template("email-body");
+		$body = new \Template("email-body");
 		$body->addPath(__DIR__ . "/templates");
 
 		$params = [
