@@ -1,26 +1,24 @@
 
 
-    <div id="custom-fields"><!-- replace with the equivalent id in the base form -->
+<div id="fields"><!-- replace with the equivalent id in the base form -->
+    <h5>Case Reviews fields</h5>
 
-        
-
-        <div class="form-group">
+        <div class="form-item">
             <label>Court</label>
-            <select name="court" class="form-control">
+            <select name="court">
                 <option selected value="Oregon Court of Appeals">Oregon Court of Appeals</option>
                 <option value="Oregon Supreme Court">Oregon Supreme Court</option>
             </select>
         </div>
-        <div class="form-group date-group">
-            <h5>Case Reviews Date Range</h5>
-            <label>From: </label>
-            <input required type="date" id="startDate" name="startDate" class="form-control" />
 
-            <label>To: </label>
-            <input required type="date" name="endDate" class="form-control" />
+        <div class="form-item">
+            <label>From</label>
+            <input type="date" id="startDate" name="startDate" />
         </div>
-        
 
-    </form>
+        <div class="form-item">
+            <label>To</label>
+            <input type="date" name="endDate" />
+        </div>
 
 </div>

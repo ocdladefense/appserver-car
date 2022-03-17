@@ -115,46 +115,10 @@ class Mail extends \Presentation\Component {
 
 
 
-	public function newMail() {
-
-		$params = $this->getRequest()->getBody();
-
-		$startDate = new DateTime($params->startDate);
-		$endDate = new DateTime($params->endDate);
-
-		// var_dump($params); exit;
-
-		$cars = $this->getRecentCarList($params->court, $startDate, $endDate);
-		
-
-		return $this->doMail($params->to, $params->subject, "OCDLA Criminal Appellate Review", $html);
-	}
 
 
 
-
-
-	public function showMailForm() {
-
-		$today = new DateTime();
-		$pickerDate = $today->format("Y-m-d");
-		$emailDate = $today->format("M d, Y");
-
-		$form = new Template("car-email-form");
-		$form->addPath(__DIR__ . "/templates");
-
-		$params = [
-			"defaultEmail"		=> current_user()->getEmail(),
-			"defaultSubject"	=> "Appellate Review - COA, $emailDate",
-			"defaultPickerDate" => $pickerDate
-		];
-
-		return $form->render($params);
-	}
-
-
-
-	public function getRecentCarList($court = 'Oregon Appellate Court', \DateTime $begin = null, \DateTime $end = null) {
+	public function getRecentCarList($court = "Oregon Court of Appeals", \DateTime $begin = null, \DateTime $end = null) {
 		$begin = null == $begin ? new \DateTime() : $begin;
 		
 		$beginMysql = $begin->format('Y-m-j');
@@ -177,42 +141,6 @@ class Mail extends \Presentation\Component {
 
 
 
-	public function doMail($to, $subject, $title, $content, $headers = array()){
-
-		$headers = [
-			"From" 		   => "notifications@ocdla.org",
-			"Content-Type" => "text/html"
-		];
-
-		$headers = HttpHeaderCollection::fromArray($headers);
-
-
-
-		$message = new MailMessage($to);
-		$message->setSubject($subject);
-		$message->setBody($content);
-		$message->setHeaders($headers);
-		$message->setTitle($title);
-
-		return $message;
-	}
-
-
-
-	public function testMail() {
-
-
-		$to = "jbernal.web.dev@gmail.com";//,rankinjohnsonpdx@gmail.com";
-		$subject = "Newest Case Review updates";
-
-
-		$range = new DateTime("2022-1-10");
-		$end = new DateTime();
-		$content = $this->getRecentCarList('Oregon Appellate Court', $range, $end);
-		
-
-		return $this->doMail($to, $subject, "OCDLA Criminal Appellate Review", $content);
-	}
 
 
 }
