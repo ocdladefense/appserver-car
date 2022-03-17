@@ -7,7 +7,7 @@
     $appURL = "https://ocdla.app/car/list?year=$year&month=$month&day=$day";
 ?>
 
-<!--<img src="https://ocdla.app/content/images/criminal-appellate-review.png" alt="Appellate Court image" />-->
+<p>&nbsp;</p>
 
 <p>Dear OCDLA Members,</p>
  
@@ -16,7 +16,7 @@
 
 
 <p>
-    <a href="<?php print $appURL; ?>">Oregon Court of Appeals - <?php print $date; ?></a>
+    <a href="<?php print $appURL; ?>"><?php print $court; ?> - <?php print $date; ?></a>
 </p>
 
 <p>-Rankin Johnson</p>

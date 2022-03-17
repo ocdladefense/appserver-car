@@ -68,14 +68,23 @@ class Mail extends \Presentation\Component {
 	public function getPreview() {
 
 		
+		$user = current_user();
 		$req = $this->getRequest();
 		$body = $req->getBody();
 
-		// var_dump($body);exit;
 
 		$court = empty($body->court) ? "Oregon Court of Appeals" : $body->court;
 		$begin = empty($body->startDate) ? new \DateTime("2022-01-01") : new \DateTime($body->startDate);
 		$end = empty($body->endDate) ? new \DateTime() : new \DateTime($body->endDate);
+
+
+		$subject = "OCDLA CAR notifications";
+		$to = $user->getEmail();
+		$tcourt = "Oregon Supreme Court" == $court ? "OSC" : "COA";
+		$title = sprintf("Appellate Review - %s, %s", $tcourt, $begin->format('F j, Y'));
+
+
+
 
 		$cars = $this->getRecentCarList($court, $begin, $end);
 
@@ -94,19 +103,12 @@ class Mail extends \Presentation\Component {
 			"month" => $begin->format('m'),
 			"day" => $begin->format('j'),
 			"date" => $begin->format('l, M j  Y'),
-			"carList" => $html 
+			"carList" => $html,
+			"court" => $court
 		];
 
 	
-		return $body->render($params);
-		
-
-		
-
-		// return $this->doMail($params->to, $params->subject, "OCDLA Criminal Appellate Review", $html);
-
-
-		return $html;
+		return array($subject,$title,$body->render($params));
 	}
 
 
