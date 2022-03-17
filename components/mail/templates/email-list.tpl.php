@@ -28,7 +28,7 @@ foreach($cars as $car):
             <?php print $car->getTitle(); ?>
         </a>
         <br />
-        <span style="font-weight:bold;">Important: <?php print $importance; ?></span>
+        <span style="font-weight:bold;">Importance: <?php print $importance; ?></span>
     </h4>
 
     <p style="font-size:11pt;">

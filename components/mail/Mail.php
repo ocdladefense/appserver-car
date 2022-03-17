@@ -67,9 +67,15 @@ class Mail extends \Presentation\Component {
 
 	public function getPreview() {
 
-		$court = "Oregon Court of Appeals";
-		$begin = new \DateTime("2022-01-01");
-		$end = new \DateTime("2022-03-02");
+		
+		$req = $this->getRequest();
+		$body = $req->getBody();
+
+		// var_dump($body);exit;
+
+		$court = empty($body->court) ? "Oregon Court of Appeals" : $body->court;
+		$begin = empty($body->startDate) ? new \DateTime("2022-01-01") : new \DateTime($body->startDate);
+		$end = empty($body->endDate) ? new \DateTime() : new \DateTime($body->endDate);
 
 		$cars = $this->getRecentCarList($court, $begin, $end);
 
