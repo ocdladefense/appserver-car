@@ -4,7 +4,7 @@
 	"comment": "Module definition file.",
 	"connectedApp": "default",
 	"mail": true,
-	"files": ["Model.php","Mail.php"],
+	"files": ["Model.php"],
 	"links": [
 		{
 			"href":"/car/new",

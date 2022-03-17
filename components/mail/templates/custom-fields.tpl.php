@@ -7,7 +7,7 @@
         <div class="form-group">
             <label>Court</label>
             <select name="court" class="form-control">
-                <option selected value="Oregon Appellate Court">Oregon Appellate Court</option>
+                <option selected value="Oregon Court of Appeals">Oregon Court of Appeals</option>
                 <option value="Oregon Supreme Court">Oregon Supreme Court</option>
             </select>
         </div>
