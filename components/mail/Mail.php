@@ -40,6 +40,16 @@ class Mail extends \Presentation\Component {
 
 
 
+	private $templates = array(
+		"notification" 	=> array(
+			"name" => "CAR Notification",
+			"subject" => "OCDLA CAR notifications",
+			"title" => "OCDLA CAR notifications"
+		)
+	);
+
+
+
 	public function __construct() {
 		parent::__construct("mail");
 		
@@ -48,7 +58,7 @@ class Mail extends \Presentation\Component {
 
 	public function getTemplates() {
 
-		return array("car-notification" => "CAR Notification");
+		return $this->templates;
 	}
 
 
@@ -113,6 +123,49 @@ class Mail extends \Presentation\Component {
 
 
 
+
+	public function getMessages($sample = false) {
+		$list = new \MailMessageList();
+
+		
+		$user = current_user();
+		$to = $user->getEmail();
+
+		
+		list($subject,$title,$content) = $this->getPreview();
+
+		
+		$message = $this->createMailMessage($to, $subject, $title, $content);
+		$list->add($message);
+
+		return $list;
+	}
+
+
+
+
+
+
+	public function createMailMessage($to, $subject, $title, $content, $headers = array()){
+
+		$headers = [
+			"From" 		   => "notifications@ocdla.org",
+			"Content-Type" => "text/html",
+            "Bcc"           => "jbernal.web.dev@gmail.com"
+		];
+
+		$headers = HttpHeaderCollection::fromArray($headers);
+
+
+
+		$message = new \MailMessage($to);
+		$message->setSubject($subject);
+		$message->setBody($content);
+		$message->setHeaders($headers);
+		$message->setTitle($title);
+
+		return $message;
+	}
 
 
 
