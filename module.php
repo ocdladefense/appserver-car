@@ -276,7 +276,7 @@ class CarModule extends Module {
 		// How do we blank out a value?
 		foreach($input as $key => $value){
 
-			if(empty($value)) unset($record[$input]);
+			if(empty($value)) unset($input[$key]);
 		}
 
 		$record = $sobject::from_array_or_standard_object($input);
