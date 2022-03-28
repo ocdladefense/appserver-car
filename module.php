@@ -216,8 +216,7 @@ class CarModule extends Module {
 		// Build the list of subjects and set the selected subject.
 		$subjects = DbHelper::getDistinctFieldValues($this->object, "subject");
 		$subjects = array_map(function($subject) { return ucwords($subject); }, $subjects);
-		$subjectDefault = array("" => "None Selected");
-        $subjects = $subjectDefault + $subjects;
+		
 		$subject = empty($record->getSubject()) ? "" : $record->getSubject();
         $subject = ucwords($subject);
 
@@ -243,7 +242,10 @@ class CarModule extends Module {
 
 		$judges = json_decode($data);
 
-		// var_dump($judges);exit;
+		$subjects = array_combine(array_map(function($s) { return strtolower($s); },$subjects),$subjects);
+		$subjectDefault = array("" => "None Selected");
+        $subjects = $subjectDefault + $subjects;
+		// var_dump($subjects);exit;
 
 		return $tpl->render(array(
 			"record" 			=> $record,
