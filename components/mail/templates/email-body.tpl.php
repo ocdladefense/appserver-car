@@ -4,7 +4,7 @@
     $ocdlaLatitude = "44.044495";
     $ocdlaLongitude = "-123.090919";
 
-    $appURL = "https://ocdla.app/car/list?year=$year&month=$month&day=$day";
+    $appURL = "https://ocdla.app/car/list?year=$year&month=$month&day=$day&court=$court";
 ?>
 
 <p>&nbsp;</p>
