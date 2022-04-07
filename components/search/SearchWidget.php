@@ -37,6 +37,8 @@ class SearchWidget extends Presentation\Component {
 
 	public $summarize;
 
+	public $decision_date; 
+
 
 	public function __construct($name) {
 		
@@ -55,6 +57,7 @@ class SearchWidget extends Presentation\Component {
 		$this->rank = $input->importance;
 		$this->min_date = "2018-01-01";
 		$this->summarize = null == $input->summarize ? "0" : $input->summarize;
+		$this->decision_date = $input->decision_date;
 		
 		$this->year = $input->year;
 	}
@@ -130,8 +133,6 @@ class SearchWidget extends Presentation\Component {
 		$appellate = DbHelper::getDistinctFieldValues("car", "appellate_judge");
 		$trial = DbHelper::getDistinctFieldValues("car", "appellate_judge");
 
-
-		
 
 		$judges = array_merge($appellate,$trial);
 		// var_dump($judges);

@@ -10,11 +10,9 @@ use Http\HttpHeader;
 use Http\HttpHeaderCollection;
 use GIS\Political\Countries\US\Oregon;
 use Ocdla\Date;
-
-
-use function Mysql\insert;
-use function Mysql\update;
 use function Mysql\select;
+
+
 /**
  * 
  * 
@@ -26,20 +24,30 @@ use function Mysql\select;
  * @method getTemplates Return an array of named templates that can be rendered into an email
  * body.
  * 
- * @method getSample Return a sample for the given email template.  The sample will typically be
+ * @method getSample Return a sample for the given email template.
+ * The sample will typically be
  * an HTML template.
- * 
- * 
  */
-
-
-
-
-
 class Mail extends \Presentation\Component {
 
 
+	// If no subject is provided, 
+	// this value will be used.
+	private static $DEFAULT_SUBJECT = "OCDLA CAR notifications";
 
+
+	// If no court is selected, this value 
+	// will be used in queries and in the title.
+	private static $DEFAULT_COURT = "Oregon Court of Appeals";
+
+
+	// Heading that appears at the top of the email.
+	// Params: court and selected date.
+	private static $DEFAULT_TITLE = "Appellate Review - %s, %s";
+
+
+	// List of templates, keyed by name,
+	// provided by this 
 	private $templates = array(
 		"notification" 	=> array(
 			"name" => "CAR Notification",
@@ -54,6 +62,7 @@ class Mail extends \Presentation\Component {
 		parent::__construct("mail");
 		
 	}
+
 
 
 	public function getTemplates() {
@@ -83,15 +92,15 @@ class Mail extends \Presentation\Component {
 		$body = $req->getBody();
 
 
-		$court = empty($body->court) ? "Oregon Court of Appeals" : $body->court;
+		$court = empty($body->court) ? self::$DEFAULT_COURT : $body->court;
 		$begin = empty($body->startDate) ? new \DateTime("2022-01-01") : new \DateTime($body->startDate);
 		$end = empty($body->endDate) ? new \DateTime() : new \DateTime($body->endDate);
 
 
-		$subject = "OCDLA CAR notifications";
+		
 		$to = $user->getEmail();
-		$tcourt = "Oregon Supreme Court" == $court ? "OSC" : "COA";
-		$title = sprintf("Appellate Review - %s, %s", $tcourt, $begin->format('F j, Y'));
+		$abbrvcourt = "Oregon Supreme Court" == $court ? "OSC" : "COA";
+		$title = sprintf(self::$DEFAULT_TITLE, $abbrvcourt, $begin->format('F j, Y'));
 
 
 
@@ -109,16 +118,15 @@ class Mail extends \Presentation\Component {
 		$body->addPath(__DIR__ . "/templates");
 
 		$params = [
-			"year" => $begin->format('Y'),
-			"month" => $begin->format('m'),
-			"day" => $begin->format('j'),
-			"date" => $begin->format('l, M j  Y'),
-			"carList" => $html,
-			"court" => $court
+			"year" 				=> $begin->format('Y'),
+			"decision_date"		=> $begin->format('Ymd'),
+			"date" 				=> $begin->format('l, M j  Y'),
+			"list" 				=> $html,
+			"court" 			=> $court
 		];
 
 	
-		return array($subject,$title,$body->render($params));
+		return array(self::$DEFAULT_SUBJECT, $title, $body->render($params));
 	}
 
 
@@ -176,16 +184,16 @@ class Mail extends \Presentation\Component {
 	public function getRecentCarList($court = "Oregon Court of Appeals", \DateTime $begin = null, \DateTime $end = null) {
 		$begin = null == $begin ? new \DateTime() : $begin;
 		
-		$beginMysql = $begin->format('Y-m-j');
+		$beginMysql = $begin->format('Ymd');
 
 		if(null == $end) {
-			$query = "SELECT * FROM car WHERE decision_date = '{$beginMysql}'";
+			$query = "SELECT * FROM car WHERE decision_date = {$beginMysql}";
 			$query .= " AND court = '{$court}'";
 		} else {
-			$endMysql = $end->format('Y-m-j');
+			$endMysql = $end->format('Ymd');
 	
-			$query = "SELECT * FROM car WHERE decision_date >= '{$beginMysql}'";
-			$query .= " AND decision_date <= '{$endMysql}'";
+			$query = "SELECT * FROM car WHERE decision_date >= {$beginMysql}";
+			$query .= " AND decision_date <= {$endMysql}";
 			$query .= " AND court = '{$court}'";
 		}
 
