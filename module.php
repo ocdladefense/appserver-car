@@ -89,12 +89,13 @@ class CarModule extends Module {
 
 
 		// If there is a new car show it at the top of the list.
-		if(!empty($carId)) {
+		if(!empty($recordId)) {
 
 			$promote = select("SELECT * FROM car WHERE id = '$recordId'");
 
 			$promote->isNew(true);
-
+			// var_dump($promote);
+			// exit;
 			for($i = 0; $i < count($records); $i++){
 
 				if($records[$i]->getId() == $promote->getId()){
@@ -170,6 +171,11 @@ class CarModule extends Module {
 				),
 				array(
 					"fieldname"	=> "importance",
+					"op"		=> "=",
+					"syntax"	=> "%s"
+				),
+				array(
+					"fieldname"	=> "decision_date",
 					"op"		=> "=",
 					"syntax"	=> "%s"
 				),

@@ -4,7 +4,7 @@
     $ocdlaLatitude = "44.044495";
     $ocdlaLongitude = "-123.090919";
 
-    $appURL = "https://ocdla.app/car/list?year=$year&month=$month&day=$day&court=$court";
+    $appURL = APP_URL . "/car/list?decision_date={$decision_date}&court=$court";
 ?>
 
 <p>&nbsp;</p>
@@ -16,12 +16,14 @@
 
 
 <p>
-    <a href="<?php print $appURL; ?>"><?php print $court; ?> - <?php print $date; ?></a>
+    <a target="_new" href="<?php print $appURL; ?>">
+        <?php print $court; ?> - <?php print $date; ?>
+    </a>
 </p>
 
 <p>-Rankin Johnson</p>
 
-<?php print $carList; ?>
+<?php print $list; ?>
 
 <br />
 
@@ -32,11 +34,11 @@
     <br />
     Oregon Criminal Defense Lawyers Association
     <br />
-    <a href="https://www.google.com/maps/dir/?api=1&destination=<?php print "$ocdlaLatitude,$ocdlaLongitude"; ?>">
+    <a target="_new" href="https://www.google.com/maps/dir/?api=1&destination=<?php print "$ocdlaLatitude,$ocdlaLongitude"; ?>">
         101 East 14th Avenue, Eugene, OR 97401
     </a>
     <br />
     <a href="tel:503.504.2060">503.504.2060</a>
     <br />
-    <a href="https://www.ocdla.org">www.ocdla.org</a>
+    <a target="_new" href="https://www.ocdla.org">www.ocdla.org</a>
 </p>
