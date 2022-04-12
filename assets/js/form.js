@@ -1,6 +1,19 @@
 
 
 
+// Prevent the form from being submitted twice.
+function onSubmit(e) {
+  // e.preventDefault();
+  // e.stopPropagation();
+  let submit = document.getElementById("submit");
+  submit.setAttribute("disabled",true);
+
+  return false;
+}
+
+
+let theForm = document.getElementById("record-form");
+theForm.addEventListener("submit",onSubmit);
 
 
 function handleNewSubject(e){
