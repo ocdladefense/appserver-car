@@ -264,6 +264,7 @@ class CarModule extends Module {
 			"importance"		=> $importance,
 			"court" 			=> $court,
 			"courts"	   		=> $courts,
+			"classes"			=> "record-" . $record->getId(),
 			"subject" 			=> $subject,
 			"subjects" 			=> $subjects,
 			"county" 			=> $county,
@@ -363,7 +364,7 @@ function recordPreprocess($record) {
 	static $index = 0; 
 
 
-	$classes = array();
+	$classes = array("record-".$record->getId());
 
 	if($record->isNew()) $classes[] = "is-new";
 
