@@ -28,6 +28,9 @@ foreach($cars as $car):
             <a target="_new" href="<?php print $link; ?>">
                 <?php print $car->getTitle(); ?>
             </a>
+            <?php if(!empty($car->getExternalLink())): ?>
+                (<a href="<?php print $car->getExternalLink(); ?>" target="_blank">Full decision</a>)
+            <?php endif; ?>
             <br />
             <span style="font-weight:bold;">Importance: <?php print $importance; ?></span>
         </h4>
@@ -35,6 +38,8 @@ foreach($cars as $car):
         <p style="font-size:11pt;">
             <?php print nl2br($car->getSummary()); ?>
         </p>
+
+
 
         <p style="font-size:11pt;">
             <?php print "$citation ($date) ($aJudge) ($county, $tJudge)"; ?>
