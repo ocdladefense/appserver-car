@@ -64,6 +64,7 @@ class SearchWidget extends Presentation\Component {
 
 
     public function getStyles() {
+		return array();
         return array(
             "active" => true,
             "href" => module_path() . "/components/search/main.css?bust=001"
