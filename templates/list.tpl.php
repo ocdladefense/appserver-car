@@ -2,20 +2,16 @@
 
 
 
-<?php if(empty($records)): ?>
-    
-	<div class="car-container" style="text-align: center;">
-		<h1>No case reviews were found.</h1>
-	</div>
-
-<?php endif; ?>
 
 
 
 
-<?php foreach($records as $record) {
-	$group = $summarize && $subject != trim($record->getSubject()) ? $record->getSubject() : "";
-?>
+
+<?php foreach($records as $record): ?>
+	<?php $subject = trim($record->getSubject()); ?>
+	
+	<?php $group = $summarize && $subject != $previous ? $subject : ""; ?>
+
 	<?php if(!empty($group)): ?>
 		<h2 class="list-group">
 			<?php print $record->getSubject(); ?>
@@ -25,8 +21,9 @@
 	<?php module_template("record", __DIR__, $record); ?>
 
 
-<?php $subject = trim($record->getSubject());
-} ?>
+	<?php $previous = $subject; ?>
+
+<?php endforeach; ?>
 
 
 

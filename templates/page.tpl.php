@@ -20,22 +20,30 @@
 </div>
 
 
-<?php if($results): ?>
-	<div id="car-list-container" class="list-container">
 
-		<?php print $list; ?>
+<?php /*
+	<?php if(empty($records)): ?>
+		
+		<div class="car-container" style="text-align: center;">
+			<h1>No case reviews were found.</h1>
+		</div>
 
-	</div> <!-- end list container -->
-
-<?php else: ?>
-	<div id="car-list-container" class="list-container">
-
-		Your search returned no results.
-
-	</div> <!-- end list container -->
-<?php endif; ?>
+	<?php endif; ?>
+	*/
+?>
 
 
+<div id="car-list-container" class="list-container">
+
+	<?php if($results): ?>
+			<?php print $list; ?>
+	<?php else: ?>
+
+			Your search returned no results.
+
+	<?php endif; ?>
+
+</div> <!-- end list container -->
 
 <script src="<?php print module_path(); ?>/assets/js/admin.js">
 </script>

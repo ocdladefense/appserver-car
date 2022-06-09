@@ -65,7 +65,7 @@
 
 
 	<div class="car-summary">
-		<?php print $summary; ?>
+		<?php print $summary;  ?>
 	</div>
 
 
