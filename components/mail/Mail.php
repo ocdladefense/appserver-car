@@ -84,26 +84,42 @@ class Mail extends \Presentation\Component {
 
 
 
-	public function getPreview() {
-
-		
-		$user = current_user();
-		$req = $this->getRequest();
-		$body = $req->getBody();
 
 
-		$court = empty($body->court) ? self::$DEFAULT_COURT : $body->court;
-		$begin = empty($body->startDate) ? new \DateTime("2022-01-01") : new \DateTime($body->startDate);
-		$end = empty($body->endDate) ? new \DateTime() : new \DateTime($body->endDate);
+
+	public function getSubject($params) {
+
+		return self::$DEFAULT_SUBJECT;
+	}
 
 
-		
-		$to = $user->getEmail();
+
+	public function getTitle($params) {
+
+		$court = empty($params->court) ? self::$DEFAULT_COURT : $params->court;
+		$begin = empty($params->startDate) ? new \DateTime("2022-01-01") : new \DateTime($params->startDate);
+		$end = empty($params->endDate) ? new \DateTime() : new \DateTime($params->endDate);
 		$abbrvcourt = "Oregon Supreme Court" == $court ? "OSC" : "COA";
-		$title = sprintf(self::$DEFAULT_TITLE, $abbrvcourt, $begin->format('F j, Y'));
+
+		return sprintf(self::$DEFAULT_TITLE, $abbrvcourt, $begin->format('F j, Y'));
+	}
 
 
 
+
+	public function getTextBody($params) {
+
+		return "Hello World!";
+	}
+
+
+
+	public function getHtmlBody($params) {
+
+
+		$court = empty($params->court) ? self::$DEFAULT_COURT : $params->court;
+		$begin = empty($params->startDate) ? new \DateTime("2022-01-01") : new \DateTime($params->startDate);
+		$end = empty($params->endDate) ? new \DateTime() : new \DateTime($params->endDate);
 
 		$cars = $this->getRecentCarList($court, $begin, $end);
 
@@ -122,31 +138,11 @@ class Mail extends \Presentation\Component {
 			"decision_date"		=> $begin->format('Ymd'),
 			"date" 				=> $begin->format('l, M j  Y'),
 			"list" 				=> $html,
-			"court" 			=> $court
+			"court" 			=> $court,
+			"title"				=> $title
 		];
 
-	
-		return array(self::$DEFAULT_SUBJECT, $title, $body->render($params));
-	}
-
-
-
-
-	public function getMessages($sample = false) {
-		$list = new \MailMessageList();
-
-		
-		$user = current_user();
-		$to = $user->getEmail();
-
-		
-		list($subject,$title,$content) = $this->getPreview();
-
-		
-		$message = $this->createMailMessage($to, $subject, $title, $content);
-		$list->add($message);
-
-		return $list;
+		return $body->render($params);
 	}
 
 
@@ -154,26 +150,7 @@ class Mail extends \Presentation\Component {
 
 
 
-	public function createMailMessage($to, $subject, $title, $content, $headers = array()){
 
-		$headers = [
-			"From" 		   => "notifications@ocdla.org",
-			"Content-Type" => "text/html",
-            "Bcc"           => "jbernal.web.dev@gmail.com"
-		];
-
-		$headers = HttpHeaderCollection::fromArray($headers);
-
-
-
-		$message = new \MailMessage($to);
-		$message->setSubject($subject);
-		$message->setBody($content);
-		$message->setHeaders($headers);
-		$message->setTitle($title);
-
-		return $message;
-	}
 
 
 
