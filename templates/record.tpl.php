@@ -12,6 +12,9 @@
  * 
  */
 
+ $searchDomain = "https://cdm17027.contentdm.oclc.org";
+ $searchUrl = "digital/search/searchterm";
+ $externalLink = $searchDomain . "/" . $searchUrl . "/" . $car->getA_number();
 ?>
 
 <div class="car-container <?php print $classes; ?>">
@@ -73,16 +76,16 @@
 	<div class="additional-info car-meta">
 		<?php require "admin.tpl.php"; ?>
 		<span>
-			<?php if(!empty($car->getExternalLink())) : ?>
-				Links: <a href="<?php print $car->getExternalLink(); ?>" target="_blank">SOLL</a>
+			<?php if(!empty($car->getExternalLink())): ?>
+				Links: <a href="<?php print $externalLink; ?>" target="_blank">SOLL</a>
 			<?php endif; ?>
-			<?php if(!empty($car->getUrl()) && is_admin_user()): ?>
+			<?php if(is_admin_user() && !empty($car->getUrl())): ?>
 				<a href="<?php print $car->getUrl(); ?>" target="_blank">LOD</a>
 			<?php endif; ?>
 		</span>
 
 		<span>
-			<strong>Appellate #: </strong>
+			<strong>Appellate &pound;: </strong>
 			<?php print !empty($car->getA_number()) ? $car->getA_number() : "Not available"; ?>
 		</span>
 
