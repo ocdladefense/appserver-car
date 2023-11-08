@@ -108,7 +108,20 @@
 			<strong>Trial Judge:</strong>
 			<?php print $car->getTrialJudge(); ?>
 		</span>
-		
+
+		<?php if(!empty($car->getConcurringJudges())): ?>
+		<span>
+			<strong>Concurring Judges:</strong>
+			<?php print $car->getConcurringJudges(); ?>
+		</span>
+		<?php endif; ?>
+
+		<?php if(!empty($car->getDissentingJudges())): ?>
+		<span>
+			<strong>Dissenting Judges:</strong>
+			<?php print $car->getDissentingJudges(); ?>
+		</span>
+		<?php endif; ?>
 
 	</div>
 

@@ -18,6 +18,10 @@ class Car {
 
 	public $appellate_judge;
 
+	public $concurring_judges;
+
+	public $dissenting_judges;
+
 	public $subject;
 
 	public $secondary_subject;
@@ -79,6 +83,8 @@ class Car {
 		$car->court = $record["court"];
 		$car->trial_judge = $record["trial_judge"];
 		$car->appellate_judge = $record["appellate_judge"];
+		$car->concurring_judges = $record["concurring_judges"];
+		$car->dissenting_judges = $record["dissenting_judges"];
 		$car->subject = $record["subject"];
 		$car->secondary_subject = $record["secondary_subject"];
 		$car->summary = $record["summary"];
@@ -221,6 +227,14 @@ class Car {
 	public function getDateString() {
 	
 		return $this->year . "-" . $this->month . "-" . $this->day;
+	}
+
+	public function getConcurringJudges() {
+		return $this->concurring_judges;
+	}
+
+	public function getDissentingJudges() {
+		return $this->dissenting_judges;
 	}
 
 

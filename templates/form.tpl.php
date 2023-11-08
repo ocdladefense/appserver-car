@@ -99,13 +99,25 @@
 
         <div class="form-group">
             <div class="form-item">
-                <label>Appellate Judge</label>
-                <input required autocomplete="off" type="text" name="appellate_judge" value="<?php print $record->getAppellateJudge(); ?>" list="judges" placeholder="Search by judge name" />
+                <label>Majority Opinion Author</label>
+                <input required autocomplete="off" type="text" name="appellate_judge" value="<?php print $record->getAppellateJudge(); ?>" list="judges" placeholder="Enter judges..." />
             </div>
 
             <div class="form-item">
                 <label>Trial Judge</label>
-                <input required autocomplete="off" type="text" name="trial_judge" value="<?php print $record->getTrialJudge(); ?>" list="judges" placeholder="Search by judge name" />
+                <input required autocomplete="off" type="text" name="trial_judge" value="<?php print $record->getTrialJudge(); ?>" list="judges" placeholder="Enter judges..." />
+            </div>
+
+
+            <div class="form-item">
+                <label>Concurring Judges</label>
+                <input required autocomplete="off" type="text" name="concurring_judges" value="<?php print $record->getConcurringJudges(); ?>" list="judges" placeholder="Enter judges..." />
+            </div>
+
+
+            <div class="form-item">
+                <label>Dissenting Judges</label>
+                <input required autocomplete="off" type="text" name="dissenting_judges" value="<?php print $record->getDissentingJudges(); ?>" list="judges" placeholder="Enter judges..." />
             </div>
 
             <!--
