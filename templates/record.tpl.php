@@ -85,7 +85,7 @@
 		</span>
 
 		<span>
-			<strong>Appellate &pound;: </strong>
+			<strong>Appellate #: </strong>
 			<?php print !empty($car->getA_number()) ? $car->getA_number() : "Not available"; ?>
 		</span>
 
@@ -100,7 +100,7 @@
 		</span>
 		
 		<span>
-			<strong>Appellate Judge:</strong>
+			<strong>Majority Opinion Author:</strong>
 			<?php print $car->getAppellateJudge(); ?>
 		</span>
 		
