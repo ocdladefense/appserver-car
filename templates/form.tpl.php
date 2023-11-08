@@ -111,13 +111,13 @@
 
             <div class="form-item">
                 <label>Concurring Judges</label>
-                <input required autocomplete="off" type="text" name="concurring_judges" value="<?php print $record->getConcurringJudges(); ?>" list="judges" placeholder="Enter judges..." />
+                <input autocomplete="off" type="text" name="concurring_judges" value="<?php print $record->getConcurringJudges(); ?>" list="judges" placeholder="Enter judges..." />
             </div>
 
 
             <div class="form-item">
                 <label>Dissenting Judges</label>
-                <input required autocomplete="off" type="text" name="dissenting_judges" value="<?php print $record->getDissentingJudges(); ?>" list="judges" placeholder="Enter judges..." />
+                <input autocomplete="off" type="text" name="dissenting_judges" value="<?php print $record->getDissentingJudges(); ?>" list="judges" placeholder="Enter judges..." />
             </div>
 
             <!--
